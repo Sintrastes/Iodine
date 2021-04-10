@@ -14,25 +14,28 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class ActionButton(val text: String, val action: ToolDescription<WindowCtx, Unit, Unit>): ComponentDescription<WindowCtx, Void, Unit, Unit> {
+    @Composable
     override fun initialize(ctx: WindowCtx, initialValue: Unit): Component<Void, Unit, Unit> = run {
-        val action = action.initialize(ctx, Unit)
         object : Component<Void, Unit, Unit> {
             @Composable
-            override fun contents(input: Unit) {
+            override fun contents() {
                 Button(
                     content = {
                         Text(text)
                     },
                     onClick = {
                         ctx.coroutineScope.launch {
-                            action.runTool(ctx)
+                            action.initialize(ctx, Unit)
+                                .runTool(ctx)
                         }
                     }
                 )
             }
 
-            override val events = emptyFlow<Void>()
-            override val result = MutableStateFlow(Unit)
+            override val events get()
+                = emptyFlow<Void>()
+            override val result get()
+                = MutableStateFlow(Unit)
         }
     }
 }

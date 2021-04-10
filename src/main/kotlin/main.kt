@@ -1,16 +1,17 @@
 import androidx.compose.desktop.Window
 import androidx.compose.material.Text
 import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
+import androidx.compose.ui.input.key.Key.Companion.Window
 import androidx.compose.ui.window.Dialog
 import com.bedelln.composetk.components.ActionButton
-import com.bedelln.composetk.desktop.ComposeTk
+import com.bedelln.composetk.components.TextEntry
+import com.bedelln.composetk.desktop.ComposeTkWindow
+import com.bedelln.composetk.imap
+import com.bedelln.composetk.omap
 import com.bedelln.composetk.tools.AlertDialog
 
+/*
 fun main() = Window {
     val dialogState = remember { mutableStateOf(false) }
 
@@ -27,29 +28,18 @@ fun main() = Window {
     }
 }
 
-    /*ComposeTk(
+ */
+
+fun main() = ComposeTkWindow(
     title = "Compose Tk Demo",
     contents = ActionButton(
         text = "Hello!",
-        action = AlertDialog("My alert") {
-            Button(
-                content = {
-                    Text("Hello from my alert!")
-                },
-                onClick = { }
-            )
-        }
+        action = AlertDialog(
+            title = "My alert",
+            contents = TextEntry
+        )
+            .imap { it: Unit -> "test" }
+            .omap { }
+
     )
-) */
-
-    /* Window {
-    var text by remember { mutableStateOf("Hello, World!") }
-
-    MaterialTheme {
-        Button(onClick = {
-            text = "Hello, Desktop!"
-        }) {
-            Text(text)
-        }
-    }
-}*/
+)

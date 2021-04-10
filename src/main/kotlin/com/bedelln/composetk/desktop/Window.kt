@@ -18,14 +18,12 @@ interface WindowCtx {
     val coroutineScope: CoroutineScope
 }
 
-fun ComposeTk(
+fun ComposeTkWindow(
     title: String,
     contents: ComponentDescription<WindowCtx, Void, Unit, Unit>
 ) {
     Window(title) {
-        MaterialTheme {
-            windowContents(contents)
-        }
+        windowContents(contents)
     }
 }
 
@@ -41,7 +39,7 @@ private fun windowContents(contents: ComponentDescription<WindowCtx, Void, Unit,
         override val coroutineScope = GlobalScope
     }
     contents.initialize(windowCtx, Unit)
-        .contents(Unit)
+        .contents()
     additional.forEach {
         it()
     }

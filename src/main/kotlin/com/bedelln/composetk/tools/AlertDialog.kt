@@ -7,19 +7,29 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DesktopDialogProperties
+import com.bedelln.composetk.ComponentDescription
 import com.bedelln.composetk.Tool
 import com.bedelln.composetk.ToolDescription
 import com.bedelln.composetk.desktop.WindowCtx
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.launch
 
-class AlertDialog(val title: String, val contents: @Composable() () -> Unit): ToolDescription<WindowCtx, Unit, Unit> {
+class AlertDialog<A,B>(val title: String, val contents: ComponentDescription<WindowCtx,Void, A,B>): ToolDescription<WindowCtx, A, B> {
 
-    var showDialogAction: (() -> Unit)? = null
+    lateinit var onFinish: MutableSharedFlow<B>
+    lateinit var showDialogAction: () -> Unit
 
-    override fun initialize(ctx: WindowCtx, initialValue: Unit) = object : Tool<WindowCtx, Unit> {
+    override fun initialize(ctx: WindowCtx, initialValue: A) = object : Tool<WindowCtx, B> {
+
         init {
-            println("Calling alert dialog initialize.")
+            onFinish = MutableSharedFlow()
+
             ctx.window.addToContents {
                 var showDialog by remember { mutableStateOf(false) }
+                val _contents = contents.initialize(ctx, initialValue)
                 showDialogAction = { showDialog = true }
                 if (showDialog) {
                     AlertDialog(
@@ -31,12 +41,14 @@ class AlertDialog(val title: String, val contents: @Composable() () -> Unit): To
                             width = 1.dp,
                             MaterialTheme.colors.primary
                         ),
-                        text = contents,
+                        text = { _contents.contents() },
                         buttons = {
                             Button(
                                 onClick = {
-                                    println("Alert dialog on click")
                                     showDialog = false
+                                    ctx.coroutineScope.launch {
+                                        onFinish.emit(_contents.result.value)
+                                    }
                                 },
                                 content = {
                                     Text("Ok")
@@ -48,9 +60,9 @@ class AlertDialog(val title: String, val contents: @Composable() () -> Unit): To
             }
         }
 
-        override suspend fun runTool(ctx: WindowCtx) {
-            println("Running alert dialog tool.")
-            showDialogAction!!()
+        override suspend fun runTool(ctx: WindowCtx): B {
+            showDialogAction()
+            return onFinish.single()
         }
     }
 }
