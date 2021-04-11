@@ -10,9 +10,9 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
-   viewBox="0 0 210 297"
+   width="51.500534mm"
+   height="46.712852mm"
+   viewBox="0 0 149.35155 135.46727"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
@@ -50,9 +50,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="338.39487"
-     inkscape:cy="553.18969"
+     inkscape:zoom="2.8284272"
+     inkscape:cx="39.669581"
+     inkscape:cy="41.64449"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -60,7 +60,12 @@
      inkscape:window-height="1016"
      inkscape:window-x="72"
      inkscape:window-y="27"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     fit-margin-top="5"
+     fit-margin-left="10"
+     fit-margin-bottom="2"
+     fit-margin-right="10"
+     scale-x="2.9" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -76,7 +81,8 @@
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(-33.537841,-86.4806)">
     <path
        style="opacity:0.56000001;fill:url(#radialGradient4612);fill-opacity:1;stroke:#c2c2c2;stroke-width:6.67086601;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 387.95052,420.27417 -6.6535,70.20022 c -104.9736,17.8283 -141.59108,63.30272 -141.59809,169.10314 1.5e-4,119.9249 52.76648,138.9948 173.48037,153.99434 C 531.89243,796.57126 578.29363,776.79456 578.29378,656.87042 578.23278,552.5461 551.00872,512.34353 447.82526,492.96665 l -8.80369,-72.96385 z"
