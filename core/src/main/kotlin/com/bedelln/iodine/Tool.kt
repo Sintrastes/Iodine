@@ -2,17 +2,6 @@ package com.bedelln.iodine
 
 import androidx.compose.runtime.Composable
 import arrow.continuations.Effect
-import com.bedelln.iodine.components.ActionButton
-import com.bedelln.iodine.components.TextEntry
-import com.bedelln.iodine.desktop.ctx.WindowCtx
-import com.bedelln.iodine.tools.AlertDialog
-
-interface Description<in C,in A,out B> {
-    @Composable
-    fun initCompose(ctx: C)
-
-    fun initialize(ctx: C, initialValue: A): B
-}
 
 typealias ToolDescription<C,A,B>
         = Description<C,A,Tool<C,B>>
@@ -108,7 +97,7 @@ object tool {
         Effect.restricted(eff = { ToolEffect { it } }, f = func, just = { it })
 }
 
-
+/*
 val test: ToolDescription<WindowCtx, Unit, Unit> = tool {
     val res = !AlertDialog(
         title = "Test",
@@ -136,3 +125,4 @@ val test: ToolDescription<WindowCtx, Unit, Unit> = tool {
     )
     Tool.just(res)
 }
+ */

@@ -6,5 +6,7 @@ pluginManagement {
     }
     
 }
-rootProject.name = "untitled"
-
+rootProject.name = "iodine"
+include("core")
+include("desktop")
+include("android")
