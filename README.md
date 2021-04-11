@@ -26,6 +26,8 @@ dependencies {
 }
 ```
 
+An example of this can be found in the [compose for desktop project example](examples/desktop_example).
+
 Concepts
 ========
 
