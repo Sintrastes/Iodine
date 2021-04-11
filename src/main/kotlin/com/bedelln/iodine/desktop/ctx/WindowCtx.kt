@@ -1,7 +1,6 @@
-package com.bedelln.composetk.desktop.ctx
+package com.bedelln.iodine.desktop.ctx
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.window.Notifier
 import kotlinx.coroutines.CoroutineScope
 
 interface WindowRef {

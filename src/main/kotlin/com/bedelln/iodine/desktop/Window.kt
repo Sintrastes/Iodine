@@ -1,17 +1,12 @@
-package com.bedelln.composetk.desktop
+package com.bedelln.iodine.desktop
 
 import androidx.compose.desktop.Window
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
-import androidx.compose.ui.input.key.Key.Companion.Window
 import androidx.compose.ui.window.Notifier
-import com.bedelln.composetk.ComponentDescription
-import com.bedelln.composetk.desktop.ctx.SystemCtx
-import com.bedelln.composetk.desktop.ctx.WindowCtx
-import com.bedelln.composetk.desktop.ctx.WindowRef
-import kotlinx.coroutines.CoroutineScope
+import com.bedelln.iodine.ComponentDescription
+import com.bedelln.iodine.desktop.ctx.WindowCtx
+import com.bedelln.iodine.desktop.ctx.WindowRef
 import kotlinx.coroutines.GlobalScope
-import kotlin.coroutines.CoroutineContext
 
 fun ComposeTkWindow(
     title: String,
