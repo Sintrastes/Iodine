@@ -22,6 +22,10 @@ inline fun <C,E,A,B,X> ComponentDescription<C,E,A,B>.imap(crossinline f: (X) -> 
     val origDescr = this
     return object: ComponentDescription<C,E,X,B> {
         @Composable
+        override fun initCompose(ctx: C) {
+            origDescr.initCompose(ctx)
+        }
+
         override fun initialize(ctx: C, initialValue: X): Component<E, X, B> {
             val orig = origDescr.initialize(ctx, f(initialValue))
             return object: Component<E,X,B> {
@@ -41,7 +45,7 @@ inline fun <C,E,A,B,X> ComponentDescription<C,E,A,B>.imap(crossinline f: (X) -> 
 fun <C,E,A,B,X> ComponentDescription<C,E,A,B>.omap(f: suspend (B) -> X): ComponentDescription<C,E,A,X> {
     val origDescr = this
     return object: ComponentDescription<C,E,A,X> {
-        @Composable
+
         override fun initialize(ctx: C, initialValue: A): Component<E, A, X> {
             val orig = origDescr.initialize(ctx, initialValue)
             return object: Component<E,A,X> {
@@ -54,6 +58,11 @@ fun <C,E,A,B,X> ComponentDescription<C,E,A,B>.omap(f: suspend (B) -> X): Compone
                 override val result: StateFlow<X>
                     get() = orig.result.map(f) as StateFlow<X>
             }
+        }
+
+        @Composable
+        override fun initCompose(ctx: C) {
+            origDescr.initCompose(ctx)
         }
     }
 }

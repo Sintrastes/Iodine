@@ -4,19 +4,14 @@ import androidx.compose.desktop.Window
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.input.key.Key.Companion.Window
+import androidx.compose.ui.window.Notifier
 import com.bedelln.composetk.ComponentDescription
+import com.bedelln.composetk.desktop.ctx.SystemCtx
+import com.bedelln.composetk.desktop.ctx.WindowCtx
+import com.bedelln.composetk.desktop.ctx.WindowRef
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlin.coroutines.CoroutineContext
-
-interface WindowRef {
-    fun addToContents(f: @Composable() () -> Unit)
-}
-
-interface WindowCtx {
-    val window: WindowRef
-    val coroutineScope: CoroutineScope
-}
 
 fun ComposeTkWindow(
     title: String,
@@ -36,8 +31,10 @@ private fun windowContents(contents: ComponentDescription<WindowCtx, Void, Unit,
                 additional = additional + listOf(f)
             }
         }
-        override val coroutineScope = GlobalScope
+        override val notifier get() = Notifier()
+        override val windowScope = GlobalScope
     }
+    contents.initCompose(windowCtx)
     contents.initialize(windowCtx, Unit)
         .contents()
     additional.forEach {

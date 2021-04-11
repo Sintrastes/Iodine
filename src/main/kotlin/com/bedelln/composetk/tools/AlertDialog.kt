@@ -10,27 +10,39 @@ import androidx.compose.ui.window.DesktopDialogProperties
 import com.bedelln.composetk.ComponentDescription
 import com.bedelln.composetk.Tool
 import com.bedelln.composetk.ToolDescription
-import com.bedelln.composetk.desktop.WindowCtx
-import kotlinx.coroutines.flow.Flow
+import com.bedelln.composetk.desktop.ctx.WindowCtx
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 
+// Note: This should probably be SystemCtx -- an alert dialog could be launched from anywhere.
 class AlertDialog<A,B>(val title: String, val contents: ComponentDescription<WindowCtx,Void, A,B>): ToolDescription<WindowCtx, A, B> {
 
     lateinit var onFinish: MutableSharedFlow<B>
-    lateinit var showDialogAction: () -> Unit
 
+    val showDialogFlow = MutableStateFlow(false)
+    lateinit var showState: State<Boolean>
+    suspend fun showDialogAction() {
+        showDialogFlow.emit(true)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Composable
+    override fun initCompose(ctx: WindowCtx) {
+        showState = showDialogFlow.collectAsState()
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun initialize(ctx: WindowCtx, initialValue: A) = object : Tool<WindowCtx, B> {
 
         init {
             onFinish = MutableSharedFlow()
 
             ctx.window.addToContents {
-                var showDialog by remember { mutableStateOf(false) }
+                val showDialog by remember { showState }
                 val _contents = contents.initialize(ctx, initialValue)
-                showDialogAction = { showDialog = true }
                 if (showDialog) {
                     AlertDialog(
                         title = { Text(title) },
@@ -45,8 +57,8 @@ class AlertDialog<A,B>(val title: String, val contents: ComponentDescription<Win
                         buttons = {
                             Button(
                                 onClick = {
-                                    showDialog = false
-                                    ctx.coroutineScope.launch {
+                                    ctx.windowScope.launch {
+                                        showDialogFlow.emit(false)
                                         onFinish.emit(_contents.result.value)
                                     }
                                 },

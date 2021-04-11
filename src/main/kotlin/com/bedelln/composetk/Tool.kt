@@ -3,11 +3,15 @@ package com.bedelln.composetk
 import androidx.compose.foundation.Text
 import androidx.compose.runtime.Composable
 import arrow.continuations.Effect
-import com.bedelln.composetk.desktop.WindowCtx
+import com.bedelln.composetk.components.ActionButton
+import com.bedelln.composetk.components.TextEntry
+import com.bedelln.composetk.desktop.ctx.WindowCtx
 import com.bedelln.composetk.tools.AlertDialog
 
-fun interface Description<in C,in A,out B> {
+interface Description<in C,in A,out B> {
     @Composable
+    fun initCompose(ctx: C)
+
     fun initialize(ctx: C, initialValue: A): B
 }
 
@@ -26,13 +30,15 @@ interface Tool<in C,out A> {
                 }
             }
         }
+        fun <C,A,B> just(value: B): ToolDescription<C,A,B> {
+            TODO()
+        }
     }
 }
 
-inline fun <C,A,B,X> ToolDescription<C,A,B>.imap(crossinline f: (X) -> A): ToolDescription<C,X,B> {
+inline fun <C,A,B,X> ToolDescription<C,A,B>.lmap(crossinline f: (X) -> A): ToolDescription<C,X,B> {
     val origDescr = this
     return object: ToolDescription<C,X,B> {
-        @Composable
         override fun initialize(ctx: C, initialValue: X): Tool<C, B> {
             val orig = origDescr.initialize(ctx, f(initialValue))
             return object: Tool<C,B> {
@@ -41,13 +47,17 @@ inline fun <C,A,B,X> ToolDescription<C,A,B>.imap(crossinline f: (X) -> A): ToolD
                 }
             }
         }
+
+        @Composable
+        override fun initCompose(ctx: C) {
+            origDescr.initCompose(ctx)
+        }
     }
 }
 
-inline fun <C,A,B,X> ToolDescription<C,A,B>.omap(crossinline f: suspend (B) -> X): ToolDescription<C,A,X> {
+inline fun <C,A,B,X> ToolDescription<C,A,B>.rmap(crossinline f: suspend (B) -> X): ToolDescription<C,A,X> {
     val origDescr = this
     return object: ToolDescription<C,A,X> {
-        @Composable
         override fun initialize(ctx: C, initialValue: A): Tool<C, X> {
             val orig = origDescr.initialize(ctx, initialValue)
             return object: Tool<C,X> {
@@ -56,21 +66,26 @@ inline fun <C,A,B,X> ToolDescription<C,A,B>.omap(crossinline f: suspend (B) -> X
                 }
             }
         }
+        @Composable
+        override fun initCompose(ctx: C) {
+            origDescr.initCompose(ctx)
+        }
     }
 }
 
-/*
 fun <Ctx,A,B,C> ToolDescription<Ctx,A,B>.compose(
     other: ToolDescription<Ctx,B,C>
 ): ToolDescription<Ctx,A,C> {
     val thisToolDescr = this
     return object: ToolDescription<Ctx,A,C> {
         @Composable
+        override fun initCompose(ctx: Ctx) {
+            thisToolDescr.initCompose(ctx)
+            other.initCompose(ctx)
+        }
+
         override fun initialize(ctx: Ctx, initialValue: A): Tool<Ctx, C> {
             val thisTool = thisToolDescr.initialize(ctx, initialValue)
-            // TODO: To make this work, I'll probably need to
-            // seperate out initialize to "@Composable initialize(ctx)
-            // and initialize(ctx, initialValue: A)
             val composedTool: suspend () -> Tool<Ctx,C> = {
                 val res = thisTool.runTool(ctx)
                 other.initialize(ctx, res)
@@ -83,26 +98,42 @@ fun <Ctx,A,B,C> ToolDescription<Ctx,A,B>.compose(
         }
     }
 }
- */
 
-fun interface ToolEffect<C,A>: Effect<Tool<C, A>> {
-    suspend fun Tool<C,A>.bind(): A =
+fun interface ToolEffect<C,A>: Effect<ToolDescription<C, Unit, A>> {
+    suspend operator fun ToolDescription<C,Unit,A>.not(): A =
         control().shift(this)
 }
 
-/*
 object tool {
-    operator fun <C, A> invoke(func: suspend ToolEffect<*,*>.() -> Tool<C,A>): Tool<C,A> =
+    operator fun <C, A> invoke(func: suspend ToolEffect<C,A>.() -> ToolDescription<C,Unit,A>): ToolDescription<C,Unit,A> =
         Effect.restricted(eff = { ToolEffect { it } }, f = func, just = { it })
 }
 
-/*
-val test: Tool<WindowCtx, Unit> = tool {
-    val res = AlertDialog(title = "Test") {
-        Text("Hello!")
-    }.bind()
-    AlertDialog(title = "Test2") {
-        Text("Hello again!")
-    }
+
+val test: ToolDescription<WindowCtx, Unit, Unit> = tool {
+    val res = !AlertDialog(
+        title = "Test",
+        contents = ActionButton(
+            text = "Hello!",
+            action = AlertDialog(
+                title = "My alert",
+                contents = TextEntry
+            )
+                .lmap { it: Unit -> "test" }
+                .rmap { }
+        )
+    )
+    !AlertDialog(
+        title = "Test",
+        contents = ActionButton(
+            text = "Hello!",
+            action = AlertDialog(
+                title = "My alert",
+                contents = TextEntry
+            )
+                .lmap { it: Unit -> "test" }
+                .rmap { }
+        )
+    )
+    Tool.just(res)
 }
- */

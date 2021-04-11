@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import com.bedelln.composetk.Component
 import com.bedelln.composetk.ComponentDescription
-import com.bedelln.composetk.desktop.WindowCtx
+import com.bedelln.composetk.desktop.ctx.WindowCtx
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,18 +16,20 @@ import kotlinx.coroutines.launch
 
 object TextEntry : ComponentDescription<WindowCtx, Void, String, String> {
     @Composable
+    override fun initCompose(ctx: WindowCtx) { }
+
     override fun initialize(ctx: WindowCtx, initialValue: String): Component<Void, String, String> {
         return object : Component<Void, String, String> {
             private val contentsFlow = MutableStateFlow(initialValue)
-            private var contents by remember { mutableStateOf(initialValue) }
 
             @Composable
             override fun contents() {
+                var contents by remember { mutableStateOf(initialValue) }
                 TextField(
                     value = contents,
                     onValueChange = { newValue ->
                         contents = newValue
-                        ctx.coroutineScope.launch {
+                        ctx.windowScope.launch {
                             contentsFlow.emit(newValue)
                         }
                     },
