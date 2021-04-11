@@ -32,10 +32,6 @@ dependencies {
     implementation("io.arrow-kt:arrow-fx-coroutines:$arrow_version")
 }
 
-tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "11"
-}
-
 tasks.jar {
     archiveFileName.set("iodine-desktop.jar")
 }
