@@ -5,6 +5,8 @@
 <p align="center">Typed components for <a href="https://developer.android.com/jetpack/compose">Jetpack Compose</a>, inspired by <a href="https://github.com/purescript-halogen/purescript-halogen">Halogen</a>.</p>
 </p>
 
+![example workflow](https://github.com/Sintrastes/iodine/workflows/ci/badge.svg)
+
 Introduction
 ============
 
