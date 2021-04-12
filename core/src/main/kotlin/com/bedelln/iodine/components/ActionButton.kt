@@ -6,16 +6,15 @@ import androidx.compose.runtime.Composable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import com.bedelln.iodine.*
-import com.bedelln.iodine.desktop.ctx.WindowCtx
 import kotlinx.coroutines.launch
 
-class ActionButton(val text: String, val action: ToolDescription<WindowCtx, Unit, Unit>): ComponentDescription<WindowCtx, Void, Unit, Unit> {
+class ActionButton<C: IodineContext>(val text: String, val action: ToolDescription<C, Unit, Unit>): ComponentDescription<C, Void, Unit, Unit> {
     @Composable
-    override fun initCompose(ctx: WindowCtx) {
+    override fun initCompose(ctx: C) {
         action.initCompose(ctx)
     }
 
-    override fun initialize(ctx: WindowCtx, initialValue: Unit): Component<Void, Unit, Unit> = run {
+    override fun initialize(ctx: C, initialValue: Unit): Component<Void, Unit, Unit> = run {
         object : Component<Void, Unit, Unit> {
             @Composable
             override fun contents() {
@@ -24,7 +23,7 @@ class ActionButton(val text: String, val action: ToolDescription<WindowCtx, Unit
                         Text(text)
                     },
                     onClick = {
-                        ctx.windowScope.launch {
+                        ctx.defaultScope.launch {
                             action.initialize(ctx, Unit)
                                 .runTool(ctx)
                         }

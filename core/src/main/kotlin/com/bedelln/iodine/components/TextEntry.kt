@@ -6,18 +6,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import com.bedelln.iodine.*
-import com.bedelln.iodine.desktop.ctx.WindowCtx
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 
-object TextEntry: ComponentDescription<WindowCtx, Void, String, String> {
+class TextEntry<C: IodineContext>(): ComponentDescription<C, Void, String, String> {
     @Composable
-    override fun initCompose(ctx: WindowCtx) { }
+    override fun initCompose(ctx: C) { }
 
-    override fun initialize(ctx: WindowCtx, initialValue: String): Component<Void, String, String> {
+    override fun initialize(ctx: C, initialValue: String): Component<Void, String, String> {
         return object : Component<Void, String, String> {
             private val contentsFlow = MutableStateFlow(initialValue)
 
@@ -28,7 +27,7 @@ object TextEntry: ComponentDescription<WindowCtx, Void, String, String> {
                     value = contents,
                     onValueChange = { newValue ->
                         contents = newValue
-                        ctx.windowScope.launch {
+                        ctx.defaultScope.launch {
                             contentsFlow.emit(newValue)
                         }
                     },
