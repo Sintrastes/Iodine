@@ -2,10 +2,12 @@
 <p align="center">
 
   <img width=10% src="res/iodine.svg?token=AA7AHVO4G25UIIT3P6G6TIDAONGOE">
-<p align="center">Typed components for <a href="https://developer.android.com/jetpack/compose">Jetpack Compose</a>, inspired by <a href="https://github.com/purescript-halogen/purescript-halogen">Halogen</a>.</p>
+<p align="center">Typed components for <a href="https://developer.android.com/jetpack/compose">Jetpack Compose</a>, inspired by <a href="https://github.com/purescript-halogen/purescript-halogen">Halogen</a>.  </p> 
+<p align="center">
+  <img src="https://github.com/sintrastes/iodine/workflows/CI/badge.svg">
+  </p>
 </p>
 
-![example workflow](https://github.com/Sintrastes/iodine/workflows/ci/badge.svg)
 
 Introduction
 ============
