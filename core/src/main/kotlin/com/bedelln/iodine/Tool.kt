@@ -91,11 +91,12 @@ fun interface ToolEffect<C,A>: Effect<ToolDescription<C, Unit, A>> {
     suspend operator fun ToolDescription<C,Unit,A>.not(): A =
         control().shift(this)
 }
-
+/*
 object tool {
     operator fun <C, A> invoke(func: suspend ToolEffect<C,A>.() -> ToolDescription<C,Unit,A>): ToolDescription<C,Unit,A> =
         Effect.restricted(eff = { ToolEffect { it } }, f = func, just = { it })
 }
+ */
 
 /*
 val test: ToolDescription<WindowCtx, Unit, Unit> = tool {

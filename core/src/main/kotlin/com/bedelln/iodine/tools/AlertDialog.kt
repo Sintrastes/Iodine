@@ -7,10 +7,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DesktopDialogProperties
-import com.bedelln.iodine.ComponentDescription
-import com.bedelln.iodine.Tool
-import com.bedelln.iodine.ToolDescription
-import com.bedelln.iodine.desktop.ctx.WindowCtx
+import com.bedelln.iodine.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +15,11 @@ import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 
 // Note: This should probably be SystemCtx -- an alert dialog could be launched from anywhere.
-class AlertDialog<A,B>(val title: String, val contents: ComponentDescription<WindowCtx,Void, A,B>): ToolDescription<WindowCtx, A, B> {
+class AlertDialog<A,B,C>(
+    val title: String,
+    val contents: ComponentDescription<C,Void, A,B>): ToolDescription<C, A, B>
+  where C: IodineContext,
+        C: HasRef {
 
     lateinit var onFinish: MutableSharedFlow<B>
 
@@ -30,17 +31,17 @@ class AlertDialog<A,B>(val title: String, val contents: ComponentDescription<Win
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Composable
-    override fun initCompose(ctx: WindowCtx) {
+    override fun initCompose(ctx: C) {
         showState = showDialogFlow.collectAsState()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun initialize(ctx: WindowCtx, initialValue: A) = object : Tool<WindowCtx, B> {
+    override fun initialize(ctx: C, initialValue: A) = object : Tool<C, B> {
 
         init {
             onFinish = MutableSharedFlow()
 
-            ctx.window.addToContents {
+            ctx.ref.addToContents {
                 val showDialog by remember { showState }
                 val _contents = contents.initialize(ctx, initialValue)
                 if (showDialog) {
@@ -57,7 +58,7 @@ class AlertDialog<A,B>(val title: String, val contents: ComponentDescription<Win
                         buttons = {
                             Button(
                                 onClick = {
-                                    ctx.windowScope.launch {
+                                    ctx.defaultScope.launch {
                                         showDialogFlow.emit(false)
                                         onFinish.emit(_contents.result.value)
                                     }
@@ -72,7 +73,7 @@ class AlertDialog<A,B>(val title: String, val contents: ComponentDescription<Win
             }
         }
 
-        override suspend fun runTool(ctx: WindowCtx): B {
+        override suspend fun runTool(ctx: C): B {
             showDialogAction()
             return onFinish.single()
         }
