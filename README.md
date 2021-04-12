@@ -76,20 +76,4 @@ Tools and components can be combined into larger and more complex components/too
   4. `pure`, `bind`: Monad operations.
   5. `mapCtx`: Contravariant functor operations
 
-Examples
-========
 
-```kotlin
-fun main() = ComposeTkWindow(
-    title = "Compose Tk Demo",
-    contents = ActionButton(
-        text = "Hello!",
-        action = AlertDialog(
-            title = "My alert",
-            contents = TextEntry
-        )
-            .lmap { it: Unit -> "test" }
-            .rmap { }
-    )
-)
-```
