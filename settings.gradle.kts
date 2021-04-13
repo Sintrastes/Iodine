@@ -8,6 +8,7 @@ pluginManagement {
     }
     
 }
+
 rootProject.name = "iodine"
 include("core")
 include("desktop")

@@ -1,39 +1,34 @@
 package com.bedelln.iodine.example_app
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
-import com.bedelln.iodine.ComponentDescription
-import com.bedelln.iodine.example_app.ui.theme.IodineAndroidAppTheme
+import com.bedelln.iodine.Tool
+import com.bedelln.iodine.ToolDescription
+import com.bedelln.iodine.android.ActivityCtx
+import com.bedelln.iodine.android.IodineActivity
+import com.bedelln.iodine.components.*
 
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            IodineAndroidAppTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
-                    Greeting("Android")
+class MainActivity: IodineActivity<ActivityCtx, Void, Unit, Unit>(Unit) {
+    override val contextInitializer = { it: ActivityCtx -> it }
+
+    override val contents = ActionButton(
+        text = "Hello, Android!",
+        action = object: ToolDescription<ActivityCtx,Unit,Unit> {
+            @Composable
+            override fun initCompose(ctx: ActivityCtx) { }
+
+            override fun initialize(
+                ctx: ActivityCtx,
+                initialValue: Unit
+            ): Tool<ActivityCtx, Unit> {
+                return object: Tool<ActivityCtx, Unit> {
+                    override suspend fun runTool(ctx: ActivityCtx) {
+                        // noop
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    IodineAndroidAppTheme {
-        Greeting("Android")
-    }
+    )
 }

@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DesktopDialogProperties
 import com.bedelln.iodine.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -49,7 +48,7 @@ class AlertDialog<A,B,C>(
                         title = { Text(title) },
                         onDismissRequest = {
                         },
-                        properties = DesktopDialogProperties(undecorated = true),
+                        // properties = DesktopDialogProperties(undecorated = true),
                         modifier = Modifier.border(
                             width = 1.dp,
                             MaterialTheme.colors.primary
