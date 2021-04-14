@@ -4,8 +4,10 @@ import androidx.compose.desktop.Window
 import androidx.compose.runtime.*
 import androidx.compose.ui.window.Notifier
 import com.bedelln.iodine.ComponentDescription
+import com.bedelln.iodine.ContainerRef
 import com.bedelln.iodine.desktop.ctx.WindowCtx
 import com.bedelln.iodine.desktop.ctx.WindowRef
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 
 /**
@@ -34,6 +36,10 @@ private fun windowContents(contents: ComponentDescription<WindowCtx, Void, Unit,
         }
         override val notifier get() = Notifier()
         override val windowScope = GlobalScope
+        override val defaultScope: CoroutineScope
+            get() = windowScope
+        override val ref: ContainerRef
+            get() = window
     }
     contents.initCompose(windowCtx)
     contents.initialize(windowCtx, Unit)

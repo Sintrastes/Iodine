@@ -9,9 +9,9 @@ fun main() = IodineWindow(
     title = "Iodine for Desktop Demo",
     contents = ActionButton(
         text = "Hello!",
-        action = AlertDialog<WindowCtx>(
+        action = AlertDialog(
             title = "My alert",
-            contents = TextEntry
+            contents = TextEntry()
         )
             .lmap { it: Unit -> "test" }
             .rmap { }
