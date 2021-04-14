@@ -12,7 +12,7 @@ buildscript {
 plugins {
     kotlin("jvm")
     id("org.jetbrains.compose") version "0.3.0"
-    id("org.jetbrains.dokka") version "1.4.30"
+    id("org.jetbrains.dokka")
 }
 
 group = "com.bedelln"
