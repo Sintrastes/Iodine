@@ -1,6 +1,7 @@
 package com.bedelln.iodine
 
 import androidx.compose.runtime.Composable
+import com.bedelln.iodine.util.mapStateFlow
 import kotlinx.coroutines.flow.*
 
 interface Settable<in C, in A> {
@@ -54,14 +55,8 @@ fun <C,E,A,B,X> ComponentDescription<C,E,A,B>.omap(f: (B) -> X): ComponentDescri
                 override val events: Flow<E>
                     get() = orig.events
                 override val result: StateFlow<X>
-                    get() = run {
-                        val flow = MutableStateFlow(f(orig.result.value))
-                        val mappedFlow = orig.result.map { f(it) }
-                        mappedFlow.onEach {
-                            flow.emit(it)
-                        }
-                        flow
-                    }
+                    get() = orig.result
+                        .mapStateFlow(f)
             }
         }
 
