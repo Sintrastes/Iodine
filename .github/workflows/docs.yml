@@ -1,0 +1,28 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build dokka docs
+        run: |
+          ./gradlew dokkaHtmlMultimodule
+
+      - name: Archive dokka docs
+        uses: actions/upload-artifact@v2
+        with:
+          name: iodine-docs
+          path: build/dokkaCustomMultiModuleOutput/
