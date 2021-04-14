@@ -1,16 +1,15 @@
 
-import com.bedelln.iodine.components.ActionButton
-import com.bedelln.iodine.components.TextEntry
-import com.bedelln.iodine.desktop.ComposeTkWindow
-import com.bedelln.iodine.lmap
-import com.bedelln.iodine.rmap
+import com.bedelln.iodine.components.*
+import com.bedelln.iodine.desktop.*
+import com.bedelln.iodine.*
+import com.bedelln.iodine.desktop.ctx.WindowCtx
 import com.bedelln.iodine.tools.AlertDialog
 
-fun main() = ComposeTkWindow(
-    title = "Compose Tk Demo",
+fun main() = IodineWindow(
+    title = "Iodine for Desktop Demo",
     contents = ActionButton(
         text = "Hello!",
-        action = AlertDialog(
+        action = AlertDialog<WindowCtx>(
             title = "My alert",
             contents = TextEntry
         )

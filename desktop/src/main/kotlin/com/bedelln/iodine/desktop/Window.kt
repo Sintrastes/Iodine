@@ -8,7 +8,13 @@ import com.bedelln.iodine.desktop.ctx.WindowCtx
 import com.bedelln.iodine.desktop.ctx.WindowRef
 import kotlinx.coroutines.GlobalScope
 
-fun ComposeTkWindow(
+/**
+ * Entrypoint for an Iodine for Desktop application.
+ *
+ * Opens a window with the given component.
+ *
+ */
+fun IodineWindow(
     title: String,
     contents: ComponentDescription<WindowCtx, Void, Unit, Unit>
 ) {
