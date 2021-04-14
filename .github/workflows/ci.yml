@@ -25,12 +25,32 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Runs a set of commands using the runners shell
       - name: Build core jar
         run: |
             ./gradlew :core:jar
             
-      # Runs a single command using the runners shell
       - name: Build desktop jar
         run: |
             ./gradlew :desktop:jar
+            
+      - name: Build android aar
+        run: |
+            ./gradlew :android:build
+            
+      - name: Archive core jar
+        uses: actions/upload-artifact@v2
+        with:
+          name: core-jar
+          path: core/build/libs/iodine-core.jar
+          
+      - name: Archive desktop jar
+        uses: actions/upload-artifact@v2
+        with:
+          name: desktop-jar
+          path: desktop/build/libs/iodine-desktop.jar
+          
+      - name: Archive android aar
+        uses: actions/upload-artifact@v2
+        with:
+          name: android-aar
+          path: android/build/aar/android-debug.jar
