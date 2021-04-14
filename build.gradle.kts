@@ -5,7 +5,6 @@ buildscript {
     repositories {
         mavenCentral()
         google()
-        jcenter()
         gradlePluginPortal()
     }
 
@@ -15,6 +14,10 @@ buildscript {
     }
 }
 
-plugins {
-    id("org.jetbrains.dokka") version "1.4.30"
+repositories {
+    maven(url="https://dl.bintray.com/kotlin/dokka")
 }
+
+//tasks.dokkaHtmlMultiModule.configure {
+//    outputDirectory.set(buildDir.resolve("dokkaCustomMultiModuleOutput"))
+//}

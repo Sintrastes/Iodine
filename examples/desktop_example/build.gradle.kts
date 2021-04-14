@@ -3,7 +3,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.30"
+    kotlin("jvm") version "1.4.31"
     id("org.jetbrains.compose") version "0.4.0-build173"
 }
 
@@ -40,7 +40,7 @@ compose.desktop {
         mainClass = "MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "iodine__desktop_example_project"
+            packageName = "iodine_desktop_example_project"
             // packageVersion = "1.0.0"
         }
     }
