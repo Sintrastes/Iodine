@@ -12,6 +12,7 @@ buildscript {
 plugins {
     kotlin("jvm") 
     id("org.jetbrains.compose") version "0.3.0"
+    id("org.jetbrains.dokka") version "1.4.30"
 }
 
 group = "com.bedelln"
@@ -20,8 +21,13 @@ version = "0.1-SNAPSHOT"
 repositories {
     mavenCentral()
     google()
+    jcenter()
     maven(url="https://dl.bintray.com/kotlin/dokka")
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
+}
+
+dependencies {
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.30")
 }
 
 val arrow_version = "0.13.1"
