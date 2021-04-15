@@ -45,8 +45,8 @@ abstract class IodineActivity<C,E,A,B>(val initialValue: A): ComponentActivity()
                 initialValue
             )
             MaterialTheme {
-                contents.initCompose(contextInitializer(ctx))
                 _contents.contents()
+                contents.initCompose(contextInitializer(ctx))
                 additionalContents.forEach {
                     it()
                 }

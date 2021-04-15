@@ -87,6 +87,19 @@ fun <Ctx,A,B,C> ToolDescription<Ctx,A,B>.compose(
     }
 }
 
+inline fun <Ctx,A,B> ToolDescription<Ctx,Unit,A>.thenTool(
+    crossinline f: (A) -> ToolDescription<Ctx,Unit,B>
+) = object: ToolDescription<Ctx,Unit,B> {
+    @Composable
+    override fun initCompose(ctx: Ctx) {
+        TODO("Not yet implemented")
+    }
+
+    override fun initialize(ctx: Ctx, initialValue: Unit): Tool<Ctx, B> {
+        TODO("Not yet implemented")
+    }
+}
+
 fun interface ToolEffect<C,A>: Effect<ToolDescription<C, Unit, A>> {
     suspend operator fun ToolDescription<C,Unit,A>.not(): A =
         control().shift(this)
