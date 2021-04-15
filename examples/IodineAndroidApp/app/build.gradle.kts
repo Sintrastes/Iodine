@@ -39,13 +39,13 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion = rootProject.extra["compose_version"] as String
-        kotlinCompilerVersion = "1.4.30"
+        kotlinCompilerVersion = "1.4.31"
     }
 }
 
 dependencies {
     implementation(files("$projectDir/libs/iodine-core.jar"))
-    implementation(files("$projectDir/libs/iodine-android.aar"))
+    implementation(files("$projectDir/libs/iodine-android-debug-1.0.aar"))
     implementation("androidx.core:core-ktx:1.3.2")
     implementation("androidx.appcompat:appcompat:1.2.0")
     implementation("com.google.android.material:material:1.3.0")
