@@ -6,14 +6,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.*
 import androidx.lifecycle.lifecycleScope
 import com.bedelln.iodine.*
 
-interface ActivityCtx : AndroidCtx {
+interface ActivityCtx : AndroidCtx, HasRef {
     val activityCtx: Context
 }
 
@@ -24,23 +22,34 @@ abstract class IodineActivity<C,E,A,B>(val initialValue: A): ComponentActivity()
 
     private val activity = this
 
-    val ctx = object : ActivityCtx {
-        override val activityCtx = activity
-        override val defaultScope = activity.lifecycleScope
-        override val defaultCtx = activityCtx
-    }
-
     override fun onCreate(
         savedInstanceState: Bundle?
     ) {
         super.onCreate(savedInstanceState)
-        val _contents = contents.initialize(
-            contextInitializer(ctx),
-            initialValue
-        )
         setContent {
+            var additionalContents by remember {
+                mutableStateOf(listOf<@Composable() () -> Unit>())
+            }
+            val ctx = object : ActivityCtx {
+                override val activityCtx = activity
+                override val defaultScope = activity.lifecycleScope
+                override val ref: ContainerRef = object: ContainerRef {
+                    override fun addToContents(f: @Composable() () -> Unit) {
+                        additionalContents = additionalContents + listOf(f)
+                    }
+                }
+                override val defaultCtx = activityCtx
+            }
+            val _contents = contents.initialize(
+                contextInitializer(ctx),
+                initialValue
+            )
             MaterialTheme {
+                contents.initCompose(contextInitializer(ctx))
                 _contents.contents()
+                additionalContents.forEach {
+                    it()
+                }
             }
         }
     }

@@ -44,6 +44,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    android.libraryVariants.all { variant ->
+        variant.outputs.all { output ->
+            if (outputFile != null && outputFileName.endsWith('.aar')) {
+                outputFileName = "iodine-android-${variant.name}-${defaultConfig.versionName}.aar"
+            }
+        }
+    }
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {

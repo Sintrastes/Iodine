@@ -19,7 +19,7 @@ jobs:
 
       - name: Build dokka docs
         run: |
-          ./gradlew dokkaHtmlMultimodule
+          ./gradlew dokkaHtmlMultiModule
 
       - name: Archive dokka docs
         uses: actions/upload-artifact@v2
