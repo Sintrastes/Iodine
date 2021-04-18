@@ -1,7 +1,8 @@
 package com.bedelln.iodine
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import arrow.continuations.Effect
+import java.lang.IllegalArgumentException
 
 typealias ToolDescription<C,A,B>
         = Description<C,A,Tool<C,B>>
@@ -10,16 +11,25 @@ interface Tool<in C,out A> {
     suspend fun runTool(ctx: C): A
 
     companion object {
-        fun <C> noop() = Tool.create<C,Unit> { }
-        fun <C,A> create(f: suspend C.() -> A): Tool<C,A> {
-            return object: Tool<C,A> {
-                override suspend fun runTool(ctx: C): A {
-                    return f(ctx)
+        fun <C,A> noop() = Tool.create<C,A,Unit> { }
+        fun <C,A,B> create(f: suspend C.(A) -> B): ToolDescription<C,A,B> {
+            return object: ToolDescription<C,A,B> {
+                @Composable
+                override fun initCompose(ctx: C) { }
+
+                override fun initialize(ctx: C, initialValue: A): Tool<C, B> {
+                    return object: Tool<C,B> {
+                        override suspend fun runTool(ctx: C): B {
+                            return f(ctx, initialValue)
+                        }
+                    }
                 }
             }
         }
         fun <C,A,B> just(value: B): ToolDescription<C,A,B> {
-            TODO()
+            return create { it: A ->
+                value
+            }
         }
     }
 }
@@ -89,14 +99,32 @@ fun <Ctx,A,B,C> ToolDescription<Ctx,A,B>.compose(
 
 inline fun <Ctx,A,B> ToolDescription<Ctx,Unit,A>.thenTool(
     crossinline f: (A) -> ToolDescription<Ctx,Unit,B>
-) = object: ToolDescription<Ctx,Unit,B> {
-    @Composable
-    override fun initCompose(ctx: Ctx) {
-        TODO("Not yet implemented")
-    }
+) = run {
+    val origTool = this
+    object : ToolDescription<Ctx, Unit, B> {
 
-    override fun initialize(ctx: Ctx, initialValue: Unit): Tool<Ctx, B> {
-        TODO("Not yet implemented")
+        lateinit var secondTool: ToolDescription<Ctx,Unit,B>
+
+        @Composable
+        override fun initCompose(ctx: Ctx) {
+            var initializedSecondTool by remember { mutableStateOf(false) }
+            origTool.initCompose(ctx)
+            if (initializedSecondTool) {
+                secondTool.initCompose(ctx)
+            }
+        }
+
+        override fun initialize(ctx: Ctx, initialValue: Unit): Tool<Ctx, B> {
+            val tool = origTool.initialize(ctx,initialValue)
+            return object: Tool<Ctx,B> {
+                override suspend fun runTool(ctx: Ctx): B {
+                    val res = tool.runTool(ctx)
+                    secondTool = f(res)
+                    return secondTool.initialize(ctx, Unit)
+                        .runTool(ctx)
+                }
+            }
+        }
     }
 }
 

@@ -3,22 +3,22 @@ package com.bedelln.iodine.moore
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.*
-import com.bedelln.iodine.ComponentDescription
-import com.bedelln.iodine.Component
+import com.bedelln.iodine.*
 import com.bedelln.iodine.util.mapStateFlow
 import kotlinx.coroutines.flow.*
 
 /** Abstract class for a component defined via the Elm Architecture. */
-abstract class MooreComponent<C,E,Ei,S,A,B>(val initialState: S, val inputEvents: Flow<Ei>): ComponentDescription<C,E,A,B> {
+abstract class MooreComponent<C,Ei,Eo,S,A,B>(val initialState: S): HComponentDescription<C,Ei,Eo,A,B> {
 
     lateinit var state: State<S>
 
     abstract fun reducer(event: Ei, state: S): S
 
     val stateStream = MutableStateFlow(initialState).apply {
-        inputEvents.onEach { event ->
-            emit(reducer(event, value))
-        }
+        // TODO: Fix this.
+        // inputEvents.onEach { event ->
+        //     emit(reducer(event, value))
+        // }
     }
 
     abstract fun result(state: S): B
@@ -31,18 +31,22 @@ abstract class MooreComponent<C,E,Ei,S,A,B>(val initialState: S, val inputEvents
         state = stateStream.collectAsState()
     }
 
-    override fun initialize(ctx: C, initialValue: A): Component<E, A, B> {
-        return object: Component<E,A,B> {
+    override fun initialize(ctx: C, initialValue: A): HComponent<Ei, Eo, A, B> {
+        return object: HComponent<Ei,Eo,A,B> {
             @Composable
-            override fun contents() {
+            override fun ComponentAction<A, Eo>.contents() {
                 render(ctx, state.value)
             }
 
-            override val events: Flow<E>
+            override val events: Flow<Eo>
                 get() = emptyFlow()
             override val result: StateFlow<B>
                 get() = stateStream
                     .mapStateFlow(::result)
+
+            override fun ComponentAction<A, Eo>.onEvent(event: Ei) {
+                TODO("Not yet implemented")
+            }
         }
     }
 }

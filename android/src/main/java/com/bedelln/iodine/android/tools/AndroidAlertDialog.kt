@@ -12,12 +12,12 @@ import com.bedelln.iodine.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class AndroidAlertDialog<A,B,C>(
+class AndroidAlertDialog<A,B,C,Ei,Eo>(
     val title: String,
-    val contents: ComponentDescription<C,Void, A,B>): ToolDescription<C, A, B>
+    val contents: HComponentDescription<C, Ei, Eo, A,B>): ToolDescription<C, A, B>
         where C: IodineContext,
               C: HasRef {
 
@@ -49,18 +49,21 @@ class AndroidAlertDialog<A,B,C>(
                         title = { Text(title) },
                         onDismissRequest = {
                         },
-                        // properties = DesktopDialogProperties(undecorated = true),
                         modifier = Modifier.border(
                             width = 1.dp,
                             MaterialTheme.colors.primary
                         ),
-                        text = { _contents.contents() },
+                        text = {
+                            // TODO: Fix this.
+                            _contents.getContents(ctx)
+                        },
                         buttons = {
                             Button(
                                 onClick = {
                                     ctx.defaultScope.launch {
                                         showDialogFlow.emit(false)
-                                        onFinish.emit(_contents.result.value)
+                                        val value = _contents.result.value
+                                        onFinish.emit(value)
                                     }
                                 },
                                 content = {
@@ -75,7 +78,7 @@ class AndroidAlertDialog<A,B,C>(
 
         override suspend fun runTool(ctx: C): B {
             showDialogAction()
-            return onFinish.single()
+            return onFinish.first()
         }
     }
 }

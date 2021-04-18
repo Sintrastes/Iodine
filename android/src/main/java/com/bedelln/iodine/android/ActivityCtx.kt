@@ -15,8 +15,8 @@ interface ActivityCtx : AndroidCtx, HasRef {
     val activityCtx: Context
 }
 
-abstract class IodineActivity<C,E,A,B>(val initialValue: A): ComponentActivity() {
-    abstract val contents: ComponentDescription<C, E, A, B>
+abstract class IodineActivity<C,Ei,Eo,A,B>(val initialValue: A): ComponentActivity() {
+    abstract val contents: HComponentDescription<C, Ei, Eo, A, B>
 
     abstract val contextInitializer: (ActivityCtx) -> C
 
@@ -45,7 +45,7 @@ abstract class IodineActivity<C,E,A,B>(val initialValue: A): ComponentActivity()
                 initialValue
             )
             MaterialTheme {
-                _contents.contents()
+                _contents.getContents(ctx)
                 contents.initCompose(contextInitializer(ctx))
                 additionalContents.forEach {
                     it()

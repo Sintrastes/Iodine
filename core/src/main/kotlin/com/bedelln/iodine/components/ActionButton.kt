@@ -8,7 +8,12 @@ import kotlinx.coroutines.flow.emptyFlow
 import com.bedelln.iodine.*
 import kotlinx.coroutines.launch
 
-class ActionButton<C: IodineContext>(val text: String, val action: ToolDescription<C, Unit, Unit>): ComponentDescription<C, Void, Unit, Unit> {
+object Click
+
+class ActionButton<C: IodineContext>(
+    val text: String,
+    val action: ToolDescription<C, Unit, Unit>
+): HComponentDescription<C, Click, Void, Unit, Unit> {
 
     lateinit var setShow: () -> Unit
 
@@ -21,23 +26,27 @@ class ActionButton<C: IodineContext>(val text: String, val action: ToolDescripti
         }
     }
 
-    override fun initialize(ctx: C, initialValue: Unit): Component<Void, Unit, Unit> = run {
-        object : Component<Void, Unit, Unit> {
+    override fun initialize(ctx: C, initialValue: Unit): HComponent<Click, Void, Unit, Unit> = run {
+        object : HComponent<Click, Void, Unit, Unit> {
             @Composable
-            override fun contents() {
+            override fun ComponentAction<Unit, Void>.contents() {
                 Button(
                     content = {
                         Text(text)
                     },
                     onClick = {
-                        ctx.defaultScope.launch {
-                            action.initialize(ctx, Unit).also {
-                                setShow()
-                            }
-                                .runTool(ctx)
-                        }
+                        onEvent(Click)
                     }
                 )
+            }
+
+            override fun ComponentAction<Unit, Void>.onEvent(event: Click) {
+                ctx.defaultScope.launch {
+                    action.initialize(ctx, Unit).also {
+                        setShow()
+                    }
+                        .runTool(ctx)
+                }
             }
 
             override val events get()

@@ -16,9 +16,9 @@ import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 
 // Note: This should probably be SystemCtx -- an alert dialog could be launched from anywhere.
-class AlertDialog<A,B,C>(
+class AlertDialog<A,B,C,Ei,Eo>(
     val title: String,
-    val contents: ComponentDescription<C,Void, A,B>): ToolDescription<C, A, B>
+    val contents: HComponentDescription<C, Ei, Eo, A, B>): ToolDescription<C, A, B>
   where C: IodineContext,
         C: HasRef {
 
@@ -55,7 +55,12 @@ class AlertDialog<A,B,C>(
                             width = 1.dp,
                             MaterialTheme.colors.primary
                         ),
-                        text = { _contents.contents() },
+                        text = {
+                            // TODO: Restore this.
+                            // with(_contents) {
+                            //     contents()
+                            // }
+                        },
                         buttons = {
                             Button(
                                 onClick = {
