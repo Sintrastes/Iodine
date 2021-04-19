@@ -2,7 +2,7 @@
 
 <h1 align="center">Iodine</h1>
 <p align="center">
-  <img width=10% src="http://sintrastes.github.io/iodine/iodine.svg">
+  <img src="http://sintrastes.github.io/iodine/iodine.svg" width=10%>
 </p>
 <p align="center">Typed components for <a href="https://developer.android.com/jetpack/compose">Jetpack Compose</a>, inspired by <a href="https://github.com/purescript-halogen/purescript-halogen">Halogen</a>.  </p> 
 <p align="center">
