@@ -151,6 +151,9 @@ fun <Ei,Eo,A,B,C: IodineContext> HComponent<Ei,Eo,A,B>.getContents(ctx: C) {
     }
 }
 
+inline fun <C,Ei,Eo,A,B> WrappedComponent(crossinline layout: @Composable () (@Composable () () -> Unit) -> Unit, component: HComponentDescription<C,Ei,Eo,A,B>): HComponentDescription<C,Ei,Eo,A,B>
+    = component.wrap(layout)
+
 inline fun <C,Ei,Eo,A,B> HComponentDescription<C,Ei,Eo,A,B>.wrap(crossinline f: @Composable () (@Composable () () -> Unit) -> Unit): HComponentDescription<C,Ei,Eo,A,B> {
     val origDescr = this
     return object: HComponentDescription<C,Ei,Eo,A,B> {

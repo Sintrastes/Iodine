@@ -1,5 +1,5 @@
 
-val kotlin_version = "1.4.31"
+val kotlin_version = "1.4.32"
 buildscript {
 
     repositories {
@@ -10,7 +10,7 @@ buildscript {
 
     dependencies {
         classpath("com.android.tools.build:gradle:7.0.0-alpha14")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.31")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.32")
     }
 }
 

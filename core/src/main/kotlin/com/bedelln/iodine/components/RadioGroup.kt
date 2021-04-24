@@ -1,6 +1,7 @@
 package com.bedelln.iodine.components
 
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import com.bedelln.iodine.*
 import com.bedelln.iodine.interfaces.Displayable
@@ -26,20 +27,22 @@ class RadioGroup<A: Displayable<C>, C: IodineContext>(
             @Composable
             override fun ComponentAction<A?, Event>.contents() {
                 var selected by remember { mutableStateOf(initialValue) }
-                for (i in values.indices) {
-                    val value = values[i]
-                    Row {
-                        RadioButton(
-                            selected = value == selected,
-                            onClick = {
-                                selected = value
-                                ctx.defaultScope.launch {
-                                    contentsFlow.emit(value)
+                Column {
+                    for (i in values.indices) {
+                        val value = values[i]
+                        Row {
+                            RadioButton(
+                                selected = value == selected,
+                                onClick = {
+                                    selected = value
+                                    ctx.defaultScope.launch {
+                                        contentsFlow.emit(value)
+                                    }
                                 }
+                            )
+                            with(value) {
+                                ctx.display()
                             }
-                        )
-                        with(value) {
-                            ctx.display()
                         }
                     }
                 }
