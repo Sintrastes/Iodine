@@ -1,4 +1,4 @@
 package com.bedelln.iodine.components
 
-class DropdownMenu {
+class ValidatedComponent {
 }
