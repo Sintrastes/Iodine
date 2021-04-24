@@ -31,6 +31,14 @@ interface Tool<in C,out A> {
                 value
             }
         }
+
+        fun interface ToolEffect<C,A>: Effect<ToolDescription<C, Unit, A>> {
+            suspend fun ToolDescription<C,Unit,A>.bind(): A =
+                control().shift(this)
+        }
+
+        operator fun <C, A> invoke(func: suspend ToolEffect<C,*>.() -> ToolDescription<C,Unit,A>): ToolDescription<C,Unit,A> =
+            Effect.restricted(eff = { ToolEffect { it } }, f = func, just = { it })
     }
 }
 
@@ -127,44 +135,3 @@ inline fun <Ctx,A,B> ToolDescription<Ctx,Unit,A>.thenTool(
         }
     }
 }
-
-fun interface ToolEffect<C,A>: Effect<ToolDescription<C, Unit, A>> {
-    suspend operator fun ToolDescription<C,Unit,A>.not(): A =
-        control().shift(this)
-}
-/*
-object tool {
-    operator fun <C, A> invoke(func: suspend ToolEffect<C,A>.() -> ToolDescription<C,Unit,A>): ToolDescription<C,Unit,A> =
-        Effect.restricted(eff = { ToolEffect { it } }, f = func, just = { it })
-}
- */
-
-/*
-val test: ToolDescription<WindowCtx, Unit, Unit> = tool {
-    val res = !AlertDialog(
-        title = "Test",
-        contents = ActionButton(
-            text = "Hello!",
-            action = AlertDialog(
-                title = "My alert",
-                contents = TextEntry
-            )
-                .lmap { it: Unit -> "test" }
-                .rmap { }
-        )
-    )
-    !AlertDialog(
-        title = "Test",
-        contents = ActionButton(
-            text = "Hello!",
-            action = AlertDialog(
-                title = "My alert",
-                contents = TextEntry
-            )
-                .lmap { it: Unit -> "test" }
-                .rmap { }
-        )
-    )
-    Tool.just(res)
-}
- */

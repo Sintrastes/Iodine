@@ -43,6 +43,8 @@ android {
     }
 }
 
+val arrow_version = "0.13.1"
+
 dependencies {
     implementation(files("$projectDir/libs/iodine-core.jar"))
     implementation(files("$projectDir/libs/iodine-android-debug-1.0.aar"))
@@ -54,6 +56,9 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling:${rootProject.extra["compose_version"]}")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha01")
     implementation("androidx.activity:activity-compose:1.3.0-alpha07")
+
+    implementation("io.arrow-kt:arrow-fx-coroutines:$arrow_version")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.2")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
