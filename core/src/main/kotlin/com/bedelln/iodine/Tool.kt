@@ -32,13 +32,18 @@ interface Tool<in C,out A> {
             }
         }
 
-        fun interface ToolEffect<C,A>: Effect<ToolDescription<C, Unit, A>> {
-            suspend fun ToolDescription<C,Unit,A>.bind(): A =
-                control().shift(this)
+        fun interface ToolEffect<C, A>: Effect<ToolDescription<C, Unit, A>> {
+            suspend fun ToolDescription<C,Unit,A>.bind(): A {
+                return control().shift(this)
+            }
         }
 
-        operator fun <C, A> invoke(func: suspend ToolEffect<C,*>.() -> ToolDescription<C,Unit,A>): ToolDescription<C,Unit,A> =
-            Effect.restricted(eff = { ToolEffect { it } }, f = func, just = { it })
+        operator fun <C, A> invoke(func: suspend ToolEffect<C,*>.() -> A): ToolDescription<C,Unit,A> =
+            Effect.restricted(
+                eff = { ToolEffect { it } },
+                f = func,
+                just = { just(it) }
+            )
     }
 }
 
