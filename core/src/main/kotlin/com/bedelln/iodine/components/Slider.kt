@@ -1,7 +1,6 @@
 package com.bedelln.iodine.components
 
 import androidx.compose.runtime.*
-import com.bedelln.iodine.ComponentAction
 import com.bedelln.iodine.HComponent
 import com.bedelln.iodine.HComponentDescription
 import com.bedelln.iodine.IodineContext
@@ -22,7 +21,7 @@ class Slider<C: IodineContext>(): HComponentDescription<C, Void, Void, Float, Fl
             private val contentsFlow = MutableStateFlow(initialValue)
 
             @Composable
-            override fun ComponentAction<Float, Void>.contents() {
+            override fun contents() {
                 var sliderPosition by remember { mutableStateOf(0f) }
                 Slider(
                     value = sliderPosition,
@@ -35,7 +34,7 @@ class Slider<C: IodineContext>(): HComponentDescription<C, Void, Void, Float, Fl
                 )
             }
 
-            override fun ComponentAction<Float, Void>.onEvent(event: Void) { }
+            override fun onEvent(event: Void) { }
 
             override val events: Flow<Void>
                 get() = emptyFlow()

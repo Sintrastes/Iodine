@@ -25,7 +25,7 @@ class RadioGroup<A: Displayable<C>, C: IodineContext>(
             private val contentsFlow = MutableStateFlow(initialValue)
 
             @Composable
-            override fun ComponentAction<A?, Event>.contents() {
+            override fun contents() {
                 var selected by remember { mutableStateOf(initialValue) }
                 Column {
                     for (i in values.indices) {
@@ -48,7 +48,7 @@ class RadioGroup<A: Displayable<C>, C: IodineContext>(
                 }
             }
 
-            override fun ComponentAction<A?, Event>.onEvent(event: Event) {
+            override fun onEvent(event: Event) {
 
             }
 

@@ -34,7 +34,7 @@ abstract class MooreComponent<C,Ei,Eo,S,A,B>(val initialState: S): HComponentDes
     override fun initialize(ctx: C, initialValue: A): HComponent<Ei, Eo, A, B> {
         return object: HComponent<Ei,Eo,A,B> {
             @Composable
-            override fun ComponentAction<A, Eo>.contents() {
+            override fun contents() {
                 render(ctx, state.value)
             }
 
@@ -44,7 +44,7 @@ abstract class MooreComponent<C,Ei,Eo,S,A,B>(val initialState: S): HComponentDes
                 get() = stateStream
                     .mapStateFlow(::result)
 
-            override fun ComponentAction<A, Eo>.onEvent(event: Ei) {
+            override fun onEvent(event: Ei) {
                 TODO("Not yet implemented")
             }
         }

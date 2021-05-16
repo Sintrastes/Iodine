@@ -10,38 +10,11 @@ interface Settable<in C, in A> {
     fun C.setValue(newValue: A)
 }
 
-interface ComponentAction<A, Eo> {
-    fun emit(event: Eo)
-    fun setValue(value: A)
-}
-
-inline fun <X,A,Eo> ComponentAction<A,Eo>.imap(crossinline f: (X) -> A): ComponentAction<X, Eo> {
-    val orig = this
-    return object: ComponentAction<X,Eo> {
-        override fun emit(event: Eo) {
-            orig.emit(event)
-        }
-
-        override fun setValue(value: X) {
-            orig.setValue(f(value))
-        }
-    }
-}
-
-interface HComponent<in Ei, Eo, A, out B> {
-    @Composable fun ComponentAction<A, Eo>.contents()
-    fun ComponentAction<A,Eo>.onEvent(event: Ei)
+interface HComponent<in Ei, out Eo, in A, out B> {
+    @Composable fun contents()
+    fun onEvent(event: Ei)
     val events: Flow<Eo>
     val result: StateFlow<B>
-}
-
-@Composable
-fun <Ei,Eo,A,B> HComponent<Ei, Eo, A, B>.contents(action: ComponentAction<A,Eo>) {
-    action.contents()
-}
-
-fun <Ei,Eo,A,B> HComponent<Ei, Eo, A, B>.onEvent(event: Ei, action: ComponentAction<A,Eo>) {
-    action.onEvent(event)
 }
 
 typealias HComponentDescription<C,Ei,Eo,A,B> =
@@ -62,11 +35,11 @@ inline fun <C,Ei,Eo,A,B,X> HComponentDescription<C,Ei,Eo,A,B>.imap(
             val orig = origDescr.initialize(ctx, f(initialValue))
             return object: HComponent<Ei,Eo,X,B> {
                 @Composable
-                override fun ComponentAction<X, Eo>.contents() {
-                    orig.contents(this.imap(fInv))
+                override fun contents() {
+                    orig.contents()
                 }
-                override fun ComponentAction<X, Eo>.onEvent(event: Ei) {
-                    orig.onEvent(event, this.imap(fInv))
+                override fun onEvent(event: Ei) {
+                    orig.onEvent(event)
                 }
                 override val events: Flow<Eo>
                     get() = orig.events
@@ -85,8 +58,8 @@ fun <C,Ei,Eo,A,B,X> HComponentDescription<C,Ei,Eo,A,B>.omap(f: (B) -> X): HCompo
             val orig = origDescr.initialize(ctx, initialValue)
             return object: HComponent<Ei,Eo,A,X> {
                 @Composable
-                override fun ComponentAction<A, Eo>.contents() {
-                    orig.contents(this)
+                override fun contents() {
+                    orig.contents()
                 }
                 override val events: Flow<Eo>
                     get() = orig.events
@@ -94,7 +67,7 @@ fun <C,Ei,Eo,A,B,X> HComponentDescription<C,Ei,Eo,A,B>.omap(f: (B) -> X): HCompo
                     get() = orig.result
                         .mapStateFlow(f)
 
-                override fun ComponentAction<A, Eo>.onEvent(event: Ei) {
+                override fun onEvent(event: Ei) {
                     with(orig) { onEvent(event) }
                 }
             }
@@ -119,11 +92,11 @@ fun <Ei,Eo,A,B,C: IodineContext> HComponent<Ei,Eo,A,B>.getContents(ctx: C) {
         }
     val newComponent = object: HComponent<Ei,Eo,A,B> {
         @Composable
-        override fun ComponentAction<A, Eo>.contents() {
+        override fun contents() {
             with(component) { contents() }
         }
 
-        override fun ComponentAction<A, Eo>.onEvent(event: Ei) {
+        override fun onEvent(event: Ei) {
             with(component) { onEvent(event) }
         }
 
@@ -133,22 +106,7 @@ fun <Ei,Eo,A,B,C: IodineContext> HComponent<Ei,Eo,A,B>.getContents(ctx: C) {
             get() = component.result
 
     }
-    val actions = object: ComponentAction<A,Eo> {
-        override fun emit(event: Eo) {
-            ctx.defaultScope.launch {
-                newEvents.emit(event)
-            }
-        }
-
-        override fun setValue(value: A) {
-            // TODO: I think Component has to extend settable for this
-            // to work.
-            // component.onSetValue()
-        }
-    }
-    with(newComponent) {
-        actions.contents()
-    }
+    newComponent.contents()
 }
 
 inline fun <C,Ei,Eo,A,B> WrappedComponent(crossinline layout: @Composable () (@Composable () () -> Unit) -> Unit, component: HComponentDescription<C,Ei,Eo,A,B>): HComponentDescription<C,Ei,Eo,A,B>
@@ -166,7 +124,7 @@ inline fun <C,Ei,Eo,A,B> HComponentDescription<C,Ei,Eo,A,B>.wrap(crossinline f: 
             val orig = origDescr.initialize(ctx, initialValue)
             return object: HComponent<Ei,Eo,A,B> {
                 @Composable
-                override fun ComponentAction<A, Eo>.contents() {
+                override fun contents() {
                     f { with(orig) { contents() } }
                 }
 
@@ -175,7 +133,7 @@ inline fun <C,Ei,Eo,A,B> HComponentDescription<C,Ei,Eo,A,B>.wrap(crossinline f: 
                 override val result: StateFlow<B>
                     get() = orig.result
 
-                override fun ComponentAction<A, Eo>.onEvent(event: Ei) {
+                override fun onEvent(event: Ei) {
                     with(orig) { onEvent(event) }
                 }
             }
@@ -195,15 +153,14 @@ inline fun <C,D,Ei,Eo,A,B> HComponentDescription<C,Ei,Eo,A,B>.mapCtx(crossinline
             val orig = origDescr.initialize(f(ctx), initialValue)
             return object: HComponent<Ei,Eo,A,B> {
                 @Composable
-                override fun ComponentAction<A, Eo>.contents() {
+                override fun contents() {
                     with(orig) { contents() }
                 }
-
                 override val events: Flow<Eo>
                     get() = orig.events
                 override val result: StateFlow<B>
                     get() = orig.result
-                override fun ComponentAction<A, Eo>.onEvent(event: Ei) {
+                override fun onEvent(event: Ei) {
                     with(orig) { onEvent(event) }
                 }
             }
@@ -223,7 +180,7 @@ inline fun <C,Ei,Eo,X,A,B> HComponentDescription<C,Ei,Eo,A,B>.mapEvents(crossinl
             val orig = origDescr.initialize(ctx, initialValue)
             return object: HComponent<Ei, X,A,B> {
                 @Composable
-                override fun ComponentAction<A, X>.contents() {
+                override fun contents() {
                     with(orig) { contents() }
                 }
 
@@ -232,7 +189,37 @@ inline fun <C,Ei,Eo,X,A,B> HComponentDescription<C,Ei,Eo,A,B>.mapEvents(crossinl
                 override val result: StateFlow<B>
                     get() = orig.result
 
-                override fun ComponentAction<A, X>.onEvent(event: Ei) {
+                override fun onEvent(event: Ei) {
+                    with(orig) { onEvent(event) }
+                }
+            }
+        }
+    }
+}
+
+inline fun <C,Ei,Eo,A,B> HComponentDescription<C,Ei,Eo,A,B>.ignoreEvents(
+): HComponentDescription<C,Void,Void,A,B> {
+    val origDescr = this
+    return object: HComponentDescription<C,Void,Void,A,B> {
+        @Composable
+        override fun initCompose(ctx: C) {
+            origDescr.initCompose(ctx)
+        }
+
+        override fun initialize(ctx: C, initialValue: A): HComponent<Void, Void, A, B> {
+            val orig = origDescr.initialize(ctx, initialValue)
+            return object: HComponent<Void,Void,A,B> {
+                @Composable
+                override fun contents() {
+                    with(orig) { contents() }
+                }
+
+                override val events: Flow<Void>
+                    get() = emptyFlow()
+                override val result: StateFlow<B>
+                    get() = orig.result
+
+                override fun onEvent(event: Void) {
                     with(orig) { onEvent(event) }
                 }
             }

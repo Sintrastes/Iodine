@@ -29,7 +29,7 @@ class ActionButton<C: IodineContext>(
     override fun initialize(ctx: C, initialValue: Unit): HComponent<Click, Void, Unit, Unit> = run {
         object : HComponent<Click, Void, Unit, Unit> {
             @Composable
-            override fun ComponentAction<Unit, Void>.contents() {
+            override fun contents() {
                 Button(
                     content = {
                         Text(text)
@@ -40,7 +40,7 @@ class ActionButton<C: IodineContext>(
                 )
             }
 
-            override fun ComponentAction<Unit, Void>.onEvent(event: Click) {
+            override fun onEvent(event: Click) {
                 ctx.defaultScope.launch {
                     action.initialize(ctx, Unit).also {
                         setShow()

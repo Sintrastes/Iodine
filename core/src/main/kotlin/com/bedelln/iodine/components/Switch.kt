@@ -3,7 +3,6 @@ package com.bedelln.iodine.components
 import androidx.compose.material.Switch
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
-import com.bedelln.iodine.ComponentAction
 import com.bedelln.iodine.HComponent
 import com.bedelln.iodine.HComponentDescription
 import com.bedelln.iodine.IodineContext
@@ -22,7 +21,7 @@ class Switch<C: IodineContext>(): HComponentDescription<C, Void, Void, Boolean, 
             private val resultFlow = MutableStateFlow(initialValue)
 
             @Composable
-            override fun ComponentAction<Boolean, Void>.contents() {
+            override fun contents() {
                 val flowState = resultFlow.collectAsState()
                 val state by remember { flowState }
                 androidx.compose.material.Switch(
@@ -35,7 +34,7 @@ class Switch<C: IodineContext>(): HComponentDescription<C, Void, Void, Boolean, 
                 )
             }
 
-            override fun ComponentAction<Boolean, Void>.onEvent(event: Void) { }
+            override fun onEvent(event: Void) { }
 
             override val events: Flow<Void>
                 get() = emptyFlow()

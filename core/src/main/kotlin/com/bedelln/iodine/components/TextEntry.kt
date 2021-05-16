@@ -27,7 +27,7 @@ class TextEntry<C: IodineContext>(): HComponentDescription<C, TextEntry.Event, T
             private val contentsFlow = MutableStateFlow(initialValue)
 
             @Composable
-            override fun ComponentAction<String, Event>.contents() {
+            override fun contents() {
                 var contents by remember { mutableStateOf(initialValue) }
                 TextField(
                     value = contents,
@@ -45,9 +45,7 @@ class TextEntry<C: IodineContext>(): HComponentDescription<C, TextEntry.Event, T
             override val result: StateFlow<String>
                 get() = contentsFlow
 
-            override fun ComponentAction<String, Event>.onEvent(event: Event) {
-                TODO("Not yet implemented")
-            }
+            override fun onEvent(event: Event) { }
         }
     }
 }

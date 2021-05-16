@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Checkbox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
-import com.bedelln.iodine.ComponentAction
 import com.bedelln.iodine.interfaces.Displayable
 import com.bedelln.iodine.*
 import com.bedelln.iodine.HComponentDescription
@@ -28,7 +27,7 @@ class MultiSelectGroup<A: Displayable<C>, C: IodineContext>(
             private val contentsFlow = MutableStateFlow(initialValue)
 
             @Composable
-            override fun ComponentAction<Set<A>, Event>.contents() {
+            override fun contents() {
                 var selectedItems by remember { mutableStateOf(initialValue) }
                 Column {
                     for (i in values.indices) {
@@ -51,7 +50,7 @@ class MultiSelectGroup<A: Displayable<C>, C: IodineContext>(
                 }
             }
 
-            override fun ComponentAction<Set<A>, Event>.onEvent(event: Event) {
+            override fun onEvent(event: Event) {
 
             }
 

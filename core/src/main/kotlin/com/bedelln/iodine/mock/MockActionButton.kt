@@ -20,7 +20,7 @@ class MockActionButton<C: IodineContext>(
     object Click
 
     class Impl: HComponent<Click, Void, Unit, Unit> {
-        override fun ComponentAction<Unit, Void>.onEvent(event: Click) {
+        override fun onEvent(event: Click) {
             TODO("Not yet implemented")
         }
 
@@ -30,7 +30,7 @@ class MockActionButton<C: IodineContext>(
             get() = TODO("Not yet implemented")
 
         @Composable
-        override fun ComponentAction<Unit, Void>.contents() {
+        override fun contents() {
             TODO("Not yet implemented")
         }
     }

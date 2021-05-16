@@ -4,7 +4,6 @@ import androidx.compose.runtime.*
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.MenuDefaults
 import androidx.compose.material.DropdownMenuItem
-import com.bedelln.iodine.ComponentAction
 import com.bedelln.iodine.HComponent
 import com.bedelln.iodine.HComponentDescription
 import com.bedelln.iodine.IodineContext
@@ -34,7 +33,7 @@ class DropdownMenu<C: IodineContext, A: Displayable<C>>(
             val resultFlow = MutableStateFlow(initialValue)
 
             @Composable
-            override fun ComponentAction<A, Event<A>>.contents() {
+            override fun contents() {
                 val flowState = resultFlow.collectAsState()
                 var expandedState by remember { mutableStateOf(false) }
                 val selectedItem by remember { flowState }
@@ -75,7 +74,7 @@ class DropdownMenu<C: IodineContext, A: Displayable<C>>(
                 }
             }
 
-            override fun ComponentAction<A, Event<A>>.onEvent(event: Event<A>) {
+            override fun onEvent(event: Event<A>) {
 
             }
 
