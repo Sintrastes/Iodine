@@ -3,23 +3,21 @@ package com.bedelln.iodine.moore
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.*
-import com.bedelln.iodine.*
+import com.bedelln.iodine.interfaces.HComponent
+import com.bedelln.iodine.interfaces.HComponentDescription
+import com.bedelln.iodine.interfaces.IodineContext
 import com.bedelln.iodine.util.mapStateFlow
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 /** Abstract class for a component defined via the Elm Architecture. */
-abstract class MooreComponent<C,Ei,Eo,S,A,B>(val initialState: S): HComponentDescription<C,Ei,Eo,A,B> {
+abstract class MooreComponent<C: IodineContext,Ei,Eo,S,A,B>(val initialState: S): HComponentDescription<C, Ei, Eo, A, B> {
 
     lateinit var state: State<S>
 
     abstract fun reducer(event: Ei, state: S): S
 
-    val stateStream = MutableStateFlow(initialState).apply {
-        // TODO: Fix this.
-        // inputEvents.onEach { event ->
-        //     emit(reducer(event, value))
-        // }
-    }
+    val stateStream = MutableStateFlow(initialState)
 
     abstract fun result(state: S): B
 
@@ -32,7 +30,7 @@ abstract class MooreComponent<C,Ei,Eo,S,A,B>(val initialState: S): HComponentDes
     }
 
     override fun initialize(ctx: C, initialValue: A): HComponent<Ei, Eo, A, B> {
-        return object: HComponent<Ei,Eo,A,B> {
+        return object: HComponent<Ei, Eo, A, B> {
             @Composable
             override fun contents() {
                 render(ctx, state.value)
@@ -45,8 +43,28 @@ abstract class MooreComponent<C,Ei,Eo,S,A,B>(val initialState: S): HComponentDes
                     .mapStateFlow(::result)
 
             override fun onEvent(event: Ei) {
-                TODO("Not yet implemented")
+                ctx.defaultScope.launch {
+                    stateStream.emit(reducer(event, state.value))
+                }
             }
+        }
+    }
+}
+
+inline fun <C: IodineContext, Ei, Eo, S, A, X, B> MooreComponent<C,Ei,Eo,S,A,X>.extendM(
+        crossinline f: (MooreComponent<C,Ei,Eo,S,A,X>) -> StateFlow<B>
+): MooreComponent<C,Ei,Eo,S,A,B> = run {
+    val component = this
+    object : MooreComponent<C, Ei, Eo, S, A, B>(this.initialState) {
+        override fun reducer(event: Ei, state: S): S =
+            component.reducer(event, state)
+
+        override fun result(state: S): B =
+            f(component).value
+
+        @Composable
+        override fun render(ctx: C, state: S) {
+            component.render(ctx, state)
         }
     }
 }
