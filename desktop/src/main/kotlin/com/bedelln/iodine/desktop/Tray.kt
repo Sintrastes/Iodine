@@ -5,6 +5,7 @@ import androidx.compose.ui.window.Tray as ComposeTray
 import androidx.compose.ui.window.MenuItem as ComposeMenuItem
 import com.bedelln.iodine.*
 import com.bedelln.iodine.desktop.ctx.SystemCtx
+import com.bedelln.iodine.interfaces.ToolDescription
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import java.awt.image.BufferedImage
@@ -47,4 +48,4 @@ class Tray<C: SystemCtx, E>(val icon: BufferedImage, val menuItems: List<MenuIte
     }
 }
 
-data class MenuItem<C: SystemCtx, E>(val name: String, val action: ToolDescription<C,Unit,E>)
+data class MenuItem<C: SystemCtx, E>(val name: String, val action: ToolDescription<C, Unit, E>)

@@ -6,7 +6,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import arrow.continuations.Effect
 import arrow.continuations.generic.DelimitedScope
-import com.bedelln.iodine.*
+import com.bedelln.iodine.interfaces.HComponent
+import com.bedelln.iodine.interfaces.HComponentDescription
+import com.bedelln.iodine.interfaces.IodineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,8 +45,8 @@ sealed class IodineMonad<Cm: IMCtx, C: IodineContext, out A> {
 
 sealed class IodineMonadF<Cm: IMCtx, C: IodineContext, A> {
     data class Add<Cm: IMCtx, C: IodineContext, A>(
-        val child: HComponentDescription<C, *, *, Unit, *>,
-        val rest: (HComponentDescription<C, *, *, Unit, *>) -> A
+            val child: HComponentDescription<C, *, *, Unit, *>,
+            val rest: (HComponentDescription<C, *, *, Unit, *>) -> A
     ): IodineMonadF<Cm, C, A>()
 }
 
@@ -57,8 +59,8 @@ interface ColumnCtx: IMCtx {
             this.execute(childComponents)
         }
 
-        operator fun <Ei, Eo, B> HComponentDescription<C,Ei,Eo,Unit,B>.not(
-        ): IodineMonad<ColumnCtx,C,HComponentDescription<C,Ei,Eo,Unit,B>> = IodineMonad.Bind(
+        operator fun <Ei, Eo, B> HComponentDescription<C, Ei, Eo, Unit, B>.not(
+        ): IodineMonad<ColumnCtx,C, HComponentDescription<C, Ei, Eo, Unit, B>> = IodineMonad.Bind(
             IodineMonadF.Add(this) {
                 IodineMonad.Return(
                     it as HComponentDescription<C, Ei, Eo, Unit, B>
@@ -69,8 +71,8 @@ interface ColumnCtx: IMCtx {
 
     companion object {
         operator fun <A,C: IodineContext> invoke(
-            childComponents: MutableList<HComponentDescription<C, *, *, Unit, *>>,
-            func: suspend ColumnEffect<C, *>.() -> IodineMonad<ColumnCtx, C, A>
+                childComponents: MutableList<HComponentDescription<C, *, *, Unit, *>>,
+                func: suspend ColumnEffect<C, *>.() -> IodineMonad<ColumnCtx, C, A>
         ): IodineMonad<ColumnCtx, C, A> =
             Effect.restricted(
                 eff = { scope ->
@@ -86,11 +88,50 @@ interface ColumnCtx: IMCtx {
     }
 }
 
+
+interface RowCtx: IMCtx {
+
+    abstract class ColumnEffect<C: IodineContext, A>(
+            val childComponents: MutableList<HComponentDescription<C, *, *, Unit, *>>
+    ): Effect<IodineMonad<RowCtx, C, A>> {
+        suspend fun <X> IodineMonad<RowCtx, C, X>.bind(): X = run {
+            this.execute(childComponents)
+        }
+
+        operator fun <Ei, Eo, B> HComponentDescription<C, Ei, Eo, Unit, B>.not(
+        ): IodineMonad<RowCtx,C, HComponentDescription<C, Ei, Eo, Unit, B>> = IodineMonad.Bind(
+                IodineMonadF.Add(this) {
+                    IodineMonad.Return(
+                            it as HComponentDescription<C, Ei, Eo, Unit, B>
+                    )
+                }
+        )
+    }
+
+    companion object {
+        operator fun <A,C: IodineContext> invoke(
+                childComponents: MutableList<HComponentDescription<C, *, *, Unit, *>>,
+                func: suspend ColumnEffect<C, *>.() -> IodineMonad<RowCtx, C, A>
+        ): IodineMonad<RowCtx, C, A> =
+                Effect.restricted(
+                        eff = { scope ->
+                            object: ColumnEffect<C,A>(childComponents) {
+                                override fun control(): DelimitedScope<IodineMonad<RowCtx, C, A>> {
+                                    return scope
+                                }
+                            }
+                        },
+                        f = func,
+                        just = { it }
+                )
+    }
+}
+
 class Column<C: IodineContext> constructor(
-    val childComponents: List<HComponentDescription<C, *, *, Unit, *>>,
-    val modifier: Modifier,
-    val verticalArrangement: Arrangement.Vertical,
-    val horizontalAlignment: Alignment.Horizontal,
+        val childComponents: List<HComponentDescription<C, *, *, Unit, *>>,
+        val modifier: Modifier,
+        val verticalArrangement: Arrangement.Vertical,
+        val horizontalAlignment: Alignment.Horizontal,
 ): HComponentDescription<C, Void, Void, Unit, Unit> {
     @Composable
     override fun initCompose(ctx: C) {
@@ -129,6 +170,49 @@ class Column<C: IodineContext> constructor(
     }
 }
 
+class Row<C: IodineContext> constructor(
+        val childComponents: List<HComponentDescription<C, *, *, Unit, *>>,
+        val modifier: Modifier,
+        val horizontalArrangement: Arrangement.Horizontal,
+        val verticalAlignment: Alignment.Vertical,
+): HComponentDescription<C, Void, Void, Unit, Unit> {
+    @Composable
+    override fun initCompose(ctx: C) {
+        childComponents.forEach {
+            it.initCompose(ctx)
+        }
+    }
+
+    override fun initialize(ctx: C, initialValue: Unit): HComponent<Void, Void, Unit, Unit> {
+        return object: HComponent<Void, Void, Unit, Unit> {
+
+            val children = childComponents.map {
+                it.initialize(ctx, Unit)
+            }
+
+            @Composable
+            override fun contents() {
+                val action = this
+                androidx.compose.foundation.layout.Row(
+                        modifier,
+                        horizontalArrangement,
+                        verticalAlignment
+                ) {
+                    children.forEach { child ->
+                        child.contents()
+                    }
+                }
+            }
+
+            override fun onEvent(event: Void) { }
+            override val events: Flow<Void>
+                get() = emptyFlow()
+            override val result: StateFlow<Unit>
+                get() = MutableStateFlow(Unit)
+        }
+    }
+}
+
 fun <C: IodineContext> Column(
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
@@ -143,6 +227,23 @@ fun <C: IodineContext> Column(
         modifier,
         verticalArrangement,
         horizontalAlignment
+    )
+}
+
+fun <C: IodineContext> Row(
+        modifier: Modifier = Modifier,
+        verticalArrangement: Arrangement.Horizontal = Arrangement.Start,
+        horizontalAlignment: Alignment.Vertical = Alignment.Top,
+        func: suspend ColumnCtx.ColumnEffect<C, *>.() -> IodineMonad<ColumnCtx, C, *>
+): Row<C> {
+    val childComponents = mutableListOf<HComponentDescription<C, *, *, Unit, *>>()
+    ColumnCtx(childComponents,func)
+            .execute(childComponents)
+    return Row(
+            childComponents,
+            modifier,
+            verticalArrangement,
+            horizontalAlignment
     )
 }
 

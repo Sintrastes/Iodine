@@ -1,7 +1,7 @@
 package com.bedelln.iodine.desktop.ctx
 
 import androidx.compose.ui.window.Notifier
-import com.bedelln.iodine.IodineContext
+import com.bedelln.iodine.interfaces.IodineContext
 
 interface SystemCtx: IodineContext {
     val notifier: Notifier

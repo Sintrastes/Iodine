@@ -4,7 +4,7 @@ import androidx.compose.desktop.Window
 import androidx.compose.runtime.*
 import androidx.compose.ui.window.Notifier
 import com.bedelln.iodine.ComponentDescription
-import com.bedelln.iodine.ContainerRef
+import com.bedelln.iodine.interfaces.ContainerRef
 import com.bedelln.iodine.desktop.ctx.WindowCtx
 import com.bedelln.iodine.desktop.ctx.WindowRef
 import kotlinx.coroutines.CoroutineScope
