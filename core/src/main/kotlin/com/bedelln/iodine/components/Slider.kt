@@ -1,9 +1,9 @@
 package com.bedelln.iodine.components
 
 import androidx.compose.runtime.*
-import com.bedelln.iodine.HComponent
-import com.bedelln.iodine.HComponentDescription
-import com.bedelln.iodine.IodineContext
+import com.bedelln.iodine.interfaces.HComponent
+import com.bedelln.iodine.interfaces.HComponentDescription
+import com.bedelln.iodine.interfaces.IodineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
@@ -16,7 +16,7 @@ class Slider<C: IodineContext>(): HComponentDescription<C, Void, Void, Float, Fl
     override fun initCompose(ctx: C) { }
 
     override fun initialize(ctx: C, initialValue: Float): HComponent<Void, Void, Float, Float> {
-        return object: HComponent<Void,Void,Float,Float> {
+        return object: HComponent<Void, Void, Float, Float> {
 
             private val contentsFlow = MutableStateFlow(initialValue)
 

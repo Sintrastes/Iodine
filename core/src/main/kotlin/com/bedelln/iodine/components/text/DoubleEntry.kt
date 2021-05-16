@@ -1,7 +1,9 @@
 package com.bedelln.iodine.components.text
 
 import androidx.compose.runtime.Composable
-import com.bedelln.iodine.*
+import com.bedelln.iodine.interfaces.HComponent
+import com.bedelln.iodine.interfaces.HComponentDescription
+import com.bedelln.iodine.interfaces.IodineContext
 
 class DoubleEntry<C: IodineContext>(): HComponentDescription<C, Void, Void, Double, Double> {
     @Composable

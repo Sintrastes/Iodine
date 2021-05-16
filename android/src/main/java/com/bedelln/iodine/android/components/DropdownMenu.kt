@@ -4,23 +4,20 @@ import androidx.compose.runtime.*
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.MenuDefaults
 import androidx.compose.material.DropdownMenuItem
-import com.bedelln.iodine.HComponent
-import com.bedelln.iodine.HComponentDescription
-import com.bedelln.iodine.IodineContext
+import com.bedelln.iodine.interfaces.HComponent
+import com.bedelln.iodine.interfaces.HComponentDescription
+import com.bedelln.iodine.interfaces.IodineContext
 import com.bedelln.iodine.interfaces.*
-import kotlin.math.exp
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import androidx.compose.foundation.background
-import androidx.compose.ui.graphics.Color
 
 class DropdownMenu<C: IodineContext, A: Displayable<C>>(
     val dropdownItems: List<A>
-): HComponentDescription<C,DropdownMenu.Event<A>,DropdownMenu.Event<A>,A,A> {
+): HComponentDescription<C, DropdownMenu.Event<A>, DropdownMenu.Event<A>, A, A> {
 
     data class Event<A>(val selected: A)
 

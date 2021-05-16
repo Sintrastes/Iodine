@@ -8,7 +8,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.bedelln.iodine.*
+import com.bedelln.iodine.interfaces.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class AndroidAlertDialog<A,B,C,Ei,Eo>(
     val title: String,
-    val contents: HComponentDescription<C, Ei, Eo, A,B>): ToolDescription<C, A, B>
+    val contents: HComponentDescription<C, Ei, Eo, A, B>): ToolDescription<C, A, B>
         where C: IodineContext,
               C: HasRef {
 
