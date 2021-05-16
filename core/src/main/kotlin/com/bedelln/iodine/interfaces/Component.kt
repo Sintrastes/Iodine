@@ -1,10 +1,8 @@
-package com.bedelln.iodine
+package com.bedelln.iodine.interfaces
 
 import androidx.compose.runtime.Composable
 import com.bedelln.iodine.util.mapStateFlow
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.flow.SharingStarted.Companion.Lazily
-import kotlinx.coroutines.launch
 
 interface Settable<in C, in A> {
     fun C.setValue(newValue: A)
@@ -17,15 +15,41 @@ interface HComponent<in Ei, out Eo, in A, out B> {
     val result: StateFlow<B>
 }
 
-typealias HComponentDescription<C,Ei,Eo,A,B> =
-    Description<C,A,HComponent<Ei,Eo,A,B>>
+interface SettableHComponent<C: IodineContext, in Ei, out Eo, in A, out B>: HComponent<Ei, Eo, A, B>, Settable<C, A>
 
-inline fun <C,Ei,Eo,A,B,X> HComponentDescription<C,Ei,Eo,A,B>.imap(
+typealias SettableHComponentDescription<C,Ei,Eo,A,B> =
+        Description<C, A, SettableHComponent<C, Ei, Eo, A, B>>
+
+typealias HComponentDescription<C,Ei,Eo,A,B> =
+        Description<C, A, HComponent<Ei, Eo, A, B>>
+
+/** Helper function for making a component from a composable function. */
+inline fun <C: IodineContext> Compose(crossinline f: @Composable() () -> Unit): HComponentDescription<C, Void, Void, Unit, Unit> {
+    return object: HComponentDescription<C, Void, Void, Unit, Unit> {
+        @Composable
+        override fun initCompose(ctx: C) { }
+
+        override fun initialize(ctx: C, initialValue: Unit): HComponent<Void, Void, Unit, Unit> {
+            return object: HComponent<Void, Void, Unit, Unit> {
+                @Composable
+                override fun contents() { f() }
+
+                override fun onEvent(event: Void) { }
+                override val events: Flow<Void>
+                    get() = emptyFlow()
+                override val result: StateFlow<Unit>
+                    get() = MutableStateFlow(Unit)
+            }
+        }
+    }
+}
+
+inline fun <C,Ei,Eo,A,B,X> HComponentDescription<C, Ei, Eo, A, B>.imap(
     crossinline f: (X) -> A,
     crossinline fInv: (A) -> X
-): HComponentDescription<C,Ei,Eo,X,B> {
+): HComponentDescription<C, Ei, Eo, X, B> {
     val origDescr = this
-    return object: HComponentDescription<C,Ei,Eo,X,B> {
+    return object: HComponentDescription<C, Ei, Eo, X, B> {
         @Composable
         override fun initCompose(ctx: C) {
             origDescr.initCompose(ctx)
@@ -33,7 +57,7 @@ inline fun <C,Ei,Eo,A,B,X> HComponentDescription<C,Ei,Eo,A,B>.imap(
 
         override fun initialize(ctx: C, initialValue: X): HComponent<Ei, Eo, X, B> {
             val orig = origDescr.initialize(ctx, f(initialValue))
-            return object: HComponent<Ei,Eo,X,B> {
+            return object: HComponent<Ei, Eo, X, B> {
                 @Composable
                 override fun contents() {
                     orig.contents()
@@ -50,13 +74,13 @@ inline fun <C,Ei,Eo,A,B,X> HComponentDescription<C,Ei,Eo,A,B>.imap(
     }
 }
 
-fun <C,Ei,Eo,A,B,X> HComponentDescription<C,Ei,Eo,A,B>.omap(f: (B) -> X): HComponentDescription<C,Ei,Eo,A,X> {
+fun <C,Ei,Eo,A,B,X> HComponentDescription<C, Ei, Eo, A, B>.omap(f: (B) -> X): HComponentDescription<C, Ei, Eo, A, X> {
     val origDescr = this
-    return object: HComponentDescription<C,Ei,Eo,A,X> {
+    return object: HComponentDescription<C, Ei, Eo, A, X> {
 
         override fun initialize(ctx: C, initialValue: A): HComponent<Ei, Eo, A, X> {
             val orig = origDescr.initialize(ctx, initialValue)
-            return object: HComponent<Ei,Eo,A,X> {
+            return object: HComponent<Ei, Eo, A, X> {
                 @Composable
                 override fun contents() {
                     orig.contents()
@@ -81,7 +105,7 @@ fun <C,Ei,Eo,A,B,X> HComponentDescription<C,Ei,Eo,A,B>.omap(f: (B) -> X): HCompo
 }
 
 @Composable
-fun <Ei,Eo,A,B,C: IodineContext> HComponent<Ei,Eo,A,B>.getContents(ctx: C) {
+fun <Ei,Eo,A,B,C: IodineContext> HComponent<Ei, Eo, A, B>.getContents(ctx: C) {
     val component = this
     val newEvents = MutableSharedFlow<Eo>()
     component.events
@@ -90,7 +114,7 @@ fun <Ei,Eo,A,B,C: IodineContext> HComponent<Ei,Eo,A,B>.getContents(ctx: C) {
                 event
             )
         }
-    val newComponent = object: HComponent<Ei,Eo,A,B> {
+    val newComponent = object: HComponent<Ei, Eo, A, B> {
         @Composable
         override fun contents() {
             with(component) { contents() }
@@ -109,12 +133,12 @@ fun <Ei,Eo,A,B,C: IodineContext> HComponent<Ei,Eo,A,B>.getContents(ctx: C) {
     newComponent.contents()
 }
 
-inline fun <C,Ei,Eo,A,B> WrappedComponent(crossinline layout: @Composable () (@Composable () () -> Unit) -> Unit, component: HComponentDescription<C,Ei,Eo,A,B>): HComponentDescription<C,Ei,Eo,A,B>
+inline fun <C,Ei,Eo,A,B> WrappedComponent(crossinline layout: @Composable () (@Composable () () -> Unit) -> Unit, component: HComponentDescription<C, Ei, Eo, A, B>): HComponentDescription<C, Ei, Eo, A, B>
     = component.wrap(layout)
 
-inline fun <C,Ei,Eo,A,B> HComponentDescription<C,Ei,Eo,A,B>.wrap(crossinline f: @Composable () (@Composable () () -> Unit) -> Unit): HComponentDescription<C,Ei,Eo,A,B> {
+inline fun <C,Ei,Eo,A,B> HComponentDescription<C, Ei, Eo, A, B>.wrap(crossinline f: @Composable () (@Composable () () -> Unit) -> Unit): HComponentDescription<C, Ei, Eo, A, B> {
     val origDescr = this
-    return object: HComponentDescription<C,Ei,Eo,A,B> {
+    return object: HComponentDescription<C, Ei, Eo, A, B> {
         @Composable
         override fun initCompose(ctx: C) {
             origDescr.initCompose(ctx)
@@ -122,7 +146,7 @@ inline fun <C,Ei,Eo,A,B> HComponentDescription<C,Ei,Eo,A,B>.wrap(crossinline f: 
 
         override fun initialize(ctx: C, initialValue: A): HComponent<Ei, Eo, A, B> {
             val orig = origDescr.initialize(ctx, initialValue)
-            return object: HComponent<Ei,Eo,A,B> {
+            return object: HComponent<Ei, Eo, A, B> {
                 @Composable
                 override fun contents() {
                     f { with(orig) { contents() } }
@@ -141,17 +165,17 @@ inline fun <C,Ei,Eo,A,B> HComponentDescription<C,Ei,Eo,A,B>.wrap(crossinline f: 
     }
 }
 
-inline fun <C,D,Ei,Eo,A,B> HComponentDescription<C,Ei,Eo,A,B>.mapCtx(crossinline  f: (D) -> C): HComponentDescription<D,Ei,Eo,A,B> {
+inline fun <C,D,Ei,Eo,A,B> HComponentDescription<C, Ei, Eo, A, B>.mapCtx(crossinline  f: (D) -> C): HComponentDescription<D, Ei, Eo, A, B> {
     val origDescr = this
-    return object: HComponentDescription<D,Ei,Eo,A,B> {
+    return object: HComponentDescription<D, Ei, Eo, A, B> {
         @Composable
         override fun initCompose(ctx: D) {
             origDescr.initCompose(f(ctx))
         }
 
-        override fun initialize(ctx: D, initialValue: A): HComponent<Ei,Eo, A, B> {
+        override fun initialize(ctx: D, initialValue: A): HComponent<Ei, Eo, A, B> {
             val orig = origDescr.initialize(f(ctx), initialValue)
-            return object: HComponent<Ei,Eo,A,B> {
+            return object: HComponent<Ei, Eo, A, B> {
                 @Composable
                 override fun contents() {
                     with(orig) { contents() }
@@ -168,9 +192,9 @@ inline fun <C,D,Ei,Eo,A,B> HComponentDescription<C,Ei,Eo,A,B>.mapCtx(crossinline
     }
 }
 
-inline fun <C,Ei,Eo,X,A,B> HComponentDescription<C,Ei,Eo,A,B>.mapEvents(crossinline f: suspend (Eo) -> X): HComponentDescription<C,Ei,X,A,B> {
+inline fun <C,Ei,Eo,X,A,B> HComponentDescription<C, Ei, Eo, A, B>.mapEvents(crossinline f: suspend (Eo) -> X): HComponentDescription<C, Ei, X, A, B> {
     val origDescr = this
-    return object: HComponentDescription<C,Ei,X,A,B> {
+    return object: HComponentDescription<C, Ei, X, A, B> {
         @Composable
         override fun initCompose(ctx: C) {
             origDescr.initCompose(ctx)
@@ -178,7 +202,7 @@ inline fun <C,Ei,Eo,X,A,B> HComponentDescription<C,Ei,Eo,A,B>.mapEvents(crossinl
 
         override fun initialize(ctx: C, initialValue: A): HComponent<Ei, X, A, B> {
             val orig = origDescr.initialize(ctx, initialValue)
-            return object: HComponent<Ei, X,A,B> {
+            return object: HComponent<Ei, X, A, B> {
                 @Composable
                 override fun contents() {
                     with(orig) { contents() }
@@ -197,10 +221,10 @@ inline fun <C,Ei,Eo,X,A,B> HComponentDescription<C,Ei,Eo,A,B>.mapEvents(crossinl
     }
 }
 
-inline fun <C,Ei,Eo,A,B> HComponentDescription<C,Ei,Eo,A,B>.ignoreEvents(
-): HComponentDescription<C,Void,Void,A,B> {
+inline fun <C,Ei,Eo,A,B> HComponentDescription<C, Ei, Eo, A, B>.ignoreEvents(
+): HComponentDescription<C, Void, Void, A, B> {
     val origDescr = this
-    return object: HComponentDescription<C,Void,Void,A,B> {
+    return object: HComponentDescription<C, Void, Void, A, B> {
         @Composable
         override fun initCompose(ctx: C) {
             origDescr.initCompose(ctx)
@@ -208,7 +232,7 @@ inline fun <C,Ei,Eo,A,B> HComponentDescription<C,Ei,Eo,A,B>.ignoreEvents(
 
         override fun initialize(ctx: C, initialValue: A): HComponent<Void, Void, A, B> {
             val orig = origDescr.initialize(ctx, initialValue)
-            return object: HComponent<Void,Void,A,B> {
+            return object: HComponent<Void, Void, A, B> {
                 @Composable
                 override fun contents() {
                     with(orig) { contents() }
