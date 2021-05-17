@@ -10,10 +10,7 @@ import androidx.compose.ui.unit.sp
 import arrow.core.Either
 import com.bedelln.iodine.components.ValidatedComponent
 import com.bedelln.iodine.components.ValidationEvent
-import com.bedelln.iodine.interfaces.HComponentDescription
-import com.bedelln.iodine.interfaces.IodineContext
-import com.bedelln.iodine.interfaces.SettableHComponent
-import com.bedelln.iodine.interfaces.SettableHComponentDescription
+import com.bedelln.iodine.interfaces.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.Lazily
 import kotlinx.coroutines.launch
@@ -22,55 +19,31 @@ object InvalidInteger
 
 /** A component for inputting integers. */
 class IntEntry<C : IodineContext> : HComponentDescription<C, ValidationEvent<Void>, Void, String, Int?> by (
-    ValidatedComponent<C, Void, Void, String, Int, InvalidInteger>(
-        object :
-            SettableHComponentDescription<
-                C, Void, Void,
-                Pair<InvalidInteger?, String>,
-                Either<Pair<InvalidInteger, String>, Int>
-                > {
-            @Composable
-            override fun initCompose(ctx: C) { }
+    ValidatedComponent<C, String, Int, InvalidInteger>(
+        object : ValidatingStoreComponentDescription<C, String, Int, InvalidInteger> {
 
-            override fun initialize(ctx: C, initialValue: Pair<InvalidInteger?, String>) =
-                object : SettableHComponent<C, Void, Void, Pair<InvalidInteger?, String>, Either<Pair<InvalidInteger, String>, Int>> {
+            override fun initialize(ctx: C, initialValue: String) =
+                object: ValidatingStoreComponent<String, Int, InvalidInteger>(initialValue) {
 
-                    val showingError = MutableStateFlow(
-                        initialValue.first != null
-                    )
-                    val textContents = MutableStateFlow(
-                        initialValue.second
-                    )
-
-                    override fun C.setValue(newValue: Pair<InvalidInteger?, String>) {
-                        ctx.defaultScope.launch {
-                            if (newValue.first != null) {
-                                showingError.emit(true)
-                            } else {
-                                showingError.emit(false)
-                            }
-                        }
-                    }
+                    override fun view(input: String) =
+                        input.toIntOrNull()?.let { Either.Right(it) }
+                            ?: Either.Left(InvalidInteger)
 
                     @Composable
-                    override fun contents() {
-                        val errorState = showingError.collectAsState()
-                        val contentsState = textContents.collectAsState()
-                        val showingError by remember { errorState }
-                        val contents by remember { contentsState }
+                    override fun contents(error: InvalidInteger?, contents: String) {
                         Column {
                             TextField(
                                 value = contents,
                                 onValueChange = { newValue ->
                                     ctx.defaultScope.launch {
-                                        textContents.emit(newValue)
+                                        mutInput.emit(newValue)
                                     }
                                 },
                                 label = {
                                     Text("")
                                 }
                             )
-                            if (showingError) {
+                            if (error == InvalidInteger) {
                                 Text(
                                     text = "Not a valid integer",
                                     color = Color.Red,
@@ -79,25 +52,6 @@ class IntEntry<C : IodineContext> : HComponentDescription<C, ValidationEvent<Voi
                             }
                         }
                     }
-
-                    fun getResults(contents: String) =
-                        contents.toIntOrNull()?.let {
-                            Either.Right(it)
-                        }
-                            ?: Either.Left(Pair(InvalidInteger, contents))
-
-
-                    override fun onEvent(event: Void) { }
-                    override val events: Flow<Void>
-                        get() = emptyFlow()
-                    override val result: StateFlow<Either<Pair<InvalidInteger, String>, Int>>
-                        get() = textContents.map { contents ->
-                            getResults(contents)
-                        }.stateIn(
-                            ctx.defaultScope,
-                            Lazily,
-                            getResults(textContents.value)
-                        )
                 }
         }
     )

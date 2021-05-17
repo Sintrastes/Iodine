@@ -2,10 +2,7 @@ package com.bedelln.iodine.components
 
 import androidx.compose.runtime.Composable
 import arrow.core.Either
-import com.bedelln.iodine.interfaces.HComponent
-import com.bedelln.iodine.interfaces.HComponentDescription
-import com.bedelln.iodine.interfaces.IodineContext
-import com.bedelln.iodine.interfaces.SettableHComponentDescription
+import com.bedelln.iodine.interfaces.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,18 +14,20 @@ sealed class ValidationEvent<in E> {
 }
 
 /** Helper class for building components with validation. */
-class ValidatedComponent<C: IodineContext, Ei, Eo, A, B, Err>(
-    val contents: SettableHComponentDescription<C, Ei, Eo, Pair<Err?, A>, Either<Pair<Err, A>, B>>
-): HComponentDescription<C, ValidationEvent<Ei>, Eo, A, B?> {
+class ValidatedComponent<C: IodineContext, A, B, Err>(
+    val contents: ValidatingStoreComponentDescription<C, A, B, Err>
+): HComponentDescription<C, ValidationEvent<Void>, Void, A, B?> {
     @Composable
     override fun initCompose(ctx: C) {
         contents.initCompose(ctx)
     }
 
-    override fun initialize(ctx: C, initialValue: A): HComponent<ValidationEvent<Ei>, Eo, A, B?> {
-        return object: HComponent<ValidationEvent<Ei>, Eo, A, B?> {
+    override fun initialize(ctx: C, initialValue: A): HComponent<ValidationEvent<Void>, Void, A, B?> {
+        return object: HComponent<ValidationEvent<Void>, Void, A, B?> {
 
-            val component = contents.initialize(ctx, Pair(null, initialValue))
+            val component = contents
+                .initialize(ctx, initialValue)
+
             val resultFlow = MutableStateFlow(
                 component.result.value.orNull()
             )
@@ -38,22 +37,17 @@ class ValidatedComponent<C: IodineContext, Ei, Eo, A, B, Err>(
                 component.contents()
             }
 
-            override fun onEvent(event: ValidationEvent<Ei>) = with(component) {
+            override fun onEvent(event: ValidationEvent<Void>) = with(component) {
                 if(event is ValidationEvent.SubmitForValidation) {
-                    when(val result = result.value) {
-                        is Either.Left -> {
-                            ctx.setValue(result.value)
-                            ctx.defaultScope.launch {
-                                resultFlow.emit(
-                                    component.result.value.orNull()
-                                )
-                            }
-                        }
+                    ctx.defaultScope.launch {
+                        resultFlow.emit(
+                            component.result.value.orNull()
+                        )
                     }
                 }
             }
 
-            override val events: Flow<Eo>
+            override val events: Flow<Void>
                 get() = component.events
             override val result: StateFlow<B?>
                 get() = resultFlow
