@@ -19,7 +19,7 @@ repositories {
 }
 
 plugins {
-    id("org.jetbrains.dokka") version "1.4.30"
+    id("org.jetbrains.dokka") version "1.4.32"
 }
 
 tasks.dokkaHtmlMultiModule.configure {
