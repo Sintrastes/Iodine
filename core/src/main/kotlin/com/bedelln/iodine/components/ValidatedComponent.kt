@@ -45,7 +45,7 @@ class ValidatedComponent<C: IodineContext, Ei, Eo, A, B, Err>(
                             ctx.setValue(result.value)
                             ctx.defaultScope.launch {
                                 resultFlow.emit(
-                                        component.result.value.orNull()
+                                    component.result.value.orNull()
                                 )
                             }
                         }

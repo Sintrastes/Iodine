@@ -1,9 +1,12 @@
 package com.bedelln.iodine.components.text
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.sp
 import arrow.core.Either
 import com.bedelln.iodine.components.ValidatedComponent
 import com.bedelln.iodine.components.ValidationEvent
@@ -40,7 +43,13 @@ class IntEntry<C : IodineContext> : HComponentDescription<C, ValidationEvent<Voi
                     )
 
                     override fun C.setValue(newValue: Pair<InvalidInteger?, String>) {
-                        TODO("Not yet implemented")
+                        ctx.defaultScope.launch {
+                            if (newValue.first != null) {
+                                showingError.emit(true)
+                            } else {
+                                showingError.emit(false)
+                            }
+                        }
                     }
 
                     @Composable
@@ -49,42 +58,45 @@ class IntEntry<C : IodineContext> : HComponentDescription<C, ValidationEvent<Voi
                         val contentsState = textContents.collectAsState()
                         val showingError by remember { errorState }
                         val contents by remember { contentsState }
-                        TextField(
-                            value = contents,
-                            onValueChange = { newValue ->
-                                ctx.defaultScope.launch {
-                                    textContents.emit(newValue)
+                        Column {
+                            TextField(
+                                value = contents,
+                                onValueChange = { newValue ->
+                                    ctx.defaultScope.launch {
+                                        textContents.emit(newValue)
+                                    }
+                                },
+                                label = {
+                                    Text("")
                                 }
-                            },
-                            label = {
-                                Text("")
-                            }
-                        )
-                        if (showingError) {
-                            Text(
-                                text = "Not a valid integer",
-                                color = Color.Red
                             )
+                            if (showingError) {
+                                Text(
+                                    text = "Not a valid integer",
+                                    color = Color.Red,
+                                    fontSize = 16.sp
+                                )
+                            }
                         }
                     }
 
-                    fun getResults(err: Boolean, contents: String) =
-                        if(err) {
-                            Either.Left(Pair(InvalidInteger, contents))
-                        } else {
-                            Either.Right(contents.toInt())
+                    fun getResults(contents: String) =
+                        contents.toIntOrNull()?.let {
+                            Either.Right(it)
                         }
+                            ?: Either.Left(Pair(InvalidInteger, contents))
+
 
                     override fun onEvent(event: Void) { }
                     override val events: Flow<Void>
                         get() = emptyFlow()
                     override val result: StateFlow<Either<Pair<InvalidInteger, String>, Int>>
-                        get() = showingError.combine(textContents) { err, contents ->
-                            getResults(err, contents)
+                        get() = textContents.map { contents ->
+                            getResults(contents)
                         }.stateIn(
                             ctx.defaultScope,
                             Lazily,
-                            getResults(showingError.value, textContents.value)
+                            getResults(textContents.value)
                         )
                 }
         }

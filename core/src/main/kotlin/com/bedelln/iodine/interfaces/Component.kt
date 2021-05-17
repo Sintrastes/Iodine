@@ -3,6 +3,7 @@ package com.bedelln.iodine.interfaces
 import androidx.compose.runtime.Composable
 import com.bedelln.iodine.util.mapStateFlow
 import kotlinx.coroutines.flow.*
+import java.util.function.Consumer
 
 interface Settable<in C, in A> {
     fun C.setValue(newValue: A)
@@ -44,9 +45,14 @@ inline fun <C: IodineContext> Compose(crossinline f: @Composable() () -> Unit): 
     }
 }
 
+/** Supply an initial value to a component. */
+fun <C,Ei,Eo,A,B> HComponentDescription<C, Ei, Eo, A, B>.initialValue(
+    x: A
+): HComponentDescription<C, Ei, Eo, Unit, B>
+ = this.imap { it: Unit -> x }
+
 inline fun <C,Ei,Eo,A,B,X> HComponentDescription<C, Ei, Eo, A, B>.imap(
-    crossinline f: (X) -> A,
-    crossinline fInv: (A) -> X
+    crossinline f: (X) -> A
 ): HComponentDescription<C, Ei, Eo, X, B> {
     val origDescr = this
     return object: HComponentDescription<C, Ei, Eo, X, B> {

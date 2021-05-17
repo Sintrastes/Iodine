@@ -43,7 +43,7 @@ android {
     }
 }
 
-val arrow_version = "0.13.1"
+val arrow_version = "0.13.2"
 
 dependencies {
     implementation(files("$projectDir/libs/iodine-core.jar"))
