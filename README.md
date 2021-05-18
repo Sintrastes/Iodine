@@ -7,7 +7,9 @@
   <a href="https://github.com/Sintrastes/iodine/actions/workflows/ci.yml">
     <img src="https://github.com/sintrastes/iodine/workflows/CI/badge.svg">
   </a>
-  <img src="https://github.com/sintrastes/iodine/workflows/DOCS/badge.svg">
+  <a href="https://sintrastes.github.io/iodine/">
+    <img src="https://github.com/sintrastes/iodine/workflows/DOCS/badge.svg">
+  </a>
 </p>
 
 
@@ -23,7 +25,10 @@ Iodine is a functional UI toolkit for Kotlin built on top of [Flow](https://kotl
 ✏️Getting Started
 --------------------
 
-To get started with Iodine, clone this project and run `gradlew :core:jar :desktop:jar` to build the `iodine-core` and `iodine-desktop` `jar`s needed for a Compose for Desktop project, then, place these in the `libs` folder of your project, and add the following to your `build.gradle.kts`:
+To get started with Iodine, clone this project and run `gradlew :core:jar :desktop:jar` 
+ to build the `iodine-core` and `iodine-desktop` `jar`s needed for a Compose for Desktop 
+ project, then, place these in the `libs` folder of your project, and add the following 
+ to your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
@@ -36,8 +41,23 @@ dependencies {
 
 An example of this can be found in the [compose for desktop project example](examples/desktop_example).
 
-🤔 Concepts
-===========
+Similarly, to get started with an Android project, you can run `gradlew :core:jar :android:build`,
+ place the built jar and aar in the `libs` folder of your project, and add the following
+to your `build.gradle.kts`:
+
+```kotlin
+dependencies {
+    ...
+    implementation(files("$projectDir/libs/iodine-core.jar"))
+    implementation(files("$projectDir/libs/iodine-android.aar"))
+    ...
+}
+```
+
+An example of this can be found in the [android project example](examples/IodineAndroidApp).
+
+Concepts
+=========
 
 Iodine enchances the concept of "composable functions" from Jetpack Compose by introducing two new concepts: `Tool`s, and `Components`.
 
@@ -83,6 +103,11 @@ Tools and components can be combined into larger and more complex components/too
   3. `identity`, `compose`: Category operations. 
   4. `pure`, `bind`: Monad operations.
   5. `mapCtx`: Contravariant functor operations
+
+📚 Learn More
+-------------
+
+For a more comprehensive tutorial, visit the [project page](https://sintrastes.github.io/iodine/) for Iodine.
 
 💡 Related Projects
 -------------------
