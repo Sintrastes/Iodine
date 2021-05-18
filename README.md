@@ -7,7 +7,7 @@
   <a href="https://github.com/Sintrastes/iodine/actions/workflows/ci.yml">
     <img src="https://github.com/sintrastes/iodine/workflows/CI/badge.svg">
   </a>
-  <a href="https://sintrastes.github.io/iodine/">
+  <a href="https://sintrastes.github.io/iodine/docs/">
     <img src="https://github.com/sintrastes/iodine/workflows/DOCS/badge.svg">
   </a>
 </p>
@@ -107,7 +107,8 @@ Tools and components can be combined into larger and more complex components/too
 📚 Learn More
 -------------
 
-For a more comprehensive tutorial, visit the [project page](https://sintrastes.github.io/iodine/) for Iodine.
+For a more comprehensive tutorial, visit the [project page](https://sintrastes.github.io/iodine/) for Iodine,
+ or, if you would prefer to dig straight into the KDocs, you can find those [here](https://sintrastes.github.io/iodine/docs/).
 
 💡 Related Projects
 -------------------
