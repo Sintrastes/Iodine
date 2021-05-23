@@ -5,13 +5,16 @@
 <p align="center">Typed components for <a href="https://developer.android.com/jetpack/compose">Jetpack Compose</a>, inspired by <a href="https://github.com/purescript-halogen/purescript-halogen">Halogen</a>.  </p> 
 <p align="center">
   <a href="https://kotlinlang.org/">
-    <img src="https://img.shields.io/badge/language-kotlin-blue">
+    <img src="https://img.shields.io/badge/Language-Kotlin-blue">
   </a>
   <a href="https://github.com/Sintrastes/iodine/actions/workflows/ci.yml">
     <img src="https://github.com/sintrastes/iodine/workflows/CI/badge.svg">
   </a>
   <a href="https://sintrastes.github.io/iodine/docs/">
     <img src="https://github.com/sintrastes/iodine/workflows/DOCS/badge.svg">
+  </a>
+  <a href="https://github.com/Sintrastes/iodine/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/License-BSD-blue">
   </a>
 </p>
 
