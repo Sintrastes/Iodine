@@ -4,6 +4,9 @@
   <img width=10% src="res/iodine.svg?token=AA7AHVO4G25UIIT3P6G6TIDAONGOE">
 <p align="center">Typed components for <a href="https://developer.android.com/jetpack/compose">Jetpack Compose</a>, inspired by <a href="https://github.com/purescript-halogen/purescript-halogen">Halogen</a>.  </p> 
 <p align="center">
+  <a href="https://kotlinlang.org/">
+    <img src="https://img.shields.io/badge/language-kotlin-blue">
+  </a>
   <a href="https://github.com/Sintrastes/iodine/actions/workflows/ci.yml">
     <img src="https://github.com/sintrastes/iodine/workflows/CI/badge.svg">
   </a>
