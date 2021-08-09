@@ -1,10 +1,9 @@
 package com.bedelln.iodine.components
 
-import androidx.compose.material.Switch
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
-import com.bedelln.iodine.HComponent
-import com.bedelln.iodine.HComponentDescription
+import com.bedelln.iodine.Component
+import com.bedelln.iodine.ComponentDescription
 import com.bedelln.iodine.IodineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,12 +11,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 
-class Switch<C: IodineContext>(): HComponentDescription<C, Void, Void, Boolean, Boolean> {
+class Switch<C: IodineContext>(): ComponentDescription<C, Void, Void, Boolean, Boolean> {
     @Composable
     override fun initCompose(ctx: C) { }
 
-    override fun initialize(ctx: C, initialValue: Boolean): HComponent<Void, Void, Boolean, Boolean> {
-        return object: HComponent<Void, Void, Boolean, Boolean> {
+    override fun initialize(ctx: C, initialValue: Boolean): Component<Void, Void, Boolean, Boolean> {
+        return object: Component<Void, Void, Boolean, Boolean> {
             private val resultFlow = MutableStateFlow(initialValue)
 
             @Composable

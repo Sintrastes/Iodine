@@ -13,7 +13,7 @@ object Click
 class ActionButton<C: IodineContext>(
     val text: String,
     val action: ToolDescription<C, Unit, Unit>
-): HComponentDescription<C, Click, Void, Unit, Unit> {
+): ComponentDescription<C, Click, Void, Unit, Unit> {
 
     lateinit var setShow: () -> Unit
 
@@ -26,8 +26,8 @@ class ActionButton<C: IodineContext>(
         }
     }
 
-    override fun initialize(ctx: C, initialValue: Unit): HComponent<Click, Void, Unit, Unit> = run {
-        object : HComponent<Click, Void, Unit, Unit> {
+    override fun initialize(ctx: C, initialValue: Unit): Component<Click, Void, Unit, Unit> = run {
+        object : Component<Click, Void, Unit, Unit> {
             @Composable
             override fun contents() {
                 Button(

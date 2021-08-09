@@ -1,6 +1,5 @@
 package com.bedelln.iodine.android
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -16,7 +15,7 @@ interface ActivityCtx : AndroidCtx, HasRef {
 }
 
 abstract class IodineActivity<C,Ei,Eo,A,B>(val initialValue: A): ComponentActivity() {
-    abstract val contents: HComponentDescription<C, Ei, Eo, A, B>
+    abstract val contents: ComponentDescription<C, Ei, Eo, A, B>
 
     abstract val contextInitializer: (ActivityCtx) -> C
 

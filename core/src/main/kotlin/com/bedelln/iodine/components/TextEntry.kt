@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 
-class TextEntry<C: IodineContext>(): HComponentDescription<C, TextEntry.Event, TextEntry.Event, String, String> {
+class TextEntry<C: IodineContext>(): ComponentDescription<C, TextEntry.Event, TextEntry.Event, String, String> {
 
     sealed class Event {
         object OnSelected: Event()
@@ -22,8 +22,8 @@ class TextEntry<C: IodineContext>(): HComponentDescription<C, TextEntry.Event, T
     @Composable
     override fun initCompose(ctx: C) { }
 
-    override fun initialize(ctx: C, initialValue: String): HComponent<Event, Event, String, String> {
-        return object : HComponent<Event, Event, String, String> {
+    override fun initialize(ctx: C, initialValue: String): Component<Event, Event, String, String> {
+        return object : Component<Event, Event, String, String> {
             private val contentsFlow = MutableStateFlow(initialValue)
 
             @Composable

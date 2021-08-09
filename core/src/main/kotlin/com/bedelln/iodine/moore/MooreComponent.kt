@@ -8,7 +8,7 @@ import com.bedelln.iodine.util.mapStateFlow
 import kotlinx.coroutines.flow.*
 
 /** Abstract class for a component defined via the Elm Architecture. */
-abstract class MooreComponent<C,Ei,Eo,S,A,B>(val initialState: S): HComponentDescription<C,Ei,Eo,A,B> {
+abstract class MooreComponent<C,Ei,Eo,S,A,B>(val initialState: S): ComponentDescription<C,Ei,Eo,A,B> {
 
     lateinit var state: State<S>
 
@@ -31,8 +31,8 @@ abstract class MooreComponent<C,Ei,Eo,S,A,B>(val initialState: S): HComponentDes
         state = stateStream.collectAsState()
     }
 
-    override fun initialize(ctx: C, initialValue: A): HComponent<Ei, Eo, A, B> {
-        return object: HComponent<Ei,Eo,A,B> {
+    override fun initialize(ctx: C, initialValue: A): Component<Ei, Eo, A, B> {
+        return object: Component<Ei,Eo,A,B> {
             @Composable
             override fun contents() {
                 render(ctx, state.value)

@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import com.bedelln.iodine.interfaces.Displayable
 import com.bedelln.iodine.*
-import com.bedelln.iodine.HComponentDescription
+import com.bedelln.iodine.ComponentDescription
 import com.bedelln.iodine.IodineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,12 +17,12 @@ import kotlinx.coroutines.launch
 
 class MultiSelectGroup<A: Displayable<C>, C: IodineContext>(
     val values: List<A>
-): HComponentDescription<C, MultiSelectGroup.Event, MultiSelectGroup.Event, Set<A>, Set<A>> {
+): ComponentDescription<C, MultiSelectGroup.Event, MultiSelectGroup.Event, Set<A>, Set<A>> {
     @Composable
     override fun initCompose(ctx: C) { }
 
-    override fun initialize(ctx: C, initialValue: Set<A>): HComponent<Event, Event, Set<A>, Set<A>> {
-        return object: HComponent<Event, Event, Set<A>, Set<A>> {
+    override fun initialize(ctx: C, initialValue: Set<A>): Component<Event, Event, Set<A>, Set<A>> {
+        return object: Component<Event, Event, Set<A>, Set<A>> {
 
             private val contentsFlow = MutableStateFlow(initialValue)
 

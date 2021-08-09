@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class AndroidAlertDialog<A,B,C,Ei,Eo>(
     val title: String,
-    val contents: HComponentDescription<C, Ei, Eo, A,B>): ToolDescription<C, A, B>
+    val contents: ComponentDescription<C, Ei, Eo, A,B>): ToolDescription<C, A, B>
         where C: IodineContext,
               C: HasRef {
 

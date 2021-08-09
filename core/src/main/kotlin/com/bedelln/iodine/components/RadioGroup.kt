@@ -15,12 +15,12 @@ import kotlinx.coroutines.launch
 
 class RadioGroup<A: Displayable<C>, C: IodineContext>(
     val values: List<A>
-): HComponentDescription<C, RadioGroup.Event, RadioGroup.Event, A?, A?> {
+): ComponentDescription<C, RadioGroup.Event, RadioGroup.Event, A?, A?> {
     @Composable
     override fun initCompose(ctx: C) { }
 
-    override fun initialize(ctx: C, initialValue: A?): HComponent<Event, Event, A?, A?> {
-        return object: HComponent<Event, Event, A?, A?> {
+    override fun initialize(ctx: C, initialValue: A?): Component<Event, Event, A?, A?> {
+        return object: Component<Event, Event, A?, A?> {
 
             private val contentsFlow = MutableStateFlow(initialValue)
 

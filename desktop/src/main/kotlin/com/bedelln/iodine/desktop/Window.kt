@@ -18,7 +18,7 @@ import kotlinx.coroutines.GlobalScope
  */
 fun IodineWindow(
     title: String,
-    contents: ComponentDescription<WindowCtx, Void, Unit, Unit>
+    contents: ComponentDescription<WindowCtx, Void, Void, Unit, Unit>
 ) {
     Window(title) {
         windowContents(contents)
@@ -26,7 +26,7 @@ fun IodineWindow(
 }
 
 @Composable
-private fun windowContents(contents: ComponentDescription<WindowCtx, Void, Unit, Unit>) {
+private fun windowContents(contents: ComponentDescription<WindowCtx, Void, Void, Unit, Unit>) {
     var additional by remember { mutableStateOf(listOf<@Composable() () -> Unit>()) }
     val windowCtx = object : WindowCtx {
         override val window = object : WindowRef {

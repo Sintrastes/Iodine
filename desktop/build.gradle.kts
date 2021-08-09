@@ -11,7 +11,7 @@ buildscript {
 
 plugins {
     kotlin("jvm") 
-    id("org.jetbrains.compose") version "0.3.0"
+    id("org.jetbrains.compose") version "1.0.0-alpha3"
     id("org.jetbrains.dokka")
 }
 
@@ -21,7 +21,6 @@ version = "0.1-SNAPSHOT"
 repositories {
     mavenCentral()
     google()
-    jcenter()
     maven(url="https://dl.bintray.com/kotlin/dokka")
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
 }

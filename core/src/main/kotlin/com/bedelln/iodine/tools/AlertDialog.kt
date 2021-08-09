@@ -1,13 +1,7 @@
 package com.bedelln.iodine.tools
 
-import androidx.compose.foundation.border
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.*
-import androidx.compose.ui.unit.dp
 import com.bedelln.iodine.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -16,9 +10,10 @@ import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 
 // Note: This should probably be SystemCtx -- an alert dialog could be launched from anywhere.
+@ExperimentalMaterialApi
 class AlertDialog<A,B,C,Ei,Eo>(
     val title: String,
-    val contents: HComponentDescription<C, Ei, Eo, A, B>): ToolDescription<C, A, B>
+    val contents: ComponentDescription<C, Ei, Eo, A, B>): ToolDescription<C, A, B>
   where C: IodineContext,
         C: HasRef {
 
@@ -51,17 +46,17 @@ class AlertDialog<A,B,C,Ei,Eo>(
                         onDismissRequest = {
                         },
                         // properties = DesktopDialogProperties(undecorated = true),
-                        modifier = Modifier.border(
-                            width = 1.dp,
-                            MaterialTheme.colors.primary
-                        ),
+                        // modifier = Modifier.border(
+                        //     width = 1.dp,
+                        //     MaterialTheme.colors.primary
+                        // ),
                         text = {
                             // TODO: Restore this.
                             // with(_contents) {
                             //     contents()
                             // }
                         },
-                        buttons = {
+                        confirmButton = {
                             Button(
                                 onClick = {
                                     ctx.defaultScope.launch {
