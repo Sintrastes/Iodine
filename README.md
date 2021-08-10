@@ -126,4 +126,6 @@ For a more comprehensive tutorial, visit the [project page](https://sintrastes.g
 Like this project?
 ------------------
 
-Buy me a coffee ☕, or a beer 🍺!
+If you use Iodine, or find it useful, consider supporting it's development efforts by buying me a coffee ☕, or a beer 🍺!
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate?business=45F7QR92B4XUY&no_recurring=0&currency_code=USD)
