@@ -27,20 +27,6 @@ Iodine is a functional UI toolkit for Kotlin built on top of [Flow](https://kotl
 ⚠️ WARNING: This project is of experimental/pre-release quality. Things are likely to break. 
  Interfaces are likely to change. Documentation may not be entirely accurate or complete. 
  The implementation may not be the most responsive. 
- 
-📚 Learn More
--------------
-
-For a more comprehensive tutorial, visit the [project page](https://sintrastes.github.io/iodine/) for Iodine,
- or, if you would prefer to dig straight into the KDocs, you can find those [here](https://sintrastes.github.io/iodine/docs/). For a quick introduction and setup guide, continue reading!
- 
-Like this project?
-------------------
-
-If you use Iodine, or find it useful, consider supporting it's development efforts by buying me a coffee ☕, or a beer 🍺!
-
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate?business=45F7QR92B4XUY&no_recurring=0&currency_code=USD)
-[![Donate with Ethereum](https://en.cryptobadges.io/badge/micro/0x61531fCA114507138ebefc74Db5C152845b77Cad)](https://en.cryptobadges.io/donate/0x61531fCA114507138ebefc74Db5C152845b77Cad)
 
 ✏️Getting Started
 --------------------
@@ -75,6 +61,20 @@ dependencies {
 ```
 
 An example of this can be found in the [android project example](examples/IodineAndroidApp).
+
+Like this project?
+------------------
+
+If you use Iodine, or find it useful, consider supporting it's development efforts by buying me a coffee ☕, or a beer 🍺!
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate?business=45F7QR92B4XUY&no_recurring=0&currency_code=USD)
+[![Donate with Ethereum](https://en.cryptobadges.io/badge/micro/0x61531fCA114507138ebefc74Db5C152845b77Cad)](https://en.cryptobadges.io/donate/0x61531fCA114507138ebefc74Db5C152845b77Cad)
+
+📚 Learn More
+-------------
+
+For a more comprehensive tutorial, visit the [project page](https://sintrastes.github.io/iodine/) for Iodine,
+ or, if you would prefer to dig straight into the KDocs, you can find those [here](https://sintrastes.github.io/iodine/docs/). For a quick introduction, continue reading!
 
 Concepts
 =========
