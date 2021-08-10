@@ -1,7 +1,8 @@
 <h1 align="center">Iodine</h1>
 <p align="center">
-
-  <img width=10% src="res/iodine.svg?token=AA7AHVO4G25UIIT3P6G6TIDAONGOE">
+  <a href="https://sintrastes.github.io/iodine/">
+    <img width=10% src="res/iodine.svg?token=AA7AHVO4G25UIIT3P6G6TIDAONGOE">
+  </a>
 <p align="center">Typed components for <a href="https://developer.android.com/jetpack/compose">Jetpack Compose</a>, inspired by <a href="https://github.com/purescript-halogen/purescript-halogen">Halogen</a>.  </p> 
 <p align="center">
   <a href="https://kotlinlang.org/">
@@ -22,7 +23,7 @@
 Introduction
 ============
 
-Iodine is a functional UI toolkit for Kotlin built on top of [Flow](https://kotlinlang.org/docs/flow.html), [Jetpack Compose](https://developer.android.com/jetpack/compose) , and [Arrow](https://arrow-kt.io/). Where Arrow intends to be a "Functional companion to Kotlin's Standard Library", Iodine aims to be a functional companion to Jetpack Compose (including for [desktop](https://github.com/JetBrains/compose-jb) and multi-platform). 
+[Iodine](https://sintrastes.github.io/iodine/) is a functional UI toolkit for Kotlin built on top of [Flow](https://kotlinlang.org/docs/flow.html), [Jetpack Compose](https://developer.android.com/jetpack/compose) , and [Arrow](https://arrow-kt.io/). Where Arrow intends to be a "Functional companion to Kotlin's Standard Library", Iodine aims to be a functional companion to Jetpack Compose (including for [desktop](https://github.com/JetBrains/compose-jb) and multi-platform). 
 
 ⚠️ WARNING: This project is of experimental/pre-release quality. Things are likely to break. 
  Interfaces are likely to change. Documentation may not be entirely accurate or complete. 
