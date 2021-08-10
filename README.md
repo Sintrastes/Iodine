@@ -14,7 +14,7 @@
     <img src="https://github.com/sintrastes/iodine/workflows/DOCS/badge.svg">
   </a>
   <a href="https://github.com/Sintrastes/iodine/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/License-BSD-blue">
+    <img src="https://img.shields.io/badge/License-MIT-blue">
   </a>
 </p>
 
