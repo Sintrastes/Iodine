@@ -8,11 +8,22 @@ repositories {
     }
 }
 
+buildscript {
+    repositories {
+        google()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.4.32")
+    }
+}
+
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'org.jetbrains.dokka'
 
-android {
+android() {
     compileSdkVersion 29
     defaultConfig {
         minSdkVersion 21

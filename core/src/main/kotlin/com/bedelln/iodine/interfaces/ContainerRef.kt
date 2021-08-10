@@ -1,4 +1,4 @@
-package com.bedelln.iodine
+package com.bedelln.iodine.interfaces
 
 import androidx.compose.runtime.Composable
 

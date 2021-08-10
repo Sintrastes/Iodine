@@ -7,8 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import com.bedelln.iodine.interfaces.Displayable
 import com.bedelln.iodine.*
-import com.bedelln.iodine.ComponentDescription
-import com.bedelln.iodine.IodineContext
+import com.bedelln.iodine.interfaces.Component
+import com.bedelln.iodine.interfaces.ComponentDescription
+import com.bedelln.iodine.interfaces.IodineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

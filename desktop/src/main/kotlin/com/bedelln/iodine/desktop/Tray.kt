@@ -5,18 +5,21 @@ import androidx.compose.ui.window.Tray as ComposeTray
 // import androidx.compose.ui.window.MenuItem as ComposeMenuItem
 import com.bedelln.iodine.*
 import com.bedelln.iodine.desktop.ctx.SystemCtx
+import com.bedelln.iodine.interfaces.Component
+import com.bedelln.iodine.interfaces.ComponentDescription
+import com.bedelln.iodine.interfaces.ToolDescription
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import java.awt.image.BufferedImage
 
-class Tray<C: SystemCtx, E>(val icon: BufferedImage, val menuItems: List<MenuItem<C,E>>): ComponentDescription<C,Void,E,Unit,Unit> {
+class Tray<C: SystemCtx, Ei, Eo>(val icon: BufferedImage, val menuItems: List<MenuItem<C,Eo>>): ComponentDescription<C,Ei,Eo,Unit,Unit> {
     @Composable
     override fun initCompose(ctx: C) {
         TODO("Not yet implemented")
     }
 
-    override fun initialize(ctx: C, initialValue: Unit): Component<Void, E, Unit, Unit> {
-        return object: Component<Void, E,Unit,Unit> {
+    override fun initialize(ctx: C, initialValue: Unit): Component<Ei, Eo, Unit, Unit> {
+        return object: Component<Ei, Eo, Unit, Unit> {
             @Composable
             override fun contents() {
                 /*
@@ -41,12 +44,12 @@ class Tray<C: SystemCtx, E>(val icon: BufferedImage, val menuItems: List<MenuIte
                  */
             }
 
-            override val events: Flow<E>
+            override val events: Flow<Eo>
                 get() = TODO("Not yet implemented")
             override val result: StateFlow<Unit>
                 get() = TODO()
 
-            override fun onEvent(event: Void) { }
+            override fun onEvent(event: Ei) { }
         }
     }
 }

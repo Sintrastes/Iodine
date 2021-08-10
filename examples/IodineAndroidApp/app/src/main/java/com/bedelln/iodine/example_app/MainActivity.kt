@@ -1,20 +1,16 @@
 package com.bedelln.iodine.example_app
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
 import androidx.compose.ui.unit.Dp
-import com.bedelln.iodine.*
 import com.bedelln.iodine.android.ActivityCtx
 import com.bedelln.iodine.android.IodineActivity
 import com.bedelln.iodine.android.tools.AndroidAlertDialog
-import com.bedelln.iodine.android.tools.Toast
 import com.bedelln.iodine.components.*
-import com.bedelln.iodine.android.components.*
-import com.bedelln.iodine.interfaces.Displayable
+import com.bedelln.iodine.components.text.IntEntry
+import com.bedelln.iodine.interfaces.*
 
 class MainActivity: IodineActivity<ActivityCtx, Void, Void, Unit, Unit>(Unit) {
     override val contextInitializer = { it: ActivityCtx -> it }
@@ -30,50 +26,21 @@ class MainActivity: IodineActivity<ActivityCtx, Void, Void, Unit, Unit>(Unit) {
                     vertical   = Dp(5.0f)
                 ))
         ) {
+            val intEntry = IntEntry<ActivityCtx>()
+                .initialValue("1")
+                .not().bind()
             ActionButton(
-                text = "Test",
-                action = Tool.noop<IodineContext, Unit>()
-            ).not().bind()
-            ActionButton(
-                text = "Test2",
-                action = Tool.noop<IodineContext, Unit>()
-            ).not()
-        }
-
-    /*
-        WrappedComponent(
-        layout = {
-            Column(
-                modifier = Modifier.fillMaxSize(1.0f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                it()
-            }
-        },
-        component = DropdownMenu(
-            dropdownItems = listOf(
-                "one".TextItem,
-                "two".TextItem
-            )
-        )
-        /* ActionButton(
-            text = "Hello, Android!",
-            action = AndroidAlertDialog(
-                title = "Hello!",
-                contents = RadioGroup(
-                    listOf(
-                        "one".TextItem,
-                        "two".TextItem
+                text = "Submit",
+                action = Tool.create<ActivityCtx, Unit, Unit> {
+                    intEntry.onEvent(
+                        ValidationEvent.SubmitForValidation()
                     )
-                )
-                    .imap({ null }, { })
-            ).thenTool { selected ->
-                Toast(selected!!.contents)
-            }
-        ) */
-    )
-     */
+                }
+            ).not().bind()
+
+            IodineMonad
+                .Return(Unit)
+        }
 }
 
 data class TextItem(val contents: String): Displayable<ActivityCtx> {
@@ -91,7 +58,7 @@ val test: ToolDescription<ActivityCtx,Unit,TextItem?> = AndroidAlertDialog(
             "two".TextItem
         )
     )
-        .imap({ null }, { })
+        .initialValue(null)
 )
 
 val String.TextItem get() = TextItem(this)

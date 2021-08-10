@@ -2,9 +2,9 @@ package com.bedelln.iodine.components
 
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
-import com.bedelln.iodine.Component
-import com.bedelln.iodine.ComponentDescription
-import com.bedelln.iodine.IodineContext
+import com.bedelln.iodine.interfaces.Component
+import com.bedelln.iodine.interfaces.ComponentDescription
+import com.bedelln.iodine.interfaces.IodineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

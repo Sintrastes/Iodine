@@ -4,8 +4,18 @@
   <img width=10% src="res/iodine.svg?token=AA7AHVO4G25UIIT3P6G6TIDAONGOE">
 <p align="center">Typed components for <a href="https://developer.android.com/jetpack/compose">Jetpack Compose</a>, inspired by <a href="https://github.com/purescript-halogen/purescript-halogen">Halogen</a>.  </p> 
 <p align="center">
-  <img src="https://github.com/sintrastes/iodine/workflows/CI/badge.svg">
-  </p>
+  <a href="https://kotlinlang.org/">
+    <img src="https://img.shields.io/badge/Language-Kotlin-blue">
+  </a>
+  <a href="https://github.com/Sintrastes/iodine/actions/workflows/ci.yml">
+    <img src="https://github.com/sintrastes/iodine/workflows/CI/badge.svg">
+  </a>
+  <a href="https://sintrastes.github.io/iodine/docs/">
+    <img src="https://github.com/sintrastes/iodine/workflows/DOCS/badge.svg">
+  </a>
+  <a href="https://github.com/Sintrastes/iodine/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/License-BSD-blue">
+  </a>
 </p>
 
 
@@ -14,12 +24,17 @@ Introduction
 
 Iodine is a functional UI toolkit for Kotlin built on top of [Flow](https://kotlinlang.org/docs/flow.html), [Jetpack Compose](https://developer.android.com/jetpack/compose) , and [Arrow](https://arrow-kt.io/). Where Arrow intends to be a "Functional companion to Kotlin's Standard Library", Iodine aims to be a functional companion to Jetpack Compose (including for [desktop](https://github.com/JetBrains/compose-jb) and multi-platform). 
 
-⚠️ WARNING: This project is of experimental/pre-release quality. Things are likely to break. Interfaces are likely to change. Documentation may not be entirely accurate. The implementation may not be the most responsive. While support is planned in the future for all of Jetpack compose's platform, for the moment, only Compose for Desktop support is provided.
+⚠️ WARNING: This project is of experimental/pre-release quality. Things are likely to break. 
+ Interfaces are likely to change. Documentation may not be entirely accurate or complete. 
+ The implementation may not be the most responsive. 
 
-Getting Started
----------------
+✏️Getting Started
+--------------------
 
-To get started with Iodine, clone this project and run `gradlew :core:jar :desktop:jar` to build the `iodine-core` and `iodine-desktop` `jar`s needed for a Compose for Desktop project, then, place these in the `libs` folder of your project, and add the following to your `build.gradle.kts`:
+To get started with Iodine, clone this project and run `gradlew :core:jar :desktop:jar` 
+ to build the `iodine-core` and `iodine-desktop` `jar`s needed for a Compose for Desktop 
+ project, then, place these in the `libs` folder of your project, and add the following 
+ to your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
@@ -32,8 +47,23 @@ dependencies {
 
 An example of this can be found in the [compose for desktop project example](examples/desktop_example).
 
+Similarly, to get started with an Android project, you can run `gradlew :core:jar :android:build`,
+ place the built jar and aar in the `libs` folder of your project, and add the following
+to your `build.gradle.kts`:
+
+```kotlin
+dependencies {
+    ...
+    implementation(files("$projectDir/libs/iodine-core.jar"))
+    implementation(files("$projectDir/libs/iodine-android.aar"))
+    ...
+}
+```
+
+An example of this can be found in the [android project example](examples/IodineAndroidApp).
+
 Concepts
-========
+=========
 
 Iodine enchances the concept of "composable functions" from Jetpack Compose by introducing two new concepts: `Tool`s, and `Components`.
 
@@ -80,4 +110,20 @@ Tools and components can be combined into larger and more complex components/too
   4. `pure`, `bind`: Monad operations.
   5. `mapCtx`: Contravariant functor operations
 
+📚 Learn More
+-------------
 
+For a more comprehensive tutorial, visit the [project page](https://sintrastes.github.io/iodine/) for Iodine,
+ or, if you would prefer to dig straight into the KDocs, you can find those [here](https://sintrastes.github.io/iodine/docs/).
+
+💡 Related Projects
+-------------------
+
+  * [Bow Arch](https://github.com/bow-swift/bow-arch): UI-framework for Swift with a similar approach to Iodine.
+  * [Halogen](https://github.com/purescript-halogen/purescript-halogen): Inspiration for Iodine's approach of using strongly typed UI composable components.
+  * [Yesod](https://www.yesodweb.com/): Inspiration for Iodine's Applicative form interface.
+
+Like this project?
+------------------
+
+Buy me a coffee ☕, or a beer 🍺!

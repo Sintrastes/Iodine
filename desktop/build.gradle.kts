@@ -10,7 +10,7 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") 
+    kotlin("jvm")
     id("org.jetbrains.compose") version "1.0.0-alpha3"
     id("org.jetbrains.dokka")
 }
@@ -26,10 +26,10 @@ repositories {
 }
 
 dependencies {
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.30")
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.32")
 }
 
-val arrow_version = "0.13.1"
+val arrow_version = "0.13.2"
 
 dependencies {
     implementation(project(":core"))

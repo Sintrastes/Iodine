@@ -1,8 +1,7 @@
 package com.bedelln.iodine.desktop.ctx
 
-import androidx.compose.runtime.Composable
-import com.bedelln.iodine.ContainerRef
-import com.bedelln.iodine.HasRef
+import com.bedelln.iodine.interfaces.ContainerRef
+import com.bedelln.iodine.interfaces.HasRef
 import kotlinx.coroutines.CoroutineScope
 
 /** Reference to an OS window. */
