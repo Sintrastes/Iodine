@@ -27,6 +27,20 @@ Iodine is a functional UI toolkit for Kotlin built on top of [Flow](https://kotl
 ⚠️ WARNING: This project is of experimental/pre-release quality. Things are likely to break. 
  Interfaces are likely to change. Documentation may not be entirely accurate or complete. 
  The implementation may not be the most responsive. 
+ 
+📚 Learn More
+-------------
+
+For a more comprehensive tutorial, visit the [project page](https://sintrastes.github.io/iodine/) for Iodine,
+ or, if you would prefer to dig straight into the KDocs, you can find those [here](https://sintrastes.github.io/iodine/docs/). For a quick introduction and setup guide, continue reading!
+ 
+Like this project?
+------------------
+
+If you use Iodine, or find it useful, consider supporting it's development efforts by buying me a coffee ☕, or a beer 🍺!
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate?business=45F7QR92B4XUY&no_recurring=0&currency_code=USD)
+[![Donate with Ethereum](https://en.cryptobadges.io/badge/micro/0x61531fCA114507138ebefc74Db5C152845b77Cad)](https://en.cryptobadges.io/donate/0x61531fCA114507138ebefc74Db5C152845b77Cad)
 
 ✏️Getting Started
 --------------------
@@ -110,23 +124,9 @@ Tools and components can be combined into larger and more complex components/too
   4. `pure`, `bind`: Monad operations.
   5. `mapCtx`: Contravariant functor operations
 
-📚 Learn More
--------------
-
-For a more comprehensive tutorial, visit the [project page](https://sintrastes.github.io/iodine/) for Iodine,
- or, if you would prefer to dig straight into the KDocs, you can find those [here](https://sintrastes.github.io/iodine/docs/).
-
 💡 Related Projects
 -------------------
 
   * [Bow Arch](https://github.com/bow-swift/bow-arch): UI-framework for Swift with a similar approach to Iodine.
   * [Halogen](https://github.com/purescript-halogen/purescript-halogen): Inspiration for Iodine's approach of using strongly typed UI composable components.
   * [Yesod](https://www.yesodweb.com/): Inspiration for Iodine's Applicative form interface.
-
-Like this project?
-------------------
-
-If you use Iodine, or find it useful, consider supporting it's development efforts by buying me a coffee ☕, or a beer 🍺!
-
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate?business=45F7QR92B4XUY&no_recurring=0&currency_code=USD)
-[![Donate with Ethereum](https://en.cryptobadges.io/badge/micro/0x61531fCA114507138ebefc74Db5C152845b77Cad)](https://en.cryptobadges.io/donate/0x61531fCA114507138ebefc74Db5C152845b77Cad)
