@@ -21,7 +21,7 @@ import java.util.function.Consumer
 // what Compose can do here with Columns.
 // But I may be able to emulate this with a
 // monadic interface making use of arrow.
-
+/*
 interface IMCtx
 sealed class IodineMonad<Cm: IMCtx, C: IodineContext, out A> {
     abstract fun execute(ctx: C, childComponents: MutableList<ComponentDescription<C, *, *, Unit, *>>): A
@@ -67,6 +67,7 @@ sealed class IodineMonadF<Cm: IMCtx, C: IodineContext, A> {
             val rest: (Component<*,*,Unit,*>) -> A
     ): IodineMonadF<Cm, C, A>()
 }
+*/
 
 interface ColumnCtx: IMCtx {
 
