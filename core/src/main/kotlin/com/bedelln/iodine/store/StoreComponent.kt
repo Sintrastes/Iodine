@@ -1,15 +1,19 @@
-package com.bedelln.iodine.interfaces
+package com.bedelln.iodine.store
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import arrow.core.Either
+import com.bedelln.iodine.interfaces.Component
+import com.bedelln.iodine.interfaces.Description
+import com.bedelln.iodine.interfaces.IodineContext
+import com.bedelln.iodine.interfaces.Settable
 import com.bedelln.iodine.util.mapStateFlow
 import kotlinx.coroutines.flow.*
 
 /** Component modeled off of the Store comonad. */
-abstract class StoreComponent<A,B>: Component<Void,Void,A,B> {
+abstract class StoreComponent<A,B>: Component<Void, Void, A, B> {
     abstract val input: StateFlow<A>
     abstract fun view(input: A): B
     final override val result: StateFlow<B>
@@ -46,19 +50,19 @@ abstract class ValidatingStoreComponent<A,B,Err>(val initialValue: A): StoreComp
 }
 
 typealias ValidatingStoreComponentDescription<C,A,B,Err>
-    = Description<C,A,ValidatingStoreComponent<A,B,Err>>
+    = Description<C, A, ValidatingStoreComponent<A, B, Err>>
 
-typealias StoreComponentDescription<C, A,B> = Description<C,A,StoreComponent<A,B>>
+typealias StoreComponentDescription<C, A,B> = Description<C, A, StoreComponent<A, B>>
 
-abstract class SettableStoreComponent<C: IodineContext, A,B>: StoreComponent<A, B>(), Settable<C,A>
+abstract class SettableStoreComponent<C: IodineContext, A,B>: StoreComponent<A, B>(), Settable<C, A>
 
-typealias SettableStoreComponentDescription<C, A,B> = Description<C,A,SettableStoreComponent<C,A,B>>
+typealias SettableStoreComponentDescription<C, A,B> = Description<C, A, SettableStoreComponent<C, A, B>>
 
-fun <A,B> StoreComponent<A,B>.extractM(): StateFlow<B> {
+fun <A,B> StoreComponent<A, B>.extractM(): StateFlow<B> {
     return this.result
 }
 
-inline fun <X,A,B> StoreComponent<X,A>.extendM(crossinline f: (StoreComponent<X,A>) -> StateFlow<B>): StoreComponent<X,B> {
+inline fun <X,A,B> StoreComponent<X, A>.extendM(crossinline f: (StoreComponent<X, A>) -> StateFlow<B>): StoreComponent<X, B> {
     val component = this
     return object: StoreComponent<X, B>() {
 

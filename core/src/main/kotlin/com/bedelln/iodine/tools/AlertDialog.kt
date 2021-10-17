@@ -13,9 +13,9 @@ import kotlinx.coroutines.launch
 
 // Note: This should probably be SystemCtx -- an alert dialog could be launched from anywhere.
 @ExperimentalMaterialApi
-class AlertDialog<A,B,C,Ei,Eo>(
+class AlertDialog<C,I,E,A,B>(
     val title: String,
-    val contents: ComponentDescription<C, Ei, Eo, A, B>): ToolDescription<C, A, B>
+    val contents: FormDescription<C, I, E, A, B>): ToolDescription<C, A, B>
   where C: IodineContext,
         C: HasRef {
 

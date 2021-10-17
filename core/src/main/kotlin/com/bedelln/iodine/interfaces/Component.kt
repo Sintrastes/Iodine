@@ -1,186 +1,183 @@
 package com.bedelln.iodine.interfaces
 
-import androidx.compose.runtime.Composable
-import com.bedelln.iodine.util.mapStateFlow
+import androidx.compose.runtime.*
 import kotlinx.coroutines.flow.*
-import java.util.function.Consumer
 
-interface Settable<in C, in A> {
-    fun C.setValue(newValue: A)
+interface Settable<in A> {
+    fun setValue(newValue: A) { }
 }
 
-interface Component<in Ei, out Eo, in A, out B> {
-    @Composable fun contents()
-    fun onEvent(event: Ei)
-    val events: Flow<Eo>
+interface Gettable<out B> {
     val result: StateFlow<B>
 }
 
-interface SettableComponent<C: IodineContext, in Ei, out Eo, in A, out B>: Component<Ei, Eo, A, B>, Settable<C, A>
+interface ViewModel<out I, out E, S, in A>: Settable<A> {
+    val impl: I
+    val events: Flow<E>
+    val state: StateFlow<S>
+}
 
-typealias SettableComponentDescription<C,Ei,Eo,A,B> =
-        Description<C, A, SettableComponent<C, Ei, Eo, A, B>>
+fun <I, S, E, A,R> ViewModel<I, S, E, A>.interact(action: I.() -> R): R {
+    return impl.action()
+}
 
-typealias ComponentDescription<C,Ei,Eo,A,B> =
-        Description<C, A, Component<Ei, Eo, A, B>>
+interface ComponentImpl<out Ctx, out I, out E, S, in A>: ViewModel<I,E,S,A> {
+    @Composable fun contents(state: S)
+}
+
+typealias Component<Ctx,I,E,A> = ComponentImpl<Ctx,I,E,*,A>
+
+typealias ComponentDescriptionImpl<Ctx,I,E,S,A> =
+        Description<Ctx, A, ComponentImpl<Ctx, I, E, S, A>>
+
+typealias ComponentDescription<Ctx,I,E,A> =
+        ComponentDescriptionImpl<Ctx,I,E,*,A>
 
 /** Helper function for making a component from a composable function. */
-inline fun <C: IodineContext> Compose(crossinline f: @Composable() () -> Unit): ComponentDescription<C, Void, Void, Unit, Unit> {
-    return object: ComponentDescription<C, Void, Void, Unit, Unit> {
+inline fun <C: IodineContext> Compose(
+    crossinline f: @Composable() C.() -> Unit
+): ComponentDescription<C, Unit, Void, Unit> {
+    return object: ComponentDescriptionImpl<C, Unit, Void, Unit, Unit> {
         @Composable
         override fun initCompose(ctx: C) { }
 
-        override fun initialize(ctx: C, initialValue: Unit): Component<Void, Void, Unit, Unit> {
-            return object: Component<Void, Void, Unit, Unit> {
+        override fun initialize(ctx: C, initialValue: Unit): ComponentImpl<C, Unit, Void, Unit, Unit> {
+            return object: ComponentImpl<C, Unit, Void, Unit, Unit> {
                 @Composable
-                override fun contents() { f() }
+                override fun contents(state: Unit) { ctx.f() }
 
-                override fun onEvent(event: Void) { }
                 override val events: Flow<Void>
                     get() = emptyFlow()
-                override val result: StateFlow<Unit>
+                override val state: StateFlow<Unit>
                     get() = MutableStateFlow(Unit)
+
+                override val impl: Unit
+                    get() = TODO("Not yet implemented")
             }
         }
     }
 }
 
 /** Supply an initial value to a component. */
-fun <C,Ei,Eo,A,B> ComponentDescription<C, Ei, Eo, A, B>.initialValue(
+fun <C,I,E,S,A> ComponentDescriptionImpl<C, I, E, S, A>.initialValue(
     x: A
-): ComponentDescription<C, Ei, Eo, Unit, B>
- = this.imap { it: Unit -> x }
+): ComponentDescriptionImpl<C, I, E, S, Unit>
+ = this.imap { x }
 
-inline fun <C,Ei,Eo,A,B,X> ComponentDescription<C, Ei, Eo, A, B>.imap(
+inline fun <C,I,E,S,A,X> ComponentDescriptionImpl<C, I, E, S, A>.imap(
     crossinline f: (X) -> A
-): ComponentDescription<C, Ei, Eo, X, B> {
+): ComponentDescriptionImpl<C, I, E, S, X> {
     val origDescr = this
-    return object: ComponentDescription<C, Ei, Eo, X, B> {
+    return object: ComponentDescriptionImpl<C, I, E, S, X> {
         @Composable
         override fun initCompose(ctx: C) {
             origDescr.initCompose(ctx)
         }
 
-        override fun initialize(ctx: C, initialValue: X): Component<Ei, Eo, X, B> {
+        override fun initialize(ctx: C, initialValue: X): ComponentImpl<C, I, E, S, X> {
             val orig = origDescr.initialize(ctx, f(initialValue))
-            return object: Component<Ei, Eo, X, B> {
+            return object: ComponentImpl<C, I, E, S, X> {
                 @Composable
-                override fun contents() {
-                    orig.contents()
+                override fun contents(state: S) {
+                    orig.contents(state)
                 }
-                override fun onEvent(event: Ei) {
-                    orig.onEvent(event)
-                }
-                override val events: Flow<Eo>
+                override val events: Flow<E>
                     get() = orig.events
-                override val result: StateFlow<B>
-                    get() = orig.result
+                override val state: StateFlow<S>
+                    get() = orig.state
+                override val impl: I
+                    get() = orig.impl
             }
         }
     }
 }
 
-fun <C,Ei,Eo,A,B,X> ComponentDescription<C, Ei, Eo, A, B>.omap(f: (B) -> X): ComponentDescription<C, Ei, Eo, A, X> {
-    val origDescr = this
-    return object: ComponentDescription<C, Ei, Eo, A, X> {
-        override fun initialize(ctx: C, initialValue: A): Component<Ei, Eo, A, X> {
-            val orig = origDescr.initialize(ctx, initialValue)
-            return object: Component<Ei, Eo, A, X> {
-                @Composable
-                override fun contents() {
-                    orig.contents()
-                }
-                override val events: Flow<Eo>
-                    get() = orig.events
-                override val result: StateFlow<X>
-                    get() = orig.result
-                        .mapStateFlow(f)
-
-                override fun onEvent(event: Ei) {
-                    with(orig) { onEvent(event) }
-                }
-            }
-        }
-
-        @Composable
-        override fun initCompose(ctx: C) {
-            origDescr.initCompose(ctx)
-        }
-    }
-}
-
+/**
+ * Helper function to obtain the composable function for rendering the given component.
+ *
+ * Useful for making use of preview functionality for composable functions.
+ */
 @Composable
-fun <Ei,Eo,A,B,C: IodineContext> Component<Ei, Eo, A, B>.getContents(ctx: C) {
+fun <C: IodineContext, I, E, S, A> ComponentImpl<C, I, E, S, A>.getContents(ctx: C) {
     val component = this
-    val newEvents = MutableSharedFlow<Eo>()
-    component.events
-        .onEach { event ->
-            newEvents.emit(
-                event
-            )
-        }
-    val newComponent = object: Component<Ei, Eo, A, B> {
-        @Composable
-        override fun contents() {
-            with(component) { contents() }
-        }
-
-        override fun onEvent(event: Ei) {
-            with(component) { onEvent(event) }
-        }
-
-        override val events: Flow<Eo>
-            get() = newEvents
-        override val result: StateFlow<B>
-            get() = component.result
-
-    }
-    newComponent.contents()
+    val componentState = component.state.collectAsState()
+    val state by remember { componentState }
+    component.contents(state)
 }
 
-inline fun <C,Ei,Eo,A,B> WrappedComponent(crossinline layout: @Composable () (@Composable () () -> Unit) -> Unit, component: ComponentDescription<C, Ei, Eo, A, B>): ComponentDescription<C, Ei, Eo, A, B>
+/**
+ * Helper function to obtain the composable function for rendering the given component description.
+ *
+ * Useful for making use of preview functionality for composable functions.
+ */
+@Composable
+fun <C: IodineContext, I, E, S, A> ComponentDescriptionImpl<C, I, E, S, A>.getContents(
+    ctx: C,
+    initialValue: A
+) {
+    val component = this.initialize(ctx, initialValue)
+    this.initCompose(ctx)
+
+    val componentState = component.state.collectAsState()
+    val state by remember { componentState }
+    component.contents(state)
+}
+
+inline fun <C,I,E,S,A> WrappedComponent(
+    crossinline layout: @Composable () (@Composable () () -> Unit) -> Unit,
+    component: ComponentDescriptionImpl<C, I, E, S, A>
+): ComponentDescriptionImpl<C, I, E, S, A>
     = component.wrap(layout)
 
-inline fun <C,Ei,Eo,A,B> ComponentDescription<C, Ei, Eo, A, B>.wrap(crossinline f: @Composable () (@Composable () () -> Unit) -> Unit): ComponentDescription<C, Ei, Eo, A, B> {
+inline fun <C,I,E,S,A> ComponentDescriptionImpl<C, I, E, S, A>.wrap(
+    crossinline f: @Composable () (@Composable () () -> Unit) -> Unit
+): ComponentDescriptionImpl<C, I, E, S, A> {
     val origDescr = this
-    return object: ComponentDescription<C, Ei, Eo, A, B> {
+    return object: ComponentDescriptionImpl<C, I, E, S, A> {
         @Composable
         override fun initCompose(ctx: C) {
             origDescr.initCompose(ctx)
         }
 
-        override fun initialize(ctx: C, initialValue: A): Component<Ei, Eo, A, B> {
+        override fun initialize(ctx: C, initialValue: A): ComponentImpl<C, I, E, S, A> {
             val orig = origDescr.initialize(ctx, initialValue)
-            return object: Component<Ei, Eo, A, B> {
+            return object: ComponentImpl<C, I, E, S, A> {
                 @Composable
-                override fun contents() {
-                    f { with(orig) { contents() } }
+                override fun contents(state: S) {
+                    f { with(orig) { contents(state) } }
                 }
 
-                override val events: Flow<Eo>
+                override val impl: I
+                    get() = orig.impl
+                override val events: Flow<E>
                     get() = orig.events
-                override val result: StateFlow<B>
-                    get() = orig.result
-
-                override fun onEvent(event: Ei) {
-                    with(orig) { onEvent(event) }
-                }
+                override val state: StateFlow<S>
+                    get() = orig.state
             }
         }
     }
 }
 
-inline fun <C,D,Ei,Eo,A,B> ComponentDescription<C, Ei, Eo, A, B>.mapCtx(crossinline  f: (D) -> C): ComponentDescription<D, Ei, Eo, A, B> {
+/*
+// Note: I'm not sure how useful this will be anymore.
+// Is there an instance where a transformation like this makes sense?
+inline fun <C,D,I,E,A> ComponentDescription<C, I, E, A>.mapCtx(
+    crossinline f: (C) -> D
+): ComponentDescription<D, I, E, A> {
     val origDescr = this
-    return object: ComponentDescription<D, Ei, Eo, A, B> {
+    return object: ComponentDescription<D, I, E, A> {
         @Composable
         override fun initCompose(ctx: D) {
             origDescr.initCompose(f(ctx))
         }
 
-        override fun initialize(ctx: D, initialValue: A): Component<Ei, Eo, A, B> {
+        override fun initialize(ctx: D, initialValue: A): Component<D, I, E, A> {
             val orig = origDescr.initialize(f(ctx), initialValue)
-            return object: Component<Ei, Eo, A, B> {
+            return object: Component<D, I, E, A> {
+                override fun <A> interact(action: I.(D) -> A): A {
+                    return with(orig) { interact { action(f(it)) } }
+                }
+
                 @Composable
                 override fun contents() {
                     with(orig) { contents() }
@@ -189,68 +186,39 @@ inline fun <C,D,Ei,Eo,A,B> ComponentDescription<C, Ei, Eo, A, B>.mapCtx(crossinl
                     get() = orig.events
                 override val result: StateFlow<B>
                     get() = orig.result
-                override fun onEvent(event: Ei) {
-                    with(orig) { onEvent(event) }
-                }
             }
         }
     }
 }
+ */
 
-inline fun <C,Ei,Eo,X,A,B> ComponentDescription<C, Ei, Eo, A, B>.mapEvents(crossinline f: suspend (Eo) -> X): ComponentDescription<C, Ei, X, A, B> {
+/**
+ * Helper function for transforming the type of events that a component emits.
+ */
+inline fun <C,I,E,X,S,A> ComponentDescriptionImpl<C, I, E, S, A>.mapEvents(
+    crossinline f: suspend (E) -> X
+): ComponentDescriptionImpl<C, I, X, S, A> {
     val origDescr = this
-    return object: ComponentDescription<C, Ei, X, A, B> {
+    return object: ComponentDescriptionImpl<C, I, X, S, A> {
         @Composable
         override fun initCompose(ctx: C) {
             origDescr.initCompose(ctx)
         }
 
-        override fun initialize(ctx: C, initialValue: A): Component<Ei, X, A, B> {
+        override fun initialize(ctx: C, initialValue: A): ComponentImpl<C, I, X, S, A> {
             val orig = origDescr.initialize(ctx, initialValue)
-            return object: Component<Ei, X, A, B> {
+            return object: ComponentImpl<C, I, X, S, A> {
                 @Composable
-                override fun contents() {
-                    with(orig) { contents() }
+                override fun contents(state: S) {
+                    with(orig) { contents(state) }
                 }
 
                 override val events: Flow<X>
                     get() = orig.events.map(f)
-                override val result: StateFlow<B>
-                    get() = orig.result
-
-                override fun onEvent(event: Ei) {
-                    with(orig) { onEvent(event) }
-                }
-            }
-        }
-    }
-}
-
-inline fun <C,Ei,Eo,A,B> ComponentDescription<C, Ei, Eo, A, B>.ignoreEvents(
-): ComponentDescription<C, Void, Void, A, B> {
-    val origDescr = this
-    return object: ComponentDescription<C, Void, Void, A, B> {
-        @Composable
-        override fun initCompose(ctx: C) {
-            origDescr.initCompose(ctx)
-        }
-
-        override fun initialize(ctx: C, initialValue: A): Component<Void, Void, A, B> {
-            val orig = origDescr.initialize(ctx, initialValue)
-            return object: Component<Void, Void, A, B> {
-                @Composable
-                override fun contents() {
-                    with(orig) { contents() }
-                }
-
-                override val events: Flow<Void>
-                    get() = emptyFlow()
-                override val result: StateFlow<B>
-                    get() = orig.result
-
-                override fun onEvent(event: Void) {
-                    with(orig) { onEvent(event) }
-                }
+                override val impl: I
+                    get() = orig.impl
+                override val state: StateFlow<S>
+                    get() = orig.state
             }
         }
     }

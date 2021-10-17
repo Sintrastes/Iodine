@@ -10,6 +10,7 @@ pluginManagement {
 }
 
 rootProject.name = "iodine"
+include("comonadic-ui")
 include("core")
 include("desktop")
 include("android")

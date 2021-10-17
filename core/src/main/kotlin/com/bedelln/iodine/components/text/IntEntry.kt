@@ -5,14 +5,13 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import arrow.core.Either
 import com.bedelln.iodine.components.ValidatedComponent
 import com.bedelln.iodine.components.ValidationEvent
 import com.bedelln.iodine.interfaces.*
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.flow.SharingStarted.Companion.Lazily
+import com.bedelln.iodine.store.ValidatingStoreComponent
+import com.bedelln.iodine.store.ValidatingStoreComponentDescription
 import kotlinx.coroutines.launch
 
 object InvalidInteger

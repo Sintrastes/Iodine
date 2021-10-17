@@ -1,4 +1,4 @@
-package com.bedelln.iodine.components
+package com.bedelln.iodine.components.builders
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.Composable
@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import arrow.continuations.Effect
 import arrow.continuations.generic.DelimitedScope
 import com.bedelln.iodine.*
-import com.bedelln.iodine.interfaces.Description
 import com.bedelln.iodine.interfaces.Component
 import com.bedelln.iodine.interfaces.ComponentDescription
 import com.bedelln.iodine.interfaces.IodineContext
@@ -15,7 +14,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
-import java.util.function.Consumer
 
 // Note: Currently I can't directly mirror
 // what Compose can do here with Columns.
@@ -69,7 +67,7 @@ sealed class IodineMonadF<Cm: IMCtx, C: IodineContext, A> {
 }
 */
 
-interface ColumnCtx: IMCtx {
+interface ColumnCtx {
 
     abstract class ColumnEffect<C: IodineContext, A>(
         val ctx: C,
@@ -97,7 +95,7 @@ interface ColumnCtx: IMCtx {
         ): IodineMonad<ColumnCtx, C, A> =
             Effect.restricted(
                 eff = { scope ->
-                    object: ColumnEffect<C,A>(ctx,childComponents) {
+                    object: ColumnEffect<C, A>(ctx,childComponents) {
                         override fun control(): DelimitedScope<IodineMonad<ColumnCtx, C, A>> {
                             return scope
                         }
@@ -138,7 +136,7 @@ interface RowCtx: IMCtx {
         ): IodineMonad<RowCtx, C, A> =
             Effect.restricted(
                 eff = { scope ->
-                    object: ColumnEffect<C,A>(ctx, childComponents) {
+                    object: ColumnEffect<C, A>(ctx, childComponents) {
                         override fun control(): DelimitedScope<IodineMonad<RowCtx, C, A>> {
                             return scope
                         }
