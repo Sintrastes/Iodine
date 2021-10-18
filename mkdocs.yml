@@ -1,0 +1,32 @@
+site_name: Iodine
+repo_url: https://github.com/Sintrastes/Iodine
+copyright: Copyright &copy; 2020 - 2021 Nathan Bedell
+nav:
+    - Introduction:  index.md
+    - 'Concepts': 
+      - concepts/basic_concepts.md
+      - concepts/comonadic_components.md
+      - concepts/profunctor_optics.md
+    - 'Examples': 
+      - examples/basic_examples.md
+      - examples/calculator_app.md
+      - examples/todo_app.md
+theme:
+  name: material
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    - scheme: slate 
+      primary: deep purple
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.expand
+    - navigation.indexes
+    - toc.integrate
+extra_css:
+  - stylesheets/extra.css
