@@ -11,6 +11,9 @@ nav:
       - examples/basic_examples.md
       - examples/calculator_app.md
       - examples/todo_app.md
+    - 'Additional Resources': 
+      - additional/halogen_comparison.md
+      - additional/higher_kinds_in_kotlin.md
 theme:
   name: material
   palette:

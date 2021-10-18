@@ -1,0 +1,47 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:com.bedelln.iodine.android.components////PointingToDeclaration/android/com.bedelln.iodine.android.components/index.html
+$dokka.location:com.bedelln.iodine.android.components/DropdownMenu.Event///PointingToDeclaration/android/com.bedelln.iodine.android.components/-dropdown-menu/-event/index.html
+$dokka.location:com.bedelln.iodine.android.components/DropdownMenu.Event/Event/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/android/com.bedelln.iodine.android.components/-dropdown-menu/-event/-event.html
+$dokka.location:com.bedelln.iodine.android.components/DropdownMenu.Event/selected/#/PointingToDeclaration/android/com.bedelln.iodine.android.components/-dropdown-menu/-event/selected.html
+$dokka.location:com.bedelln.iodine.android.components/DropdownMenu///PointingToDeclaration/android/com.bedelln.iodine.android.components/-dropdown-menu/index.html
+$dokka.location:com.bedelln.iodine.android.components/DropdownMenu/DropdownMenu/#kotlin.collections.List[TypeParam(bounds=[com.bedelln.iodine.interfaces.Displayable[TypeParam(bounds=[com.bedelln.iodine.interfaces.IodineContext])]])]/PointingToDeclaration/android/com.bedelln.iodine.android.components/-dropdown-menu/-dropdown-menu.html
+$dokka.location:com.bedelln.iodine.android.components/DropdownMenu/dropdownItems/#/PointingToDeclaration/android/com.bedelln.iodine.android.components/-dropdown-menu/dropdown-items.html
+$dokka.location:com.bedelln.iodine.android.components/DropdownMenu/initCompose/#TypeParam(bounds=[com.bedelln.iodine.interfaces.IodineContext])/PointingToDeclaration/android/com.bedelln.iodine.android.components/-dropdown-menu/init-compose.html
+$dokka.location:com.bedelln.iodine.android.components/DropdownMenu/initialize/#TypeParam(bounds=[com.bedelln.iodine.interfaces.IodineContext])#TypeParam(bounds=[com.bedelln.iodine.interfaces.Displayable[TypeParam(bounds=[com.bedelln.iodine.interfaces.IodineContext])]])/PointingToDeclaration/android/com.bedelln.iodine.android.components/-dropdown-menu/initialize.html
+$dokka.location:com.bedelln.iodine.android.tools////PointingToDeclaration/android/com.bedelln.iodine.android.tools/index.html
+$dokka.location:com.bedelln.iodine.android.tools/AndroidAlertDialog///PointingToDeclaration/android/com.bedelln.iodine.android.tools/-android-alert-dialog/index.html
+$dokka.location:com.bedelln.iodine.android.tools/AndroidAlertDialog/AndroidAlertDialog/#kotlin.String#com.bedelln.iodine.interfaces.Description[TypeParam(bounds=[com.bedelln.iodine.interfaces.IodineContext, com.bedelln.iodine.interfaces.HasRef]),TypeParam(bounds=[kotlin.Any?]),com.bedelln.iodine.interfaces.HComponent[TypeParam(bounds=[kotlin.Any?]),TypeParam(bounds=[kotlin.Any?]),TypeParam(bounds=[kotlin.Any?]),TypeParam(bounds=[kotlin.Any?])]]/PointingToDeclaration/android/com.bedelln.iodine.android.tools/-android-alert-dialog/-android-alert-dialog.html
+$dokka.location:com.bedelln.iodine.android.tools/AndroidAlertDialog/contents/#/PointingToDeclaration/android/com.bedelln.iodine.android.tools/-android-alert-dialog/contents.html
+$dokka.location:com.bedelln.iodine.android.tools/AndroidAlertDialog/initCompose/#TypeParam(bounds=[com.bedelln.iodine.interfaces.IodineContext, com.bedelln.iodine.interfaces.HasRef])/PointingToDeclaration/android/com.bedelln.iodine.android.tools/-android-alert-dialog/init-compose.html
+$dokka.location:com.bedelln.iodine.android.tools/AndroidAlertDialog/initialize/#TypeParam(bounds=[com.bedelln.iodine.interfaces.IodineContext, com.bedelln.iodine.interfaces.HasRef])#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/android/com.bedelln.iodine.android.tools/-android-alert-dialog/initialize.html
+$dokka.location:com.bedelln.iodine.android.tools/AndroidAlertDialog/onFinish/#/PointingToDeclaration/android/com.bedelln.iodine.android.tools/-android-alert-dialog/on-finish.html
+$dokka.location:com.bedelln.iodine.android.tools/AndroidAlertDialog/showDialogAction/#/PointingToDeclaration/android/com.bedelln.iodine.android.tools/-android-alert-dialog/show-dialog-action.html
+$dokka.location:com.bedelln.iodine.android.tools/AndroidAlertDialog/showDialogFlow/#/PointingToDeclaration/android/com.bedelln.iodine.android.tools/-android-alert-dialog/show-dialog-flow.html
+$dokka.location:com.bedelln.iodine.android.tools/AndroidAlertDialog/showState/#/PointingToDeclaration/android/com.bedelln.iodine.android.tools/-android-alert-dialog/show-state.html
+$dokka.location:com.bedelln.iodine.android.tools/AndroidAlertDialog/title/#/PointingToDeclaration/android/com.bedelln.iodine.android.tools/-android-alert-dialog/title.html
+$dokka.location:com.bedelln.iodine.android.tools/Snackbar///PointingToDeclaration/android/com.bedelln.iodine.android.tools/-snackbar/index.html
+$dokka.location:com.bedelln.iodine.android.tools/Snackbar/Snackbar/#/PointingToDeclaration/android/com.bedelln.iodine.android.tools/-snackbar/-snackbar.html
+$dokka.location:com.bedelln.iodine.android.tools/Snackbar/initCompose/#com.bedelln.iodine.android.AndroidCtx/PointingToDeclaration/android/com.bedelln.iodine.android.tools/-snackbar/init-compose.html
+$dokka.location:com.bedelln.iodine.android.tools/Snackbar/initialize/#com.bedelln.iodine.android.AndroidCtx#kotlin.Unit/PointingToDeclaration/android/com.bedelln.iodine.android.tools/-snackbar/initialize.html
+$dokka.location:com.bedelln.iodine.android.tools/Toast///PointingToDeclaration/android/com.bedelln.iodine.android.tools/-toast/index.html
+$dokka.location:com.bedelln.iodine.android.tools/Toast/Toast/#kotlin.String/PointingToDeclaration/android/com.bedelln.iodine.android.tools/-toast/-toast.html
+$dokka.location:com.bedelln.iodine.android.tools/Toast/initCompose/#com.bedelln.iodine.android.AndroidCtx/PointingToDeclaration/android/com.bedelln.iodine.android.tools/-toast/init-compose.html
+$dokka.location:com.bedelln.iodine.android.tools/Toast/initialize/#com.bedelln.iodine.android.AndroidCtx#kotlin.Unit/PointingToDeclaration/android/com.bedelln.iodine.android.tools/-toast/initialize.html
+$dokka.location:com.bedelln.iodine.android.tools/Toast/message/#/PointingToDeclaration/android/com.bedelln.iodine.android.tools/-toast/message.html
+$dokka.location:com.bedelln.iodine.android////PointingToDeclaration/android/com.bedelln.iodine.android/index.html
+$dokka.location:com.bedelln.iodine.android/ActivityCtx///PointingToDeclaration/android/com.bedelln.iodine.android/-activity-ctx/index.html
+$dokka.location:com.bedelln.iodine.android/ActivityCtx/activityCtx/#/PointingToDeclaration/android/com.bedelln.iodine.android/-activity-ctx/activity-ctx.html
+$dokka.location:com.bedelln.iodine.android/AndroidCtx///PointingToDeclaration/android/com.bedelln.iodine.android/-android-ctx/index.html
+$dokka.location:com.bedelln.iodine.android/AndroidCtx/defaultCtx/#/PointingToDeclaration/android/com.bedelln.iodine.android/-android-ctx/default-ctx.html
+$dokka.location:com.bedelln.iodine.android/FragmentCtx///PointingToDeclaration/android/com.bedelln.iodine.android/-fragment-ctx/index.html
+$dokka.location:com.bedelln.iodine.android/FragmentCtx/fragmentCtx/#/PointingToDeclaration/android/com.bedelln.iodine.android/-fragment-ctx/fragment-ctx.html
+$dokka.location:com.bedelln.iodine.android/IodineActivity///PointingToDeclaration/android/com.bedelln.iodine.android/-iodine-activity/index.html
+$dokka.location:com.bedelln.iodine.android/IodineActivity/IodineActivity/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/android/com.bedelln.iodine.android/-iodine-activity/-iodine-activity.html
+$dokka.location:com.bedelln.iodine.android/IodineActivity/contents/#/PointingToDeclaration/android/com.bedelln.iodine.android/-iodine-activity/contents.html
+$dokka.location:com.bedelln.iodine.android/IodineActivity/contextInitializer/#/PointingToDeclaration/android/com.bedelln.iodine.android/-iodine-activity/context-initializer.html
+$dokka.location:com.bedelln.iodine.android/IodineActivity/initialValue/#/PointingToDeclaration/android/com.bedelln.iodine.android/-iodine-activity/initial-value.html
+com.bedelln.iodine.android
+com.bedelln.iodine.android.components
+com.bedelln.iodine.android.tools
+
