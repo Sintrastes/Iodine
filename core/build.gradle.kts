@@ -5,6 +5,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 buildscript {
     repositories {
         google()
+        mavenLocal()
+        jcenter()
         mavenCentral()
         gradlePluginPortal()
     }
@@ -21,9 +23,9 @@ version = "0.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    google()
-    // TODO: It seems like dokka doesn't build without jcenter.
+    mavenLocal()
     jcenter()
+    google()
     maven(url="https://dl.bintray.com/kotlin/dokka")
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
 }
@@ -39,6 +41,7 @@ dependencies {
     implementation(compose.foundation)
     implementation(compose.material)
     implementation("io.arrow-kt:arrow-fx-coroutines:$arrow_version")
+    implementation("io.github.sintrastes:buildable-kt-interfaces:1.0-SNAPSHOT")
 }
 
 tasks.jar {
