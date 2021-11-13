@@ -97,7 +97,9 @@ passed in.
 
 Note that the "event" here is different from the usual `E` parameter of an Iodine `Component`, which is a type of event that the component can asynchronously _output_ -- so to distinguish between the two, we use the convention of `Ei` as a "input event" and `Eo` as an "output event".
 
-![HComponent](https://raw.githubusercontent.com/Sintrastes/Iodine/gh-pages/HComponent.png)
+<figure markdown>
+  ![HComponent](https://raw.githubusercontent.com/Sintrastes/Iodine/gh-pages/HComponent.png)
+</figure>
 
 Cofree Components
 ----------------
