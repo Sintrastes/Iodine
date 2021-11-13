@@ -621,7 +621,10 @@ val personNameStore = Store(
 <p>So again, a <code>Moore</code> comonad holds on to a "current state" with <code>value</code>. However, unlike the <code>Store</code> comonad, it also comes equipped with a transition function <code>next</code> which depending on an event <code>E</code>, will return a new state of the Moore machine (<code>Moore&lt;E, A&gt;</code>) according to the event
 passed in.</p>
 <p>Note that the "event" here is different from the usual <code>E</code> parameter of an Iodine <code>Component</code>, which is a type of event that the component can asynchronously <em>output</em> -- so to distinguish between the two, we use the convention of <code>Ei</code> as a "input event" and <code>Eo</code> as an "output event".</p>
-<p><img alt="HComponent" src="https://raw.githubusercontent.com/Sintrastes/Iodine/gh-pages/HComponent.png" /></p>
+<figure markdown>
+  ![HComponent](https://raw.githubusercontent.com/Sintrastes/Iodine/gh-pages/HComponent.png)
+</figure>
+
 <h2 id="cofree-components">Cofree Components</h2>
 <p>The most flexible of the comonadic components defined by Iodine is that of a <code>Cofree</code> component. Unlike the other comonads we have seen, <code>Cofree</code> takes a <a href="../../additional/higher_kinds_in_kotlin/">higher-kinded</a> parameter <code>F</code>:</p>
 <pre><code class="language-kotlin">data class Cofree&lt;F, A&gt;(

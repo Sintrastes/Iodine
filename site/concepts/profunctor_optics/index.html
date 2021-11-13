@@ -67,7 +67,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#profunctor-optics" class="md-skip">
+        <a href="#profunctors" class="md-skip">
           Skip to content
         </a>
       
@@ -344,8 +344,29 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#profunctors" class="md-nav__link">
+    Profunctors
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#forms" class="md-nav__link">
+    Forms
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#profunctor-optics" class="md-nav__link">
     Profunctor optics
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#applications-of-profunctor-optics-to-forms" class="md-nav__link">
+    Applications of Profunctor Optics to Forms
   </a>
   
 </li>
@@ -536,8 +557,22 @@
                 
                   <h1>Profunctor optics</h1>
                 
-                <h2 id="profunctor-optics">Profunctor optics</h2>
+                <h2 id="profunctors">Profunctors</h2>
 <p>In addition to comonads, another concept from the pure functional programming community that Iodine makes use of is that of <em>profunctors</em> and <em>profunctor optics</em>.</p>
+<p>Profunctors are a generalization of functions. Essentially, they can be thought of as objects with an "input type", and an "output type" -- where these input and output types can be "adapted" by providing the appropriate type of function.</p>
+<pre><code class="language-kotlin">interface Profunctor&lt;P&gt; {
+    fun Hk2&lt;P,A,B&gt;.lmap(f: (X) -&gt; A): Hk2&lt;P,X,B&gt;
+    fun Hk2&lt;P,A,B&gt;.rmap(f: (B) -&gt; X): Hk2&lt;P,A,X&gt;
+}
+</code></pre>
+<h2 id="forms">Forms</h2>
+<p>For every <code>Component</code> interface in Iodine, such as <code>ComponentImpl</code>, <code>MooreComponent</code>, and so on -- there is a comporresponding interface for a <code>Form</code> that extends the given notion of a component with an <em>output type</em>. This interface is incredibly useful for components used for <em>data entry</em> -- hence the name. Forms will have all the same generic parameters as Components, plus an additional one for it's output type. So, for instance, something like <code>Form&lt;Ctx,I,E,A,B&gt;</code>, rather than <code>Component&lt;Ctx,I,E,A&gt;</code>.</p>
+<p>Defining forms this way allows us to view forms as an important example of a <code>Profunctor</code>, as witnessed by the <code>lmap</code> and <code>rmap</code> methods defined for such forms. </p>
+<h2 id="profunctor-optics">Profunctor optics</h2>
+<p><em>Optics</em> are usually concieved as a type of <em>modular data accessor_s for immutable data structures in functional languages. However, optics also have <a href="https://medium.com/@wigahluk/another-look-through-optics-ffd253336e9c">another side</a> less seen -- and this can be seen through the lens (pun intended) of _profunctor optics</em>.</p>
+<p>...</p>
+<h2 id="applications-of-profunctor-optics-to-forms">Applications of Profunctor Optics to Forms</h2>
+<p>...</p>
                 
               
               

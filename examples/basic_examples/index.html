@@ -586,6 +586,26 @@ object: ValidatingStoreComponent&lt;String, Int, InvalidInteger&gt;(initialValue
 }
 </code></pre>
 <h2 id="combining-components">Combining components</h2>
+<p>The easiest way to combine smaller components into larger components in Iodine is to make use of one of the provided <em>builders</em>. For components which are not <code>Form</code>s -- you'll generally want to make use of <code>ComponentBuilder</code>.</p>
+<pre><code class="language-kotlin">
+</code></pre>
+<p>For combining <code>Form</code>s, a little bit more care is needed. Currently Iodine only directly supports building up forms whose input and output types are immutable data classes. For such cases, we can make use of the <a href="https://github.com/Sintrastes/buildable-kt">buildable-kt</a> library. </p>
+<p><code>buildable-kt</code> comes with an annotation <code>@GenBuildable</code>, which can be applied to a data class in order to automatically generate an implementation of the <code>Buildable</code> interface that Iodine needs in order to be able to construct a form for a complete type from smaller forms that are used for inputting it's constituent peices. </p>
+<p>To illustrate this, let's look at an example of how <code>buildable-kt</code> can be used alongside Iodine's <code>FormBuilder</code> to build up a form:</p>
+<pre><code class="language-kotlin">@GenBuildable
+data class Person(
+    val name: String,
+    val age: Int
+) {
+    companion object { }
+}
+
+object PersonForm: SFormDescription&lt;IodineCtx, Person&gt; by (
+    FormBuilder {
+
+    }
+)
+</code></pre>
                 
               
               
