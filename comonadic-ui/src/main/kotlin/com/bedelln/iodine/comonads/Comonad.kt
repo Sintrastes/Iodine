@@ -1,10 +1,7 @@
 package com.bedelln.iodine.comonads
 
+import com.bedelln.iodine.util.Functor
 import io.kindedj.Hk
-
-interface Functor<F> {
-    fun <A, B> Hk<F, A>.fmap(f: (A) -> B): Hk<F, B>
-}
 
 interface Comonad<W> : Functor<W> {
     fun <A> Hk<W, A>.extract(): A
