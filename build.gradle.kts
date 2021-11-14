@@ -1,11 +1,12 @@
 
-val kotlin_version = "1.5.30"
+val kotlin_version = "1.5.31"
 buildscript {
 
     repositories {
         mavenCentral()
         google()
         gradlePluginPortal()
+        maven(url = "https://oss.sonatype.org/content/repositories/snapshots/")
     }
 
     dependencies {
@@ -15,7 +16,7 @@ buildscript {
 }
 
 repositories {
-    jcenter() // or (not currently working) maven(url="https://dl.bintray.com/kotlin/dokka")
+    maven(url="https://dl.bintray.com/kotlin/dokka")
 }
 
 plugins {

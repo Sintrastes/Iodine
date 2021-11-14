@@ -1,28 +1,31 @@
 package com.bedelln.iodine.components
 
 import androidx.compose.runtime.*
-import androidx.compose.runtime.collectAsState
 import com.bedelln.iodine.interfaces.Component
 import com.bedelln.iodine.interfaces.ComponentDescription
+import com.bedelln.iodine.interfaces.ComponentImpl
 import com.bedelln.iodine.interfaces.IodineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 
-class Switch<C: IodineContext>(): ComponentDescription<C, Void, Void, Boolean, Boolean> {
-    @Composable
-    override fun initCompose(ctx: C) { }
+/**
+ * Iodine component for a single [androidx.compose.material.Switch].
+ */
+class Switch<C: IodineContext>(): ComponentDescription<C, Switch.Action, Void, Boolean> {
+    interface Action {
+        fun toggle()
+        fun isOn(): Boolean
+    }
 
-    override fun initialize(ctx: C, initialValue: Boolean): Component<Void, Void, Boolean, Boolean> {
-        return object: Component<Void, Void, Boolean, Boolean> {
+    override fun initialize(ctx: C, initialValue: Boolean): Component<Action, Void, Boolean> {
+        return object: ComponentImpl<Action, Void, Boolean, Boolean> {
             private val resultFlow = MutableStateFlow(initialValue)
+            override val state get() = resultFlow
 
             @Composable
-            override fun contents() {
-                val flowState = resultFlow.collectAsState()
-                val state by remember { flowState }
+            override fun contents(state: Boolean) {
                 androidx.compose.material.Switch(
                     checked = state,
                     onCheckedChange = {
@@ -33,12 +36,19 @@ class Switch<C: IodineContext>(): ComponentDescription<C, Void, Void, Boolean, B
                 )
             }
 
-            override fun onEvent(event: Void) { }
-
             override val events: Flow<Void>
                 get() = emptyFlow()
-            override val result: StateFlow<Boolean>
-                get() = resultFlow
+            override val impl = object: Action {
+                override fun toggle() {
+                    ctx.defaultScope.launch {
+                        resultFlow.emit(!resultFlow.value)
+                    }
+                }
+
+                override fun isOn(): Boolean {
+                    return state.value
+                }
+            }
         }
     }
 }

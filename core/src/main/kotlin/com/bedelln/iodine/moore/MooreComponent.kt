@@ -34,7 +34,7 @@ typealias MooreComponent<C,Ei,Eo,A>
  * @param initialState The initial state of the component.
  */
 abstract class MooreComponentImpl<C: IodineContext,Ei,Eo,S,A>(
-    initialState: S
+    val initialState: S
 ): ComponentDescriptionImpl<C,EventInterface<Ei>,Eo,S,A> {
 
     abstract fun reducer(event: Ei, state: S): S
@@ -47,8 +47,8 @@ abstract class MooreComponentImpl<C: IodineContext,Ei,Eo,S,A>(
     @Composable
     override fun initCompose(ctx: C) { }
 
-    override fun initialize(ctx: C, initialValue: A): ComponentImpl<C, EventInterface<Ei>, Eo, S, A> {
-        return object: ComponentImpl<C, EventInterface<Ei>, Eo, S, A> {
+    override fun initialize(ctx: C, initialValue: A): ComponentImpl<EventInterface<Ei>, Eo, S, A> {
+        return object: ComponentImpl<EventInterface<Ei>, Eo, S, A> {
             @Composable
             override fun contents(state: S) {
                 ctx.render(state)
@@ -67,6 +67,25 @@ abstract class MooreComponentImpl<C: IodineContext,Ei,Eo,S,A>(
 
             override val state: StateFlow<S>
                 get() = stateStream
+        }
+    }
+}
+
+/**
+ * Monadic extend function for a [MooreComponent].
+ */
+inline fun <C: IodineContext, Ei, Eo, S, A, X, B> MooreComponentImpl<C,Ei,Eo,S,A>.extendM(
+    crossinline f: (MooreComponentImpl<C,Ei,Eo,S,A>) -> StateFlow<B>
+): MooreComponentImpl<C,Ei,Eo,S,A> = run {
+    val component = this
+    object : MooreComponentImpl<C, Ei, Eo, S, A>(component.initialState) {
+        override fun reducer(event: Ei, state: S): S =
+            component.reducer(event, state)
+
+        @Composable
+        override fun C.render(state: S) {
+            val ctx = this
+            with(component) { ctx.render(state) }
         }
     }
 }

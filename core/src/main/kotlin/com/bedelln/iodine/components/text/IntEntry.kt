@@ -7,22 +7,24 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import arrow.core.Either
-import com.bedelln.iodine.components.ValidatedComponent
-import com.bedelln.iodine.components.ValidationEvent
+import com.bedelln.iodine.forms.ValidatedForm
+import com.bedelln.iodine.forms.ValidatingForm
+import com.bedelln.iodine.forms.ValidatingFormDescription
+import com.bedelln.iodine.forms.ValidationEvent
 import com.bedelln.iodine.interfaces.*
-import com.bedelln.iodine.store.ValidatingStoreComponent
-import com.bedelln.iodine.store.ValidatingStoreComponentDescription
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 
 object InvalidInteger
 
 /** A component for inputting integers. */
-class IntEntry<C : IodineContext> : ComponentDescription<C, ValidationEvent<Void>, Void, String, Int?> by (
-    ValidatedComponent<C, String, Int, InvalidInteger>(
-        object : ValidatingStoreComponentDescription<C, String, Int, InvalidInteger> {
+class IntEntry<C : IodineContext> : FormDescription<C, Any, ValidationEvent<Void>, String, Int?> by (
+    ValidatedForm(
+        object: ValidatingFormDescription<C, Unit, Void, String, Int, InvalidInteger> {
 
             override fun initialize(ctx: C, initialValue: String) =
-                object: ValidatingStoreComponent<String, Int, InvalidInteger>(initialValue) {
+                object: ValidatingForm<C, Unit, Void, String, Int, InvalidInteger>(initialValue) {
 
                     override fun view(input: String) =
                         input.toIntOrNull()?.let { Either.Right(it) }
@@ -51,6 +53,11 @@ class IntEntry<C : IodineContext> : ComponentDescription<C, ValidationEvent<Void
                             }
                         }
                     }
+
+                    override val impl: Unit
+                        get() = Unit
+                    override val events: Flow<Void>
+                        get() = emptyFlow()
                 }
         }
     )

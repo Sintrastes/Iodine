@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import com.bedelln.iodine.interfaces.Component
 import com.bedelln.iodine.interfaces.ComponentDescription
+import com.bedelln.iodine.interfaces.ComponentImpl
 import com.bedelln.iodine.interfaces.IodineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,27 +15,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 
-class TextEntry<C: IodineContext>(): ComponentDescription<C, TextEntry.Event, TextEntry.Event, String, String> {
-
-    sealed class Event {
-        object OnSelected: Event()
-        object OnDeselected : Event()
+class TextEntry<C: IodineContext>(): ComponentDescription<C, TextEntry.Action, Void, String> {
+    interface Action {
+        fun setText(value: String)
     }
 
-    @Composable
-    override fun initCompose(ctx: C) { }
-
-    override fun initialize(ctx: C, initialValue: String): Component<Event, Event, String, String> {
-        return object : Component<Event, Event, String, String> {
+    override fun initialize(ctx: C, initialValue: String): Component<Action, Void, String> {
+        return object : ComponentImpl<Action, Void, String, String> {
             private val contentsFlow = MutableStateFlow(initialValue)
+            override val state = contentsFlow
 
             @Composable
-            override fun contents() {
-                var contents by remember { mutableStateOf(initialValue) }
+            override fun contents(state: String) {
                 TextField(
-                    value = contents,
+                    value = state,
                     onValueChange = { newValue ->
-                        contents = newValue
                         ctx.defaultScope.launch {
                             contentsFlow.emit(newValue)
                         }
@@ -43,11 +38,15 @@ class TextEntry<C: IodineContext>(): ComponentDescription<C, TextEntry.Event, Te
                 )
             }
 
-            override val events: Flow<Event> get() = emptyFlow()
-            override val result: StateFlow<String>
-                get() = contentsFlow
-
-            override fun onEvent(event: Event) { }
+            override val impl = object : Action {
+                override fun setText(value: String) {
+                    ctx.defaultScope.launch {
+                        contentsFlow.emit(value)
+                    }
+                }
+            }
+            override val events: Flow<Void>
+                get() = emptyFlow()
         }
     }
 }

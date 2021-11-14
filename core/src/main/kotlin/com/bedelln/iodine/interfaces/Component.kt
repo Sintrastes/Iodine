@@ -11,7 +11,7 @@ interface Gettable<out B> {
     val result: StateFlow<B>
 }
 
-interface ViewModel<out I, out E, S, in A>: Settable<A> {
+interface ViewModel<out I, out E, out S, in A>: Settable<A> {
     val impl: I
     val events: Flow<E>
     val state: StateFlow<S>
@@ -21,14 +21,14 @@ fun <I, S, E, A,R> ViewModel<I, S, E, A>.interact(action: I.() -> R): R {
     return impl.action()
 }
 
-interface ComponentImpl<out Ctx, out I, out E, S, in A>: ViewModel<I,E,S,A> {
+interface ComponentImpl<out I, out E, S, in A>: ViewModel<I,E,S,A> {
     @Composable fun contents(state: S)
 }
 
-typealias Component<Ctx,I,E,A> = ComponentImpl<Ctx,I,E,*,A>
+typealias Component<I,E,A> = ComponentImpl<I,E,*,A>
 
 typealias ComponentDescriptionImpl<Ctx,I,E,S,A> =
-        Description<Ctx, A, ComponentImpl<Ctx, I, E, S, A>>
+        Description<Ctx, A, ComponentImpl<I, E, S, A>>
 
 typealias ComponentDescription<Ctx,I,E,A> =
         ComponentDescriptionImpl<Ctx,I,E,*,A>
@@ -37,12 +37,12 @@ typealias ComponentDescription<Ctx,I,E,A> =
 inline fun <C: IodineContext> Compose(
     crossinline f: @Composable() C.() -> Unit
 ): ComponentDescription<C, Unit, Void, Unit> {
-    return object: ComponentDescriptionImpl<C, Unit, Void, Unit, Unit> {
+    return object: ComponentDescription<C, Unit, Void, Unit> {
         @Composable
         override fun initCompose(ctx: C) { }
 
-        override fun initialize(ctx: C, initialValue: Unit): ComponentImpl<C, Unit, Void, Unit, Unit> {
-            return object: ComponentImpl<C, Unit, Void, Unit, Unit> {
+        override fun initialize(ctx: C, initialValue: Unit): ComponentImpl<Unit, Void, Unit, Unit> {
+            return object: ComponentImpl<Unit, Void, Unit, Unit> {
                 @Composable
                 override fun contents(state: Unit) { ctx.f() }
 
@@ -52,7 +52,7 @@ inline fun <C: IodineContext> Compose(
                     get() = MutableStateFlow(Unit)
 
                 override val impl: Unit
-                    get() = TODO("Not yet implemented")
+                    get() = Unit
             }
         }
     }
@@ -74,9 +74,9 @@ inline fun <C,I,E,S,A,X> ComponentDescriptionImpl<C, I, E, S, A>.imap(
             origDescr.initCompose(ctx)
         }
 
-        override fun initialize(ctx: C, initialValue: X): ComponentImpl<C, I, E, S, X> {
+        override fun initialize(ctx: C, initialValue: X): ComponentImpl<I, E, S, X> {
             val orig = origDescr.initialize(ctx, f(initialValue))
-            return object: ComponentImpl<C, I, E, S, X> {
+            return object: ComponentImpl<I, E, S, X> {
                 @Composable
                 override fun contents(state: S) {
                     orig.contents(state)
@@ -98,7 +98,7 @@ inline fun <C,I,E,S,A,X> ComponentDescriptionImpl<C, I, E, S, A>.imap(
  * Useful for making use of preview functionality for composable functions.
  */
 @Composable
-fun <C: IodineContext, I, E, S, A> ComponentImpl<C, I, E, S, A>.getContents(ctx: C) {
+fun <I, E, S, A> ComponentImpl<I, E, S, A>.getContents() {
     val component = this
     val componentState = component.state.collectAsState()
     val state by remember { componentState }
@@ -139,9 +139,9 @@ inline fun <C,I,E,S,A> ComponentDescriptionImpl<C, I, E, S, A>.wrap(
             origDescr.initCompose(ctx)
         }
 
-        override fun initialize(ctx: C, initialValue: A): ComponentImpl<C, I, E, S, A> {
+        override fun initialize(ctx: C, initialValue: A): ComponentImpl<I, E, S, A> {
             val orig = origDescr.initialize(ctx, initialValue)
-            return object: ComponentImpl<C, I, E, S, A> {
+            return object: ComponentImpl<I, E, S, A> {
                 @Composable
                 override fun contents(state: S) {
                     f { with(orig) { contents(state) } }
@@ -205,9 +205,9 @@ inline fun <C,I,E,X,S,A> ComponentDescriptionImpl<C, I, E, S, A>.mapEvents(
             origDescr.initCompose(ctx)
         }
 
-        override fun initialize(ctx: C, initialValue: A): ComponentImpl<C, I, X, S, A> {
+        override fun initialize(ctx: C, initialValue: A): ComponentImpl<I, X, S, A> {
             val orig = origDescr.initialize(ctx, initialValue)
-            return object: ComponentImpl<C, I, X, S, A> {
+            return object: ComponentImpl<I, X, S, A> {
                 @Composable
                 override fun contents(state: S) {
                     with(orig) { contents(state) }

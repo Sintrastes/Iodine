@@ -7,6 +7,10 @@ buildscript {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
+    }
+    dependencies {
+        classpath("io.arrow-kt:arrow-proofs-gradle-plugin:1.5.31-SNAPSHOT")
     }
 }
 
@@ -14,6 +18,7 @@ plugins {
     kotlin("jvm")
     id("org.jetbrains.compose") version "1.0.0-alpha4-build348"
     id("org.jetbrains.dokka")
+    // id("io.arrow-kt.proofs") version "1.5.31-SNAPSHOT"
 }
 
 group = "com.bedelln"
@@ -22,9 +27,8 @@ version = "0.1-SNAPSHOT"
 repositories {
     mavenCentral()
     google()
-    // TODO: It seems like dokka doesn't build without jcenter.
-    jcenter()
     maven(url="https://dl.bintray.com/kotlin/dokka")
+    maven(url = "https://oss.sonatype.org/content/repositories/snapshots/")
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
 }
 

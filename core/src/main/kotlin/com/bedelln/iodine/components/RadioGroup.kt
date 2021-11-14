@@ -3,40 +3,38 @@ package com.bedelln.iodine.components
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
-import com.bedelln.iodine.interfaces.Displayable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import com.bedelln.iodine.interfaces.Component
-import com.bedelln.iodine.interfaces.ComponentDescription
-import com.bedelln.iodine.interfaces.IodineContext
+import com.bedelln.iodine.interfaces.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class RadioGroup<A: Displayable<C>, C: IodineContext>(
     val values: List<A>
-): ComponentDescription<C, RadioGroup.Event, RadioGroup.Event, A?, A?> {
-    @Composable
-    override fun initCompose(ctx: C) { }
+): ComponentDescription<C, RadioGroup.Action<A>, Void, A?> {
+    interface Action<A> {
+        fun select(value: A)
+        fun currentlySelected(): A?
+    }
 
-    override fun initialize(ctx: C, initialValue: A?): Component<Event, Event, A?, A?> {
-        return object: Component<Event, Event, A?, A?> {
+    override fun initialize(ctx: C, initialValue: A?): Component<Action<A>, Void, A?> {
+        return object: ComponentImpl<Action<A>, Void, A?, A?> {
 
-            private val contentsFlow = MutableStateFlow(initialValue)
+            val contentsFlow = MutableStateFlow(initialValue)
+            override val state = contentsFlow
 
             @Composable
-            override fun contents() {
-                var selected by remember { mutableStateOf(initialValue) }
+            override fun contents(state: A?) {
                 Column {
                     for (i in values.indices) {
                         val value = values[i]
                         Row {
                             RadioButton(
-                                selected = value == selected,
+                                selected = value == state,
                                 onClick = {
-                                    selected = value
                                     ctx.defaultScope.launch {
                                         contentsFlow.emit(value)
                                     }
@@ -50,18 +48,20 @@ class RadioGroup<A: Displayable<C>, C: IodineContext>(
                 }
             }
 
-            override fun onEvent(event: Event) {
+            override val impl = object: Action<A> {
+                override fun select(value: A) {
+                    ctx.defaultScope.launch {
+                        contentsFlow.emit(value)
+                    }
+                }
 
+                override fun currentlySelected(): A? {
+                    return contentsFlow.value
+                }
             }
 
-            override val events: Flow<Event>
+            override val events: Flow<Void>
                 get() = emptyFlow()
-            override val result: StateFlow<A?>
-                get() = contentsFlow
         }
-    }
-
-    sealed class Event {
-        data class SelectItem<A>(val item: A, val index: Int): Event()
     }
 }
