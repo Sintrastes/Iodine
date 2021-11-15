@@ -9,9 +9,9 @@ buildscript {
         gradlePluginPortal()
         maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
     }
-    dependencies {
-        classpath("io.arrow-kt:arrow-proofs-gradle-plugin:1.5.31-SNAPSHOT")
-    }
+    // dependencies {
+    //     classpath("io.arrow-kt:arrow-proofs-gradle-plugin:1.5.31-SNAPSHOT")
+    // }
 }
 
 plugins {
@@ -43,6 +43,7 @@ dependencies {
     implementation(compose.foundation)
     implementation(compose.material)
     implementation("io.kindedj:kindedj:1.1.0")
+    implementation("io.arrow-kt:arrow-core:1.0.0")
 }
 
 tasks.jar {
