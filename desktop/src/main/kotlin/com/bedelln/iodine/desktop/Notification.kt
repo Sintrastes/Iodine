@@ -6,7 +6,11 @@ import com.bedelln.iodine.interfaces.ToolDescription
 import com.bedelln.iodine.desktop.ctx.SystemCtx
 import com.bedelln.iodine.desktop.ctx.notify
 
-class Notification<C: SystemCtx>(val title: String, val message: String): ToolDescription<C, Unit, Unit> {
+/** A tool for sending a notification to the system tray. */
+class Notification<C: SystemCtx>(
+    val title: String,
+    val message: String
+): ToolDescription<C, Unit, Unit> {
     @Composable
     override fun initCompose(ctx: C) { }
 

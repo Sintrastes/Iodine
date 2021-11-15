@@ -16,10 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
 
-// Note: Currently I can't directly mirror
-// what Compose can do here with Columns.
-// But I may be able to emulate this with a
-// monadic interface making use of arrow.
+/*
 interface IMCtx
 sealed class IodineMonad<Cm : IMCtx, C : IodineContext, out A> {
     abstract fun execute(ctx: C, childComponents: MutableList<ComponentDescription<C, *, *, Any?>>): A
@@ -284,6 +281,8 @@ fun <C: IodineContext> Row(
     )
 }
 */
+
+ */
 
 
 

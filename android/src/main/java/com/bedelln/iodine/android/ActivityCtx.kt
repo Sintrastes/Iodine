@@ -13,12 +13,13 @@ import com.bedelln.iodine.interfaces.ComponentDescription
 import com.bedelln.iodine.interfaces.HasRef
 import com.bedelln.iodine.interfaces.getContents
 
+/** Iodine context associated with an Android activity. */
 interface ActivityCtx : AndroidCtx, HasRef {
     val activityCtx: Context
 }
 
-abstract class IodineActivity<C,Ei,Eo,A,B>(val initialValue: A): ComponentActivity() {
-    abstract val contents: ComponentDescription<C, Ei, Eo, A, B>
+abstract class IodineActivity<C,I,E,A>(val initialValue: A): ComponentActivity() {
+    abstract val contents: ComponentDescription<C, I, E, A>
 
     abstract val contextInitializer: (ActivityCtx) -> C
 
@@ -47,7 +48,7 @@ abstract class IodineActivity<C,Ei,Eo,A,B>(val initialValue: A): ComponentActivi
                 initialValue
             )
             MaterialTheme {
-                _contents.getContents(ctx)
+                _contents.getContents()
                 contents.initCompose(contextInitializer(ctx))
                 additionalContents.forEach {
                     it()

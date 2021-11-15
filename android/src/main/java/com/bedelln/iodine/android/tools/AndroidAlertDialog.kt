@@ -8,6 +8,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.bedelln.iodine.android.AndroidCtx
 import com.bedelln.iodine.interfaces.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -15,10 +16,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class AndroidAlertDialog<A,B,C,Ei,Eo>(
+class AndroidAlertDialog<C, I, E, A, B>(
     val title: String,
-    val contents: ComponentDescription<C, Ei, Eo, A,B>): ToolDescription<C, A, B>
-        where C: IodineContext,
+    val contents: FormDescription<C, I, E, A, B>): ToolDescription<C, A, B>
+        where C : AndroidCtx,
               C: HasRef {
 
     lateinit var onFinish: MutableSharedFlow<B>
@@ -55,7 +56,7 @@ class AndroidAlertDialog<A,B,C,Ei,Eo>(
                         ),
                         text = {
                             // TODO: Fix this.
-                            _contents.getContents(ctx)
+                            _contents.getContents()
                         },
                         buttons = {
                             Button(

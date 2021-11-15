@@ -17,27 +17,27 @@ import kotlinx.coroutines.launch
 
 class DropdownMenu<C: IodineContext, A: Displayable<C>>(
     val dropdownItems: List<A>
-): ComponentDescription<C, DropdownMenu.Event<A>, DropdownMenu.Event<A>, A, A> {
+): ComponentDescription<C, Any, DropdownMenu.Event<A>, A> {
 
     data class Event<A>(val selected: A)
 
     @Composable
     override fun initCompose(ctx: C) { }
 
-    override fun initialize(ctx: C, initialValue: A): Component<Event<A>, Event<A>, A, A> {
-        return object: Component<Event<A>, Event<A>, A, A> {
-
+    override fun initialize(ctx: C, initialValue: A): Component<Any, Event<A>, A> {
+        return object: ComponentImpl<Unit, Event<A>, A, A> {
             val resultFlow = MutableStateFlow(initialValue)
+            override val state get() = resultFlow
 
             @Composable
-            override fun contents() {
+            override fun contents(state: A) {
                 val flowState = resultFlow.collectAsState()
                 var expandedState by remember { mutableStateOf(false) }
                 val selectedItem by remember { flowState }
                 Box(
                     modifier = Modifier.fillMaxSize()
                         .wrapContentSize(Alignment.TopStart)
-                        // .backgrond(Color.Gray)
+                         // .backgrond(Color.Gray)
                         .clickable(onClick = {
                             expandedState = true
                         })
@@ -71,14 +71,9 @@ class DropdownMenu<C: IodineContext, A: Displayable<C>>(
                 }
             }
 
-            override fun onEvent(event: Event<A>) {
-
-            }
-
             override val events: Flow<Event<A>>
                 get() = emptyFlow()
-            override val result: StateFlow<A>
-                get() = resultFlow
+            override val impl = Unit
         }
     }
 }

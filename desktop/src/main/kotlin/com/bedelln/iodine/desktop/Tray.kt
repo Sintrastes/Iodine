@@ -1,60 +1,64 @@
 package com.bedelln.iodine.desktop
 
 import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.toPainter
 import androidx.compose.ui.window.Tray as ComposeTray
-// import androidx.compose.ui.window.MenuItem as ComposeMenuItem
-import com.bedelln.iodine.*
 import com.bedelln.iodine.desktop.ctx.SystemCtx
 import com.bedelln.iodine.interfaces.Component
 import com.bedelln.iodine.interfaces.ComponentDescription
+import com.bedelln.iodine.interfaces.ComponentImpl
 import com.bedelln.iodine.interfaces.ToolDescription
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.launch
 import java.awt.image.BufferedImage
 
-class Tray<C: SystemCtx, Ei, Eo>(val icon: BufferedImage, val menuItems: List<MenuItem<C,Eo>>): ComponentDescription<C,Ei,Eo,Unit,Unit> {
-    @Composable
-    override fun initCompose(ctx: C) {
-        TODO("Not yet implemented")
-    }
-
-    override fun initialize(ctx: C, initialValue: Unit): Component<Ei, Eo, Unit, Unit> {
-        return object: Component<Ei, Eo, Unit, Unit> {
+/**
+ * Iodine component for displaying a system tray entry.
+ */
+class Tray<C: SystemCtx>(
+    val icon: BufferedImage,
+    val menuItems: List<MenuItem<C>>
+): ComponentDescription<C,Any,Void,Unit> {
+    override fun initialize(ctx: C, initialValue: Unit): Component<Any, Void, Unit> {
+        return object: ComponentImpl<Unit, Void, Unit, Unit> {
             @Composable
-            override fun contents() {
-                /*
-                DisposableEffect(Unit) {
-                    val tray = ComposeTray(icon).apply {
-                        icon(icon)
-                        menu(
-                            *menuItems.map { mi ->
-                                ComposeMenuItem(
-                                    name = mi.name,
-                                    onClick = {
-                                        mi.action
+            override fun contents(state: Unit) {
+                ctx.appScope.ComposeTray(
+                    icon = icon.toPainter(),
+                    menu = {
+                        menuItems.forEach { mi ->
+                            Item(
+                                text = mi.name,
+                                onClick = {
+                                    ctx.defaultScope.launch {
+                                        mi.action.initialize(ctx, Unit)
+                                            .runTool(ctx)
                                     }
-                                )
-                            }.toTypedArray()
-                        )
+                                }
+                            )
+                        }
                     }
-                    onDispose {
-                        tray.remove()
-                    }
-                }
-                 */
+                )
             }
 
-            override val events: Flow<Eo>
-                get() = TODO("Not yet implemented")
-            override val result: StateFlow<Unit>
-                get() = TODO()
-
-            override fun onEvent(event: Ei) { }
+            override val events: Flow<Void>
+                get() = emptyFlow()
+            override val impl = Unit
+            override val state: StateFlow<Unit>
+                get() = MutableStateFlow(Unit)
         }
     }
 }
 
-data class MenuItem<C: SystemCtx, E>(
+/**
+ * A menu item for a system tray component built with [Tray].
+ */
+data class MenuItem<C: SystemCtx>(
+    /** The name displayed for the menu item. */
     val name: String,
-    val action: ToolDescription<C,Unit,E>
+    /** An action preformed when this menu item is clicked. */
+    val action: ToolDescription<C, Unit, Unit>
 )
