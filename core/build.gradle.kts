@@ -11,7 +11,7 @@ buildscript {
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.compose") version "1.0.0-alpha4-build348"
+    id("org.jetbrains.compose") version "1.0.0-beta6-dev462"
     id("org.jetbrains.dokka")
 }
 
