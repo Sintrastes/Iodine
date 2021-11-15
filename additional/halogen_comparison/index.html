@@ -313,8 +313,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/profunctor_optics/" class="md-nav__link">
-        Profunctor optics
+      <a href="../../concepts/forms_and_profunctors/" class="md-nav__link">
+        Forms and profunctors
       </a>
     </li>
   
@@ -564,34 +564,32 @@
 <p>To which I respond: Don't worry -- this actually has a bit of precedent, and <a href="https://r6.ca/blog/20140210T181244Z.html">interesting theory</a> behind it. So if you need to legitimize your functional street cred, just be sure to mention something about the "van Laarhoven Free Monad". Also, to be fair, we still do need higher kinds when <em>defining</em> the component -- let me explain.</p>
 <p>It turns out that the Kotlin type <code>I.() -&gt; A</code>, where <code>I</code> is an interface, is <em>almost like</em> a free monad. This is not quite as powerful as the van Laarhoven encoding mentioned above, but close enough for our use-case of <code>I</code> as a parameter for describing the API for interacting with a typed comonent (hence, <em>interaction interface</em>).</p>
 <p>Even better -- it turns out that <code>I</code> is pretty close to what we need in order to <em>interpret</em> our "free-ish" monad <code>I.() -&gt; A</code> -- that is, a <a href="https://dlaing.org/cofun/posts/free_and_cofree.html">cofree comonad</a>. However, this is where higher-kinds are nescesary for our use-case. In Iodine, we make use of the following interface</p>
-<pre><code class="language-kotlin">interface IndexedAPI&lt;I,Ix&gt; {
-    fun I.asIx(): Hk&lt;Ix, Unit&gt;
-    fun Hk&lt;Ix, Unit&gt;.asInterface(): I
-}
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span> <span class="nc">IndexedAPI</span><span class="o">&lt;</span><span class="n">I</span><span class="p">,</span><span class="n">Ix</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="kd">fun</span> <span class="n">I</span><span class="p">.</span><span class="nf">asIx</span><span class="p">():</span> <span class="n">Hk</span><span class="o">&lt;</span><span class="n">Ix</span><span class="p">,</span> <span class="kt">Unit</span><span class="o">&gt;</span>
+    <span class="kd">fun</span> <span class="nf">Hk</span><span class="o">&lt;</span><span class="n">Ix</span><span class="p">,</span> <span class="kt">Unit</span><span class="o">&gt;</span><span class="p">.</span><span class="na">asInterface</span><span class="p">():</span> <span class="n">I</span>
+<span class="p">}</span>
+</code></pre></div>
 <p>to witness the relationship between an <em>interface</em> <code>I</code>, and it's "indexed" (or functorial) version <code>Ix</code>. Note that here, <a href="../higher_kinds_in_kotlin/"><code>Hk&lt;F,A&gt;</code></a> can be read as <code>F&lt;A&gt;</code>. For example:</p>
-<pre><code class="language-kotlin">
-interface Calculator {
-    fun enterNumber(x: Int)
-    fun enterSymbol(symbol: Symbol)
-    fun viewScreen(): String
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span> <span class="nc">Calculator</span> <span class="p">{</span>
+    <span class="kd">fun</span> <span class="nf">enterNumber</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span>
+    <span class="kd">fun</span> <span class="nf">enterSymbol</span><span class="p">(</span><span class="n">symbol</span><span class="p">:</span> <span class="n">Symbol</span><span class="p">)</span>
+    <span class="kd">fun</span> <span class="nf">viewScreen</span><span class="p">():</span> <span class="kt">String</span>
 
-    companion object {
-        fun indexed(): IndexedAPI&lt;Calculator, IxCalculator.W&gt; {
-            ...
-        }
-    }
-}
+    <span class="kd">companion</span> <span class="kd">object</span> <span class="err">{</span>
+        <span class="kd">fun</span> <span class="nf">indexed</span><span class="p">():</span> <span class="n">IndexedAPI</span><span class="o">&lt;</span><span class="n">Calculator</span><span class="p">,</span> <span class="n">IxCalculator</span><span class="p">.</span><span class="na">W</span><span class="o">&gt;</span> <span class="p">{</span>
+            <span class="p">...</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 
-interface IxCalculator&lt;K&gt;: Hk&lt;IxCalculator.W, K&gt; {
-    object W
+<span class="kd">interface</span> <span class="nc">IxCalculator</span><span class="o">&lt;</span><span class="n">K</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">Hk</span><span class="o">&lt;</span><span class="n">IxCalculator</span><span class="p">.</span><span class="na">W</span><span class="p">,</span> <span class="n">K</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="kd">object</span> <span class="nc">W</span>
 
-    fun enterNumber(x: Int): K
-    fun enterSymbol(symbol: Symbol): K
-    fun viewScreen(): Pair&lt;String, K&gt;
-}
-
-</code></pre>
+    <span class="kd">fun</span> <span class="nf">enterNumber</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="kt">Int</span><span class="p">):</span> <span class="n">K</span>
+    <span class="kd">fun</span> <span class="nf">enterSymbol</span><span class="p">(</span><span class="n">symbol</span><span class="p">:</span> <span class="n">Symbol</span><span class="p">):</span> <span class="n">K</span>
+    <span class="kd">fun</span> <span class="nf">viewScreen</span><span class="p">():</span> <span class="n">Pair</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span> <span class="n">K</span><span class="o">&gt;</span>
+<span class="p">}</span>
+</code></pre></div>
 <h2 id="composing-components">Composing Components</h2>
 <p>Although, after parsing out the differences between Halogen's <code>query</code> parameter and Iodine's <code>I</code>, Iodine provides a very similar external API for components, a major different arises in how these APIs are used. Whereas Halogen enforces a <em>tree-like</em> hiearchy of components, with "parent" and "child" components, Iodine is not as strict -- and allows anyone with a reference to a <code>Component&lt;Ctx,I,E,A&gt;</code> to <code>interact</code> with it.</p>
 <h2 id="monadic-effects">Monadic effects</h2>

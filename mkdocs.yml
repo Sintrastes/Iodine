@@ -6,7 +6,7 @@ nav:
     - 'Concepts': 
       - concepts/basic_concepts.md
       - concepts/comonadic_components.md
-      - concepts/profunctor_optics.md
+      - concepts/forms_and_profunctors.md
     - 'Examples': 
       - examples/basic_examples.md
       - examples/calculator_app.md
@@ -33,3 +33,9 @@ theme:
     - toc.integrate
 extra_css:
   - stylesheets/extra.css
+markdown_extensions:
+  - markdown.extensions.attr_list
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.snippets

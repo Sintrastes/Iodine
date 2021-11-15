@@ -97,9 +97,9 @@ passed in.
 
 Note that the "event" here is different from the usual `E` parameter of an Iodine `Component`, which is a type of event that the component can asynchronously _output_ -- so to distinguish between the two, we use the convention of `Ei` as a "input event" and `Eo` as an "output event".
 
-<figure markdown>
-  ![HComponent](https://raw.githubusercontent.com/Sintrastes/Iodine/gh-pages/HComponent.png)
-</figure>
+
+![HComponent](https://raw.githubusercontent.com/Sintrastes/Iodine/gh-pages/moore_component.png){: .center}
+
 
 Cofree Components
 ----------------
@@ -114,5 +114,7 @@ data class Cofree<F, A>(
 ```
 
 Again, like the others, a `Cofree` holds on to a `state` -- but it's `next` parameter takes an an application of `F` to control how the "next states" branch out.
+
+![Cofree Component](https://raw.githubusercontent.com/Sintrastes/Iodine/gh-pages/cofree_component.png){: .center}
 
 

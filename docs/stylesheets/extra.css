@@ -4,3 +4,8 @@
   --md-primary-fg-color--dark:  #90030C;
   --md-typeset-a-color:  #f5c7ff;
 }
+
+.center {
+    display: block;
+    margin: 0 auto;
+}

@@ -313,8 +313,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/profunctor_optics/" class="md-nav__link">
-        Profunctor optics
+      <a href="../../concepts/forms_and_profunctors/" class="md-nav__link">
+        Forms and profunctors
       </a>
     </li>
   
@@ -524,18 +524,16 @@
      should be safe as long as for each <code>Fw</code>, there is only one <code>F</code> that implements <code>Hk&lt;Fw, A&gt;</code>.</li>
 </ol>
 <p>For example, to represent <code>MyType</code> as a higher-kind with the witness <code>MyType.W</code>:</p>
-<pre><code class="language-kotlin">
-data class MyType&lt;A&gt;(val someValue: A, val someOtherValue: A): Hk&lt;MyType.W, A&gt; {
-    // Witness for MyType
-    object W
-}
+<div class="highlight"><pre><span></span><code><span class="kd">data</span> <span class="kd">class</span> <span class="nc">MyType</span><span class="o">&lt;</span><span class="n">A</span><span class="o">&gt;</span><span class="p">(</span><span class="kd">val</span> <span class="nv">someValue</span><span class="p">:</span> <span class="n">A</span><span class="p">,</span> <span class="kd">val</span> <span class="nv">someOtherValue</span><span class="p">:</span> <span class="n">A</span><span class="p">):</span> <span class="n">Hk</span><span class="o">&lt;</span><span class="n">MyType</span><span class="p">.</span><span class="na">W</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="c1">// Witness for MyType</span>
+    <span class="kd">object</span> <span class="nc">W</span>
+<span class="p">}</span>
 
-@Supress(&quot;UncheckedCast&quot;)
-fun Hk&lt;MyType.W, A&gt;.fix(): MyType&lt;A&gt; {
-    return this as MyType&lt;A&gt;
-}
-
-</code></pre>
+<span class="nd">@Supress</span><span class="p">(</span><span class="s">&quot;UncheckedCast&quot;</span><span class="p">)</span>
+<span class="kd">fun</span> <span class="nf">Hk</span><span class="o">&lt;</span><span class="n">MyType</span><span class="p">.</span><span class="na">W</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span><span class="p">.</span><span class="na">fix</span><span class="p">():</span> <span class="n">MyType</span><span class="o">&lt;</span><span class="n">A</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span> <span class="k">as</span> <span class="n">MyType</span><span class="o">&lt;</span><span class="n">A</span><span class="o">&gt;</span>
+<span class="p">}</span>
+</code></pre></div>
                 
               
               

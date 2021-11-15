@@ -372,8 +372,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../profunctor_optics/" class="md-nav__link">
-        Profunctor optics
+      <a href="../forms_and_profunctors/" class="md-nav__link">
+        Forms and profunctors
       </a>
     </li>
   
@@ -566,73 +566,71 @@
 <li>Has a way of updating that state.</li>
 </ol>
 <p>For a more in-deth explination, and similar view of comonads, see <a href="https://blog.functorial.com/posts/2016-08-07-Comonads-As-Spaces.html">Comonads as Spaces</a>. In Iodine, a <code>Comonad</code> is defined as a container <code>F</code> with methods:</p>
-<pre><code class="language-kotlin">interface Comonad&lt;W&gt;: Functor&lt;W&gt; {
-    val state: Hk&lt;W,S&gt;.S
-    fun Hk&lt;W,S&gt;.duplicate(): Hk&lt;W,Hk&lt;W,S&gt;&gt;
-}
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span> <span class="nc">Comonad</span><span class="o">&lt;</span><span class="n">W</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">Functor</span><span class="o">&lt;</span><span class="n">W</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="nv">state</span><span class="p">:</span> <span class="n">Hk</span><span class="o">&lt;</span><span class="n">W</span><span class="p">,</span><span class="n">S</span><span class="o">&gt;</span><span class="p">.</span><span class="na">S</span>
+    <span class="kd">fun</span> <span class="nf">Hk</span><span class="o">&lt;</span><span class="n">W</span><span class="p">,</span><span class="n">S</span><span class="o">&gt;</span><span class="p">.</span><span class="na">duplicate</span><span class="p">():</span> <span class="n">Hk</span><span class="o">&lt;</span><span class="n">W</span><span class="p">,</span><span class="n">Hk</span><span class="o">&lt;</span><span class="n">W</span><span class="p">,</span><span class="n">S</span><span class="o">&gt;&gt;</span>
+<span class="p">}</span>
+</code></pre></div>
 <p>where <code>state</code> gets the current state of the comonad, and <code>duplicate</code> encodes a way of denoting possible "future states" (how this is accomplished will be more clear later, with some concrete examples).</p>
 <p>A comonadic component then, is a component whose internal state and state transitions are modeled via a <em>comonad</em>. As it turns out, <a href="#cofree-components"><em>all components in Iodine</em> are in fact comonadic</a> -- but to avoid added complexity, this fact is hidden from the user unless they would like to explicitly explore this approach to modeling user interfaces.</p>
 <h2 id="store-components">Store Components</h2>
 <p>One of the most basic examples of a comonad is the <code>Store</code> comonad. The type itself is defined as follows:</p>
-<pre><code class="language-kotlin">data class Store&lt;X, S&gt;(
-    val internalState: X,
-    val view: (X) -&gt; S
-)
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="kd">data</span> <span class="kd">class</span> <span class="nc">Store</span><span class="o">&lt;</span><span class="n">X</span><span class="p">,</span> <span class="n">S</span><span class="o">&gt;</span><span class="p">(</span>
+    <span class="kd">val</span> <span class="nv">internalState</span><span class="p">:</span> <span class="n">X</span><span class="p">,</span>
+    <span class="kd">val</span> <span class="nv">view</span><span class="p">:</span> <span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">S</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Essentially a store is something that holds onto an internal state <code>X</code>, and "exposes" a computed <em>view</em> of that state with the supplied function. For instance:</p>
-<pre><code class="language-kotlin">data class Person(
-    val name: String,
-    val age: Int
-)
+<div class="highlight"><pre><span></span><code><span class="kd">data</span> <span class="kd">class</span> <span class="nc">Person</span><span class="p">(</span>
+    <span class="kd">val</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+    <span class="kd">val</span> <span class="nv">age</span><span class="p">:</span> <span class="kt">Int</span>
+<span class="p">)</span>
 
-val personNameStore = Store(
-    internalState = Person(&quot;Bob&quot;, 42),
-    view  = { person -&gt; person.name }
-)
-</code></pre>
+<span class="kd">val</span> <span class="nv">personNameStore</span> <span class="o">=</span> <span class="n">Store</span><span class="p">(</span>
+    <span class="n">internalState</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="s">&quot;Bob&quot;</span><span class="p">,</span> <span class="m">42</span><span class="p">),</span>
+    <span class="n">view</span>  <span class="o">=</span> <span class="p">{</span> <span class="n">person</span> <span class="o">-&gt;</span> <span class="n">person</span><span class="p">.</span><span class="na">name</span> <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>The <code>state</code> of a <code>Store</code> is just applying the <code>view</code> to the <code>internalState</code> to get the publicly exposed state:</p>
-<pre><code class="language-kotlin">val Store&lt;X,S&gt;.state: S = view(internalState)
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span> <span class="nv">Store</span><span class="o">&lt;</span><span class="n">X</span><span class="p">,</span><span class="n">S</span><span class="o">&gt;</span><span class="p">.</span><span class="na">state</span><span class="p">:</span> <span class="n">S</span> <span class="o">=</span> <span class="n">view</span><span class="p">(</span><span class="n">internalState</span><span class="p">)</span>
+</code></pre></div>
 <p>The <code>duplicate</code> operation is defined as follows:</p>
-<pre><code class="language-kotlin">fun Store&lt;X,S&gt;.duplicate(): Store&lt;X,Store&lt;X,S&gt;&gt; {
-    val currentStore = this
-    return Store(
-        internalState = currentStore.internalState,
-        view = { nextState -&gt; 
-            Store(
-                internalState = nextState,
-                view = currentStore.view
-            )
-        }
-    )
-}
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="kd">fun</span> <span class="nf">Store</span><span class="o">&lt;</span><span class="n">X</span><span class="p">,</span><span class="n">S</span><span class="o">&gt;</span><span class="p">.</span><span class="na">duplicate</span><span class="p">():</span> <span class="n">Store</span><span class="o">&lt;</span><span class="n">X</span><span class="p">,</span><span class="n">Store</span><span class="o">&lt;</span><span class="n">X</span><span class="p">,</span><span class="n">S</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="nv">currentStore</span> <span class="o">=</span> <span class="k">this</span>
+    <span class="k">return</span> <span class="n">Store</span><span class="p">(</span>
+        <span class="n">internalState</span> <span class="o">=</span> <span class="n">currentStore</span><span class="p">.</span><span class="na">internalState</span><span class="p">,</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="p">{</span> <span class="n">nextState</span> <span class="o">-&gt;</span> 
+            <span class="n">Store</span><span class="p">(</span>
+                <span class="n">internalState</span> <span class="o">=</span> <span class="n">nextState</span><span class="p">,</span>
+                <span class="n">view</span> <span class="o">=</span> <span class="n">currentStore</span><span class="p">.</span><span class="na">view</span>
+            <span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
 <p>So in other words, if we <code>view</code> a duplicated state with a new <code>internalState</code>, we get an updated <code>Store</code> that "stores" that new state, with the same <code>view</code> as before. This is how <code>duplicate</code> can be used to transition a <code>Store</code> to a new state. The method for updating the state of a <code>Store</code> is to just pass in a new internal state.</p>
 <p>Thus, a <code>StoreComponent</code> is just a component holding on to some state <code>S</code> that can be updated to any value. There are no complicated state transitions to contend with. For this reason, <code>StoreComponents</code> are good at modeling things like basic entry forms that just "hold on" to some entered value.</p>
 <h2 id="moore-components">Moore Components</h2>
 <p>Our next example allows for the modeling of some more complicated state transitions in a <code>Component</code>, and actually corresponds to something close to the original design of <code>Iodine</code> -- as well as being similar to the <em>Elm Architecture</em>. </p>
 <p>The <code>Moore</code> comonad -- so named because it acts similarly to a finite state machine called a <a href="https://en.wikipedia.org/wiki/Moore_machine">Moore machine</a> -- is defined as follows:</p>
-<pre><code class="language-kotlin">data class Moore&lt;E, A&gt;(
-    val value: A,
-    val next: (E) -&gt; Moore&lt;E, A&gt;
-)
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="kd">data</span> <span class="kd">class</span> <span class="nc">Moore</span><span class="o">&lt;</span><span class="n">E</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span><span class="p">(</span>
+    <span class="kd">val</span> <span class="nv">value</span><span class="p">:</span> <span class="n">A</span><span class="p">,</span>
+    <span class="kd">val</span> <span class="nv">next</span><span class="p">:</span> <span class="p">(</span><span class="n">E</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Moore</span><span class="o">&lt;</span><span class="n">E</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>So again, a <code>Moore</code> comonad holds on to a "current state" with <code>value</code>. However, unlike the <code>Store</code> comonad, it also comes equipped with a transition function <code>next</code> which depending on an event <code>E</code>, will return a new state of the Moore machine (<code>Moore&lt;E, A&gt;</code>) according to the event
 passed in.</p>
 <p>Note that the "event" here is different from the usual <code>E</code> parameter of an Iodine <code>Component</code>, which is a type of event that the component can asynchronously <em>output</em> -- so to distinguish between the two, we use the convention of <code>Ei</code> as a "input event" and <code>Eo</code> as an "output event".</p>
-<figure markdown>
-  ![HComponent](https://raw.githubusercontent.com/Sintrastes/Iodine/gh-pages/HComponent.png)
-</figure>
-
+<p><img alt="HComponent" class="center" src="https://raw.githubusercontent.com/Sintrastes/Iodine/gh-pages/moore_component.png" /></p>
 <h2 id="cofree-components">Cofree Components</h2>
 <p>The most flexible of the comonadic components defined by Iodine is that of a <code>Cofree</code> component. Unlike the other comonads we have seen, <code>Cofree</code> takes a <a href="../../additional/higher_kinds_in_kotlin/">higher-kinded</a> parameter <code>F</code>:</p>
-<pre><code class="language-kotlin">data class Cofree&lt;F, A&gt;(
-    val state: A,
-    val next: Hk&lt;F, Cofree&lt;F,A&gt;&gt;
-)
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="kd">data</span> <span class="kd">class</span> <span class="nc">Cofree</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span><span class="p">(</span>
+    <span class="kd">val</span> <span class="nv">state</span><span class="p">:</span> <span class="n">A</span><span class="p">,</span>
+    <span class="kd">val</span> <span class="nv">next</span><span class="p">:</span> <span class="n">Hk</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">Cofree</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span><span class="n">A</span><span class="o">&gt;&gt;</span>
+<span class="p">)</span>
+</code></pre></div>
 <p>Again, like the others, a <code>Cofree</code> holds on to a <code>state</code> -- but it's <code>next</code> parameter takes an an application of <code>F</code> to control how the "next states" branch out.</p>
+<p><img alt="Cofree Component" class="center" src="https://raw.githubusercontent.com/Sintrastes/Iodine/gh-pages/cofree_component.png" /></p>
                 
               
               
@@ -668,13 +666,13 @@ passed in.</p>
       
       
         
-        <a href="../profunctor_optics/" class="md-footer__link md-footer__link--next" aria-label="Next: Profunctor optics" rel="next">
+        <a href="../forms_and_profunctors/" class="md-footer__link md-footer__link--next" aria-label="Next: Forms and profunctors" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Profunctor optics
+              Forms and profunctors
             </div>
           </div>
           <div class="md-footer__button md-icon">

@@ -355,8 +355,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../profunctor_optics/" class="md-nav__link">
-        Profunctor optics
+      <a href="../forms_and_profunctors/" class="md-nav__link">
+        Forms and profunctors
       </a>
     </li>
   
@@ -542,16 +542,16 @@
 <p>The two basic concepts that Iodine makes use of is that of a <em>Component</em>, and that of a <em>View Model</em>. Roughly speaking, a <em>Component</em> is reusable bundle of behavior and a view (i.e. a <code>@Composable fun</code>) of that behavior's internal <em>state</em>. Oftentimes, it may be convinient to keep the "pure" UI behavior logic decoupled from the actual way in which such logic is rendered -- for this purpose, we have the concept of a <code>ViewModel</code>. A <code>ViewModel</code> is pretty much what it sounds like -- a model of a view, or in our case a <code>Component</code>.</p>
 <h2 id="view-models-and-components">View models and Components</h2>
 <p>To start, let's dig into how Iodine defines a <code>ViewModel</code>:</p>
-<pre><code class="language-kotlin">interface Settable&lt;in A&gt; {
-    fun setValue(newValue: A) { }
-}
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span> <span class="nc">Settable</span><span class="o">&lt;</span><span class="k">in</span> <span class="n">A</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="kd">fun</span> <span class="nf">setValue</span><span class="p">(</span><span class="n">newValue</span><span class="p">:</span> <span class="n">A</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+<span class="p">}</span>
 
-interface ViewModel&lt;out I, out E, S, in A&gt;: Settable&lt;A&gt; {
-    val impl: I
-    val events: Flow&lt;E&gt;
-    val state: StateFlow&lt;S&gt;
-}
-</code></pre>
+<span class="kd">interface</span> <span class="nc">ViewModel</span><span class="o">&lt;</span><span class="k">out</span> <span class="n">I</span><span class="p">,</span> <span class="k">out</span> <span class="n">E</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="k">in</span> <span class="n">A</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">Settable</span><span class="o">&lt;</span><span class="n">A</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="kd">val</span> <span class="nv">impl</span><span class="p">:</span> <span class="n">I</span>
+    <span class="kd">val</span> <span class="nv">events</span><span class="p">:</span> <span class="n">Flow</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span>
+    <span class="kd">val</span> <span class="nv">state</span><span class="p">:</span> <span class="n">StateFlow</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span>
+<span class="p">}</span>
+</code></pre></div>
 <p>Theoretically, Iodine could have just gotten away with using <code>I</code> here -- as most <em>view models</em> as used in UI design patterns such as <em>Model-View-ViewModel</em> are just plain old interfaces. However, for convinience, we decided to break up the idea of a view model into three distinct components:</p>
 <ol>
 <li><code>I</code>: The "core" interface of the ViewModel -- this should be an interface that describes methods that can be used to interact with the view model.</li>
@@ -559,13 +559,13 @@ interface ViewModel&lt;out I, out E, S, in A&gt;: Settable&lt;A&gt; {
 <li><code>S</code>: The type of internal state used by the view model. Usually, in a traditional view model, this would be a <code>private</code> part of the implementation of the API. However, for an Iodine <code>ViewModel</code>, we expose this inner state as a reactive <code>StateFlow&lt;S&gt;</code> so this view model can be bound to a rendering function to produce a full <code>Component</code>.</li>
 </ol>
 <p><code>Component</code>s are just like view models, but together with a function for rendering the state of the <code>ViewModel</code>. Once a <code>ViewModel</code> has been bound to a mechanism for rendering it's state, there is no longer a reason to care about the state type <code>S</code>. Thus, whereas a <code>ComponentImpl</code> is defined as follows:</p>
-<pre><code class="language-kotlin">interface ComponentImpl&lt;out Ctx, out I, out E, S, in A&gt;: ViewModel&lt;I,E,S,A&gt; {
-     @Composable fun contents(state: S)
- }
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span> <span class="nc">ComponentImpl</span><span class="o">&lt;</span><span class="k">out</span> <span class="n">Ctx</span><span class="p">,</span> <span class="k">out</span> <span class="n">I</span><span class="p">,</span> <span class="k">out</span> <span class="n">E</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="k">in</span> <span class="n">A</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">ViewModel</span><span class="o">&lt;</span><span class="n">I</span><span class="p">,</span><span class="n">E</span><span class="p">,</span><span class="n">S</span><span class="p">,</span><span class="n">A</span><span class="o">&gt;</span> <span class="p">{</span>
+     <span class="nd">@Composable</span> <span class="kd">fun</span> <span class="nf">contents</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">S</span><span class="p">)</span>
+ <span class="p">}</span>
+</code></pre></div>
 <p>most of the time we want to use a <code>Component</code>, we want to keep the internal state <code>S</code> <em>encapsulated</em>. This can be accomplished with a star projection, which is how Iodine defines an honest-to-goodness <code>Component</code>:</p>
-<pre><code class="language-kotlin"> typealias Component&lt;Ctx,I,E,A&gt; = ComponentImpl&lt;Ctx,I,E,*,A&gt;
-</code></pre>
+<div class="highlight"><pre><span></span><code> <span class="k">typealias</span> <span class="n">Component</span><span class="o">&lt;</span><span class="n">Ctx</span><span class="p">,</span><span class="n">I</span><span class="p">,</span><span class="n">E</span><span class="p">,</span><span class="n">A</span><span class="o">&gt;</span> <span class="o">=</span> <span class="n">ComponentImpl</span><span class="o">&lt;</span><span class="n">Ctx</span><span class="p">,</span><span class="n">I</span><span class="p">,</span><span class="n">E</span><span class="p">,</span><span class="o">*</span><span class="p">,</span><span class="n">A</span><span class="o">&gt;</span>
+</code></pre></div>
                 
               
               

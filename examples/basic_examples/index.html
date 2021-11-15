@@ -313,8 +313,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/profunctor_optics/" class="md-nav__link">
-        Profunctor optics
+      <a href="../../concepts/forms_and_profunctors/" class="md-nav__link">
+        Forms and profunctors
       </a>
     </li>
   
@@ -556,56 +556,56 @@
 <h2 id="building-a-basic-component">Building a basic component</h2>
 <h2 id="input-validation">Input validation</h2>
 <p>One common problem often that has to be addressed when building graphical user interfaces is how to handle <em>form input validation</em>. Iodine provides a couple of utility classes for dealing with exactly this problem. For example, consider the following example for how to build a component with input validation for a textbox entry for an integer.</p>
-<pre><code class="language-kotlin">// Example Component
-object: ValidatingStoreComponent&lt;String, Int, InvalidInteger&gt;(initialValue) {
-    override fun view(input: String) =
-        input.toIntOrNull()?.let { Either.Right(it) }
-            ?: Either.Left(InvalidInteger)
+<div class="highlight"><pre><span></span><code><span class="c1">// Example Component</span>
+<span class="n">object</span><span class="p">:</span> <span class="n">ValidatingStoreComponent</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Int</span><span class="p">,</span> <span class="n">InvalidInteger</span><span class="o">&gt;</span><span class="p">(</span><span class="n">initialValue</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">override</span> <span class="kd">fun</span> <span class="nf">view</span><span class="p">(</span><span class="n">input</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">=</span>
+        <span class="n">input</span><span class="p">.</span><span class="na">toIntOrNull</span><span class="p">()</span><span class="o">?.</span><span class="na">let</span> <span class="p">{</span> <span class="n">Either</span><span class="p">.</span><span class="na">Right</span><span class="p">(</span><span class="nb">it</span><span class="p">)</span> <span class="p">}</span>
+            <span class="o">?:</span> <span class="n">Either</span><span class="p">.</span><span class="na">Left</span><span class="p">(</span><span class="n">InvalidInteger</span><span class="p">)</span>
 
-     @Composable
-     override fun contents(error: InvalidInteger?, contents: String) {
-         Column {
-             TextField(
-                 value = contents,
-                     onValueChange = { newValue -&gt;
-                         ctx.defaultScope.launch {
-                             mutInput.emit(newValue)
-                         }
-                     },
-                 label = {
-                     Text(&quot;&quot;)
-                 }
-             )
-         if (error == InvalidInteger) {
-             Text(
-                 text = &quot;Not a valid integer&quot;,
-                 color = Color.Red,
-                 fontSize = 16.sp
-             )
-     }
-}
-</code></pre>
+     <span class="nd">@Composable</span>
+     <span class="kd">override</span> <span class="kd">fun</span> <span class="nf">contents</span><span class="p">(</span><span class="n">error</span><span class="p">:</span> <span class="n">InvalidInteger?,</span> <span class="n">contents</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="p">{</span>
+         <span class="n">Column</span> <span class="p">{</span>
+             <span class="n">TextField</span><span class="p">(</span>
+                 <span class="n">value</span> <span class="o">=</span> <span class="n">contents</span><span class="p">,</span>
+                     <span class="n">onValueChange</span> <span class="o">=</span> <span class="p">{</span> <span class="n">newValue</span> <span class="o">-&gt;</span>
+                         <span class="n">ctx</span><span class="p">.</span><span class="na">defaultScope</span><span class="p">.</span><span class="na">launch</span> <span class="p">{</span>
+                             <span class="n">mutInput</span><span class="p">.</span><span class="na">emit</span><span class="p">(</span><span class="n">newValue</span><span class="p">)</span>
+                         <span class="p">}</span>
+                     <span class="p">},</span>
+                 <span class="n">label</span> <span class="o">=</span> <span class="p">{</span>
+                     <span class="n">Text</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+                 <span class="p">}</span>
+             <span class="p">)</span>
+         <span class="k">if</span> <span class="p">(</span><span class="n">error</span> <span class="o">==</span> <span class="n">InvalidInteger</span><span class="p">)</span> <span class="p">{</span>
+             <span class="n">Text</span><span class="p">(</span>
+                 <span class="n">text</span> <span class="o">=</span> <span class="s">&quot;Not a valid integer&quot;</span><span class="p">,</span>
+                 <span class="n">color</span> <span class="o">=</span> <span class="n">Color</span><span class="p">.</span><span class="na">Red</span><span class="p">,</span>
+                 <span class="n">fontSize</span> <span class="o">=</span> <span class="m">16.</span><span class="n">sp</span>
+             <span class="p">)</span>
+     <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
 <h2 id="combining-components">Combining components</h2>
 <p>The easiest way to combine smaller components into larger components in Iodine is to make use of one of the provided <em>builders</em>. For components which are not <code>Form</code>s -- you'll generally want to make use of <code>ComponentBuilder</code>.</p>
-<pre><code class="language-kotlin">
-</code></pre>
+<div class="highlight"><pre><span></span><code>
+</code></pre></div>
 <p>For combining <code>Form</code>s, a little bit more care is needed. Currently Iodine only directly supports building up forms whose input and output types are immutable data classes. For such cases, we can make use of the <a href="https://github.com/Sintrastes/buildable-kt">buildable-kt</a> library. </p>
 <p><code>buildable-kt</code> comes with an annotation <code>@GenBuildable</code>, which can be applied to a data class in order to automatically generate an implementation of the <code>Buildable</code> interface that Iodine needs in order to be able to construct a form for a complete type from smaller forms that are used for inputting it's constituent peices. </p>
 <p>To illustrate this, let's look at an example of how <code>buildable-kt</code> can be used alongside Iodine's <code>FormBuilder</code> to build up a form:</p>
-<pre><code class="language-kotlin">@GenBuildable
-data class Person(
-    val name: String,
-    val age: Int
-) {
-    companion object { }
-}
+<div class="highlight"><pre><span></span><code><span class="nd">@GenBuildable</span>
+<span class="kd">data</span> <span class="kd">class</span> <span class="nc">Person</span><span class="p">(</span>
+    <span class="kd">val</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+    <span class="kd">val</span> <span class="nv">age</span><span class="p">:</span> <span class="kt">Int</span>
+<span class="p">)</span> <span class="p">{</span>
+    <span class="kd">companion</span> <span class="kd">object</span> <span class="err">{ }</span>
+<span class="p">}</span>
 
-object PersonForm: SFormDescription&lt;IodineCtx, Person&gt; by (
-    FormBuilder {
+<span class="kd">object</span> <span class="nc">PersonForm</span><span class="p">:</span> <span class="n">SFormDescription</span><span class="o">&lt;</span><span class="n">IodineCtx</span><span class="p">,</span> <span class="n">Person</span><span class="o">&gt;</span> <span class="k">by</span> <span class="p">(</span>
+    <span class="n">FormBuilder</span> <span class="p">{</span>
 
-    }
-)
-</code></pre>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div>
                 
               
               
@@ -625,7 +625,7 @@ object PersonForm: SFormDescription&lt;IodineCtx, Person&gt; by (
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../../concepts/profunctor_optics/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Profunctor optics" rel="prev">
+        <a href="../../concepts/forms_and_profunctors/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Forms and profunctors" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -634,7 +634,7 @@ object PersonForm: SFormDescription&lt;IodineCtx, Person&gt; by (
               <span class="md-footer__direction">
                 Previous
               </span>
-              Profunctor optics
+              Forms and profunctors
             </div>
           </div>
         </a>

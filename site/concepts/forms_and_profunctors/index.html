@@ -9,19 +9,19 @@
       
       
       
-      <link rel="icon" href="/assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.4">
     
     
       
-        <title>Iodine</title>
+        <title>Forms and profunctors - Iodine</title>
       
     
     
-      <link rel="stylesheet" href="/assets/stylesheets/main.db9e7362.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.db9e7362.min.css">
       
         
-        <link rel="stylesheet" href="/assets/stylesheets/palette.3f5d1f46.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
         
       
     
@@ -36,7 +36,7 @@
     
     
     
-      <link rel="stylesheet" href="/stylesheets/extra.css">
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
     
     
       
@@ -57,7 +57,7 @@
     <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
   
     
-    <script>function __prefix(e){return new URL("/",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    <script>function __prefix(e){return new URL("../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
     
       <script>var palette=__get("__palette");if(null!==palette&&"object"==typeof palette.color)for(var key in palette.color)document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
     
@@ -65,6 +65,11 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
+      
+        
+        <a href="#profunctors" class="md-skip">
+          Skip to content
+        </a>
       
     </div>
     <div data-md-component="announce">
@@ -75,7 +80,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="/." title="Iodine" class="md-header__button md-logo" aria-label="Iodine" data-md-component="logo">
+    <a href="../.." title="Iodine" class="md-header__button md-logo" aria-label="Iodine" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
@@ -94,7 +99,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              
+              Forms and profunctors
             
           </span>
         </div>
@@ -199,7 +204,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/." title="Iodine" class="md-nav__button md-logo" aria-label="Iodine" data-md-component="logo">
+    <a href="../.." title="Iodine" class="md-nav__button md-logo" aria-label="Iodine" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
@@ -231,7 +236,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         Introduction
       </a>
     </li>
@@ -244,12 +249,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" data-md-state="indeterminate" type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
       
       
       
@@ -280,7 +287,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/concepts/basic_concepts/" class="md-nav__link">
+      <a href="../basic_concepts/" class="md-nav__link">
         Basic concepts
       </a>
     </li>
@@ -294,7 +301,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/concepts/comonadic_components/" class="md-nav__link">
+      <a href="../comonadic_components/" class="md-nav__link">
         Comonadic components
       </a>
     </li>
@@ -306,11 +313,68 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="/concepts/forms_and_profunctors/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Forms and profunctors
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Forms and profunctors
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#profunctors" class="md-nav__link">
+    Profunctors
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#forms" class="md-nav__link">
+    Forms
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#profunctor-optics" class="md-nav__link">
+    Profunctor optics
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#applications-of-profunctor-optics-to-forms" class="md-nav__link">
+    Applications of Profunctor Optics to Forms
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -364,7 +428,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/examples/basic_examples/" class="md-nav__link">
+      <a href="../../examples/basic_examples/" class="md-nav__link">
         Basic examples
       </a>
     </li>
@@ -378,7 +442,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/examples/calculator_app/" class="md-nav__link">
+      <a href="../../examples/calculator_app/" class="md-nav__link">
         Calculator app
       </a>
     </li>
@@ -392,7 +456,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/examples/todo_app/" class="md-nav__link">
+      <a href="../../examples/todo_app/" class="md-nav__link">
         Todo app
       </a>
     </li>
@@ -446,7 +510,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/additional/halogen_comparison/" class="md-nav__link">
+      <a href="../../additional/halogen_comparison/" class="md-nav__link">
         Halogen comparison
       </a>
     </li>
@@ -460,7 +524,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/additional/higher_kinds_in_kotlin/" class="md-nav__link">
+      <a href="../../additional/higher_kinds_in_kotlin/" class="md-nav__link">
         Higher kinds in kotlin
       </a>
     </li>
@@ -485,7 +549,35 @@
           <div class="md-content" data-md-component="content">
             <article class="md-content__inner md-typeset">
               
-  <h1>404 - Not found</h1>
+                
+                  <a href="https://github.com/Sintrastes/Iodine/edit/master/docs/concepts/forms_and_profunctors.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  <h1>Forms and profunctors</h1>
+                
+                <h2 id="profunctors">Profunctors</h2>
+<p>In addition to comonads, another concept from the pure functional programming community that Iodine makes use of is that of <em>profunctors</em> and <em>profunctor optics</em>.</p>
+<p>Profunctors are a generalization of functions. Essentially, they can be thought of as objects with an "input type", and an "output type" -- where these input and output types can be "adapted" by providing the appropriate type of function.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span> <span class="nc">Profunctor</span><span class="o">&lt;</span><span class="n">P</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="kd">fun</span> <span class="nf">Hk2</span><span class="o">&lt;</span><span class="n">P</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="o">&gt;</span><span class="p">.</span><span class="na">lmap</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">A</span><span class="p">):</span> <span class="n">Hk2</span><span class="o">&lt;</span><span class="n">P</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">B</span><span class="o">&gt;</span>
+    <span class="kd">fun</span> <span class="nf">Hk2</span><span class="o">&lt;</span><span class="n">P</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="o">&gt;</span><span class="p">.</span><span class="na">rmap</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="p">(</span><span class="n">B</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">X</span><span class="p">):</span> <span class="n">Hk2</span><span class="o">&lt;</span><span class="n">P</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="n">X</span><span class="o">&gt;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="forms">Forms</h2>
+<p>For every <code>Component</code> interface in Iodine, such as <code>ComponentImpl</code>, <code>MooreComponent</code>, and so on -- there is a comporresponding interface for a <code>Form</code> that extends the given notion of a component with an <em>output type</em>. This interface is incredibly useful for components used for <em>data entry</em> -- hence the name. Forms will have all the same generic parameters as Components, plus an additional one for it's output type. So, for instance, something like <code>Form&lt;Ctx,I,E,A,B&gt;</code>, rather than <code>Component&lt;Ctx,I,E,A&gt;</code>.</p>
+<p>Defining forms this way allows us to view forms as an important example of a <code>Profunctor</code>, as witnessed by the <code>lmap</code> and <code>rmap</code> methods defined for such forms. </p>
+<h2 id="profunctor-optics">Profunctor optics</h2>
+<p><em>Optics</em> are usually concieved as a type of <em>modular data accessor_s for immutable data structures in functional languages. However, optics also have <a href="https://medium.com/@wigahluk/another-look-through-optics-ffd253336e9c">another side</a> less seen -- and this can be seen through the lens (pun intended) of _profunctor optics</em>.</p>
+<p>...</p>
+<h2 id="applications-of-profunctor-optics-to-forms">Applications of Profunctor Optics to Forms</h2>
+<p>...</p>
+                
+              
+              
+                
+
 
               
             </article>
@@ -496,6 +588,41 @@
       
         
 <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../comonadic_components/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Comonadic components" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Comonadic components
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../../examples/basic_examples/" class="md-footer__link md-footer__link--next" aria-label="Next: Basic examples" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Basic examples
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
@@ -522,10 +649,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "/", "features": ["navigation.instant", "navigation.expand", "navigation.indexes", "toc.integrate"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "/assets/javascripts/workers/search.8397ff9e.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.expand", "navigation.indexes", "toc.integrate"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.8397ff9e.min.js", "version": null}</script>
     
     
-      <script src="/assets/javascripts/bundle.1e84347e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.1e84347e.min.js"></script>
       
     
   </body>
