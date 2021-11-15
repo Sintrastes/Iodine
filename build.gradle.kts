@@ -1,5 +1,4 @@
 
-val kotlin_version = "1.5.31"
 buildscript {
 
     repositories {
@@ -11,12 +10,13 @@ buildscript {
 
     dependencies {
         classpath("com.android.tools.build:gradle:7.0.0")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.30")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31")
     }
 }
 
 repositories {
     maven(url="https://dl.bintray.com/kotlin/dokka")
+    maven(url = "https://oss.sonatype.org/content/repositories/snapshots/")
 }
 
 plugins {

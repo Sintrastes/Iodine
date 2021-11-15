@@ -11,7 +11,7 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") version "1.5.30"
+    kotlin("jvm") version "1.5.31"
     id("org.jetbrains.compose") version "1.0.0-alpha4-build348"
 }
 
@@ -19,7 +19,6 @@ group = "com.bedelln"
 version = "1.0.0"
 
 repositories {
-    jcenter()
     mavenCentral()
     google()
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
