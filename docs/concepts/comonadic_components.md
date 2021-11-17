@@ -78,10 +78,14 @@ So in other words, if we `view` a duplicated state with a new `internalState`, w
 
 Thus, a `StoreComponent` is just a component holding on to some state `S` that can be updated to any value. There are no complicated state transitions to contend with. For this reason, `StoreComponents` are good at modeling things like basic entry forms that just "hold on" to some entered value.
 
+In fact, by exposing the internal state, together with the "viewed" state -- we can take another perspective on comonadic store components entirely by viewing these parameters as the type of _inputs_ and _outputs_ to the component -- `A`, `B`. 
+
+This turns out to be the most useful application of Store components in Iodine -- so we give a name to this concept: A _Form_. Exposing these two parameters rather than simply an input parameter, as is done with normal Iodine components gives us an instance of another important mathematical struture -- that of the _Profunctor_. This is all explained in greater detail, with examples, in the section on [`Form`s](forms_and_profunctors.md).
+
 Moore Components
 ----------------
 
-Our next example allows for the modeling of some more complicated state transitions in a `Component`, and actually corresponds to something close to the original design of `Iodine` -- as well as being similar to the _Elm Architecture_. 
+Our next example allows for the modeling of some more complicated state transitions in a `Component`, and actually corresponds to something close to the original design of `Iodine` -- as well as being similar to the [_Elm Architecture_](https://elm-lang.org/). 
 
 The `Moore` comonad -- so named because it acts similarly to a finite state machine called a [Moore machine](https://en.wikipedia.org/wiki/Moore_machine) -- is defined as follows:
 
@@ -100,6 +104,48 @@ Note that the "event" here is different from the usual `E` parameter of an Iodin
 
 ![HComponent](https://raw.githubusercontent.com/Sintrastes/Iodine/gh-pages/moore_component.png){: .center}
 
+Let's look at a simple example of defining a component using this type of architecture defined by the Moore comonad:
+
+```kotlin
+
+/**
+ * The Elm Arctitecture (a.k.a. Model-View-Update) in Iodine.
+ *
+ * Compare with https://elm-lang.org/examples/buttons
+ *
+ */
+ 
+// Model
+value class Model(val count: Int)
+
+enum class Msg {
+    Increment, Decrement
+}
+
+object CounterComponent: MooreComponentImpl<IodineContext, Msg, Void, Model, Model>(
+    initialState = Model(0)
+) {
+    // View
+    @Composable
+    override fun C.render(state: S) {
+    	Column {
+    	    Text("Hello MVU!")
+    	    
+            Button(text = "-", onClick = { emit(Msg.Decrement) })
+            Text(state.count.toString())
+            Button(text = "+", onClick = { emit(Msg.Increment) })
+        }
+    }
+
+    // Update
+    override fun reducer(event: Msg, state: Model): Model =
+        when (event) {
+            Msg.Increment -> Model(state.count + 1)
+            Msg.Decrement -> Model(state.count - 1) 
+        }
+}
+
+```
 
 Cofree Components
 ----------------
@@ -116,5 +162,70 @@ data class Cofree<F, A>(
 Again, like the others, a `Cofree` holds on to a `state` -- but it's `next` parameter takes an an application of `F` to control how the "next states" branch out.
 
 ![Cofree Component](https://raw.githubusercontent.com/Sintrastes/Iodine/gh-pages/cofree_component.png){: .center}
+
+Combining Components
+--------------------
+
+So far, all of the types of comonadic components we have seen all have concrete representations as interfaces or abstract classes in the core `iodine` package. What then is the use of having a generic `ComonadicComponent` interface hanging around (besides just being good fun and interesting for those who enjoy Category Theory)?
+
+The answer lies in the different ways that one can _combine_ comonads. As a bit of a teaser, you can think of a complex combination of comonads as giving you something similar to a statically-typed version of a UI testing framework like [Selenium](https://www.selenium.dev/) or [Espresso](https://developer.android.com/training/testing/espresso). To begin, meet `Day`:
+
+```kotlin
+interface Day<F,G,A>: Hk<Day.W<F, G>, A> {
+    class W<F,G>
+
+    fun <B,C> runDay(x: Hk<F,B>, y: Hk<G,C>, f: (B,C) -> A): A
+}
+```
+
+If this implementation doesn't make sense -- that's fine! It'll probably take some time playing around with examples to get an intuition for how this works "under the hood" -- but at a high-level: `Day` gives us a way of embedding two comonads `F`, `G` into a larger comonad `Day<F,G>` where at any point in time, you can manipulate the state of `Day<F,G,S>` by either making use of the API provided by `F` _or_ by making use of the API provided by `G`.
+
+Testing a Comonadic API
+-----------------------
+
+Now that we've seen a few different ways of combining comonadic components -- let's look at some examples of how we can use these ideas in testing.
+
+Let's say you're building an app for managing recipes, and you want to build an automated UI test to see what happens when you try to add a recipe with the same name as one that you already have saved.
+
+This App's main activity can be broken down into two high-level components -- a `MyRecipeAppBar` and a `MyRecipesView`. Let's look at what sort of APIs they provide.
+
+```kotlin
+object MyRecipeAppBar: ComponentDescription<ActivityCtx, MyRecipeAppBar.Action, MyRecipeAppBar.Event, Unit> {
+    interface Action {
+        /** Add the given recipe to the app. */
+        fun addRecipe(recipe: Recipe)
+        /** Navigates the user to the preference activty. */
+        fun openPreferences()
+    }
+    
+    sealed interface Event {
+        /** 
+         * Event emitted whenever a recipe is imported into the app.
+         *
+         * Examples: 
+         *   User manually enters in a new recipe.
+         *   User imports a recipe via the "share" feature of another app.
+         */
+    	data class OnRecipeAdded(val recipe: Recipe)
+    }
+    
+    ...
+}
+
+object MyRecipesView: ComponentDescription<ActivityCtx, MyRecipesView.Action, Void, Unit> {
+    interface Action {
+        /** Sort the list of recipes in the app by the given strategy. */
+        fun sortRecipes(by: SortingStrategy)
+        
+        /** Get the list of recipes in the view in the current sorted order. */
+        fun getRecipes(): List<Recipe>
+        
+        /** Remove a recipe from the app. Returns false on failure. */
+        fun removeRecipe(recipe: Recipe): Boolean
+    }
+    
+    ...
+}
+```
 
 

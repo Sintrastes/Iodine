@@ -357,6 +357,20 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#combining-components" class="md-nav__link">
+    Combining Components
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-a-comonadic-api" class="md-nav__link">
+    Testing a Comonadic API
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -610,8 +624,10 @@
 </code></pre></div>
 <p>So in other words, if we <code>view</code> a duplicated state with a new <code>internalState</code>, we get an updated <code>Store</code> that "stores" that new state, with the same <code>view</code> as before. This is how <code>duplicate</code> can be used to transition a <code>Store</code> to a new state. The method for updating the state of a <code>Store</code> is to just pass in a new internal state.</p>
 <p>Thus, a <code>StoreComponent</code> is just a component holding on to some state <code>S</code> that can be updated to any value. There are no complicated state transitions to contend with. For this reason, <code>StoreComponents</code> are good at modeling things like basic entry forms that just "hold on" to some entered value.</p>
+<p>In fact, by exposing the internal state, together with the "viewed" state -- we can take another perspective on comonadic store components entirely by viewing these parameters as the type of <em>inputs</em> and <em>outputs</em> to the component -- <code>A</code>, <code>B</code>. </p>
+<p>This turns out to be the most useful application of Store components in Iodine -- so we give a name to this concept: A <em>Form</em>. Exposing these two parameters rather than simply an input parameter, as is done with normal Iodine components gives us an instance of another important mathematical struture -- that of the <em>Profunctor</em>. This is all explained in greater detail, with examples, in the section on <a href="../forms_and_profunctors/"><code>Form</code>s</a>.</p>
 <h2 id="moore-components">Moore Components</h2>
-<p>Our next example allows for the modeling of some more complicated state transitions in a <code>Component</code>, and actually corresponds to something close to the original design of <code>Iodine</code> -- as well as being similar to the <em>Elm Architecture</em>. </p>
+<p>Our next example allows for the modeling of some more complicated state transitions in a <code>Component</code>, and actually corresponds to something close to the original design of <code>Iodine</code> -- as well as being similar to the <a href="https://elm-lang.org/"><em>Elm Architecture</em></a>. </p>
 <p>The <code>Moore</code> comonad -- so named because it acts similarly to a finite state machine called a <a href="https://en.wikipedia.org/wiki/Moore_machine">Moore machine</a> -- is defined as follows:</p>
 <div class="highlight"><pre><span></span><code><span class="kd">data</span> <span class="kd">class</span> <span class="nc">Moore</span><span class="o">&lt;</span><span class="n">E</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span><span class="p">(</span>
     <span class="kd">val</span> <span class="nv">value</span><span class="p">:</span> <span class="n">A</span><span class="p">,</span>
@@ -622,6 +638,44 @@
 passed in.</p>
 <p>Note that the "event" here is different from the usual <code>E</code> parameter of an Iodine <code>Component</code>, which is a type of event that the component can asynchronously <em>output</em> -- so to distinguish between the two, we use the convention of <code>Ei</code> as a "input event" and <code>Eo</code> as an "output event".</p>
 <p><img alt="HComponent" class="center" src="https://raw.githubusercontent.com/Sintrastes/Iodine/gh-pages/moore_component.png" /></p>
+<p>Let's look at a simple example of defining a component using this type of architecture defined by the Moore comonad:</p>
+<div class="highlight"><pre><span></span><code><span class="cm">/**</span>
+<span class="cm"> * The Elm Arctitecture (a.k.a. Model-View-Update) in Iodine.</span>
+<span class="cm"> *</span>
+<span class="cm"> * Compare with https://elm-lang.org/examples/buttons</span>
+<span class="cm"> *</span>
+<span class="cm"> */</span>
+
+<span class="c1">// Model</span>
+<span class="n">value</span> <span class="kd">class</span> <span class="nc">Model</span><span class="p">(</span><span class="kd">val</span> <span class="nv">count</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span>
+
+<span class="kd">enum</span> <span class="kd">class</span> <span class="nc">Msg</span> <span class="p">{</span>
+    <span class="n">Increment</span><span class="p">,</span> <span class="n">Decrement</span>
+<span class="p">}</span>
+
+<span class="kd">object</span> <span class="nc">CounterComponent</span><span class="p">:</span> <span class="n">MooreComponentImpl</span><span class="o">&lt;</span><span class="n">IodineContext</span><span class="p">,</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">Void</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Model</span><span class="o">&gt;</span><span class="p">(</span>
+    <span class="n">initialState</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="m">0</span><span class="p">)</span>
+<span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// View</span>
+    <span class="nd">@Composable</span>
+    <span class="kd">override</span> <span class="kd">fun</span> <span class="n">C</span><span class="p">.</span><span class="nf">render</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">S</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Column</span> <span class="p">{</span>
+            <span class="n">Text</span><span class="p">(</span><span class="s">&quot;Hello MVU!&quot;</span><span class="p">)</span>
+
+            <span class="n">Button</span><span class="p">(</span><span class="n">text</span> <span class="o">=</span> <span class="s">&quot;-&quot;</span><span class="p">,</span> <span class="n">onClick</span> <span class="o">=</span> <span class="p">{</span> <span class="n">emit</span><span class="p">(</span><span class="n">Msg</span><span class="p">.</span><span class="na">Decrement</span><span class="p">)</span> <span class="p">})</span>
+            <span class="n">Text</span><span class="p">(</span><span class="n">state</span><span class="p">.</span><span class="na">count</span><span class="p">.</span><span class="na">toString</span><span class="p">())</span>
+            <span class="n">Button</span><span class="p">(</span><span class="n">text</span> <span class="o">=</span> <span class="s">&quot;+&quot;</span><span class="p">,</span> <span class="n">onClick</span> <span class="o">=</span> <span class="p">{</span> <span class="n">emit</span><span class="p">(</span><span class="n">Msg</span><span class="p">.</span><span class="na">Increment</span><span class="p">)</span> <span class="p">})</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Update</span>
+    <span class="kd">override</span> <span class="kd">fun</span> <span class="nf">reducer</span><span class="p">(</span><span class="n">event</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">Model</span><span class="p">):</span> <span class="n">Model</span> <span class="o">=</span>
+        <span class="k">when</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">Msg</span><span class="p">.</span><span class="na">Increment</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">(</span><span class="n">state</span><span class="p">.</span><span class="na">count</span> <span class="o">+</span> <span class="m">1</span><span class="p">)</span>
+            <span class="n">Msg</span><span class="p">.</span><span class="na">Decrement</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">(</span><span class="n">state</span><span class="p">.</span><span class="na">count</span> <span class="o">-</span> <span class="m">1</span><span class="p">)</span> 
+        <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
 <h2 id="cofree-components">Cofree Components</h2>
 <p>The most flexible of the comonadic components defined by Iodine is that of a <code>Cofree</code> component. Unlike the other comonads we have seen, <code>Cofree</code> takes a <a href="../../additional/higher_kinds_in_kotlin/">higher-kinded</a> parameter <code>F</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="kd">data</span> <span class="kd">class</span> <span class="nc">Cofree</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span><span class="p">(</span>
@@ -631,6 +685,57 @@ passed in.</p>
 </code></pre></div>
 <p>Again, like the others, a <code>Cofree</code> holds on to a <code>state</code> -- but it's <code>next</code> parameter takes an an application of <code>F</code> to control how the "next states" branch out.</p>
 <p><img alt="Cofree Component" class="center" src="https://raw.githubusercontent.com/Sintrastes/Iodine/gh-pages/cofree_component.png" /></p>
+<h2 id="combining-components">Combining Components</h2>
+<p>So far, all of the types of comonadic components we have seen all have concrete representations as interfaces or abstract classes in the core <code>iodine</code> package. What then is the use of having a generic <code>ComonadicComponent</code> interface hanging around (besides just being good fun and interesting for those who enjoy Category Theory)?</p>
+<p>The answer lies in the different ways that one can <em>combine</em> comonads. As a bit of a teaser, you can think of a complex combination of comonads as giving you something similar to a statically-typed version of a UI testing framework like <a href="https://www.selenium.dev/">Selenium</a> or <a href="https://developer.android.com/training/testing/espresso">Espresso</a>. To begin, meet <code>Day</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span> <span class="nc">Day</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span><span class="n">G</span><span class="p">,</span><span class="n">A</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">Hk</span><span class="o">&lt;</span><span class="n">Day</span><span class="p">.</span><span class="na">W</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">G</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">A</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="kd">class</span> <span class="nc">W</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span><span class="n">G</span><span class="o">&gt;</span>
+
+    <span class="kd">fun</span> <span class="o">&lt;</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="o">&gt;</span> <span class="nf">runDay</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Hk</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span><span class="n">B</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">Hk</span><span class="o">&lt;</span><span class="n">G</span><span class="p">,</span><span class="n">C</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">A</span><span class="p">):</span> <span class="n">A</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>If this implementation doesn't make sense -- that's fine! It'll probably take some time playing around with examples to get an intuition for how this works "under the hood" -- but at a high-level: <code>Day</code> gives us a way of embedding two comonads <code>F</code>, <code>G</code> into a larger comonad <code>Day&lt;F,G&gt;</code> where at any point in time, you can manipulate the state of <code>Day&lt;F,G,S&gt;</code> by either making use of the API provided by <code>F</code> <em>or</em> by making use of the API provided by <code>G</code>.</p>
+<h2 id="testing-a-comonadic-api">Testing a Comonadic API</h2>
+<p>Now that we've seen a few different ways of combining comonadic components -- let's look at some examples of how we can use these ideas in testing.</p>
+<p>Let's say you're building an app for managing recipes, and you want to build an automated UI test to see what happens when you try to add a recipe with the same name as one that you already have saved.</p>
+<p>This App's main activity can be broken down into two high-level components -- a <code>MyRecipeAppBar</code> and a <code>MyRecipesView</code>. Let's look at what sort of APIs they provide.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">object</span> <span class="nc">MyRecipeAppBar</span><span class="p">:</span> <span class="n">ComponentDescription</span><span class="o">&lt;</span><span class="n">ActivityCtx</span><span class="p">,</span> <span class="n">MyRecipeAppBar</span><span class="p">.</span><span class="na">Action</span><span class="p">,</span> <span class="n">MyRecipeAppBar</span><span class="p">.</span><span class="na">Event</span><span class="p">,</span> <span class="kt">Unit</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="kd">interface</span> <span class="nc">Action</span> <span class="p">{</span>
+        <span class="cm">/** Add the given recipe to the app. */</span>
+        <span class="kd">fun</span> <span class="nf">addRecipe</span><span class="p">(</span><span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">)</span>
+        <span class="cm">/** Navigates the user to the preference activty. */</span>
+        <span class="kd">fun</span> <span class="nf">openPreferences</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="kd">sealed</span> <span class="kd">interface</span> <span class="nc">Event</span> <span class="p">{</span>
+        <span class="cm">/** </span>
+<span class="cm">         * Event emitted whenever a recipe is imported into the app.</span>
+<span class="cm">         *</span>
+<span class="cm">         * Examples: </span>
+<span class="cm">         *   User manually enters in a new recipe.</span>
+<span class="cm">         *   User imports a recipe via the &quot;share&quot; feature of another app.</span>
+<span class="cm">         */</span>
+        <span class="kd">data</span> <span class="kd">class</span> <span class="nc">OnRecipeAdded</span><span class="p">(</span><span class="kd">val</span> <span class="nv">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="p">...</span>
+<span class="p">}</span>
+
+<span class="kd">object</span> <span class="nc">MyRecipesView</span><span class="p">:</span> <span class="n">ComponentDescription</span><span class="o">&lt;</span><span class="n">ActivityCtx</span><span class="p">,</span> <span class="n">MyRecipesView</span><span class="p">.</span><span class="na">Action</span><span class="p">,</span> <span class="n">Void</span><span class="p">,</span> <span class="kt">Unit</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="kd">interface</span> <span class="nc">Action</span> <span class="p">{</span>
+        <span class="cm">/** Sort the list of recipes in the app by the given strategy. */</span>
+        <span class="kd">fun</span> <span class="nf">sortRecipes</span><span class="p">(</span><span class="k">by</span><span class="p">:</span> <span class="n">SortingStrategy</span><span class="p">)</span>
+
+        <span class="cm">/** Get the list of recipes in the view in the current sorted order. */</span>
+        <span class="kd">fun</span> <span class="nf">getRecipes</span><span class="p">():</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Recipe</span><span class="o">&gt;</span>
+
+        <span class="cm">/** Remove a recipe from the app. Returns false on failure. */</span>
+        <span class="kd">fun</span> <span class="nf">removeRecipe</span><span class="p">(</span><span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">):</span> <span class="kt">Boolean</span>
+    <span class="p">}</span>
+
+    <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div>
                 
               
               
