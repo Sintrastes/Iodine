@@ -11,6 +11,7 @@ pluginManagement {
 }
 
 rootProject.name = "iodine"
+include("base")
 include("comonadic-ui")
 include("core")
 include("desktop")

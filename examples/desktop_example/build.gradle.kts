@@ -26,6 +26,7 @@ repositories {
 
 dependencies {
     implementation(compose.desktop.currentOs)
+    implementation(files("$projectDir/libs/iodine-base.jar"))
     implementation(files("$projectDir/libs/iodine-core.jar"))
     implementation(files("$projectDir/libs/iodine-desktop.jar"))
 }
