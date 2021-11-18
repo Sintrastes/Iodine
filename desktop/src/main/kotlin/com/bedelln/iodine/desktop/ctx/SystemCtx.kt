@@ -6,9 +6,8 @@ import androidx.compose.ui.window.TrayState
 import com.bedelln.iodine.interfaces.IodineContext
 
 /** Minimal Iodine context for a Compose for desktop application. */
-interface SystemCtx: IodineContext {
+interface SystemCtx: IodineContext, ApplicationScope {
     val trayState: TrayState
-    val appScope: ApplicationScope
 }
 
 /** Send a Desktop notification. */

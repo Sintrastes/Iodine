@@ -32,6 +32,7 @@ dependencies {
 val arrow_version = "1.0.0"
 
 dependencies {
+    implementation(project(":base"))
     implementation(project(":core"))
     implementation(compose.desktop.currentOs)
     implementation("io.arrow-kt:arrow-fx-coroutines:$arrow_version")

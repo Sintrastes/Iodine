@@ -13,26 +13,22 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 
 /** Entrypoint for an Iodine desktop application. */
-fun <I,E,A> iodineApplication(
-    initialValue: A,
+fun iodineDesktopApplication(
     exitProcessOnExit: Boolean = true,
-    content: ComponentDescription<SystemCtx, I, E, A>
+    content: @Composable SystemCtx.() -> Unit
 ) {
     application(exitProcessOnExit) {
         val appScope = this
         val trayState = rememberTrayState()
 
-        val ctx = object: SystemCtx {
+        val ctx = object: SystemCtx, ApplicationScope by appScope {
             override val trayState: TrayState
                 get() = trayState
-            override val appScope: ApplicationScope
-                get() = appScope
             override val defaultScope: CoroutineScope
                 get() = CoroutineScope(Dispatchers.Default)
         }
 
-        content.initialize(ctx, initialValue)
-            .getContents()
+        ctx.content()
     }
 }
 
@@ -43,9 +39,9 @@ fun <I,E,A> iodineApplication(
  *
  */
 @Composable
-fun <I,E> ApplicationScope.IodineWindow(
+fun ApplicationScope.IodineWindow(
     title: String,
-    contents: ComponentDescription<WindowCtx, I, E, Any>
+    contents: ComponentDescription<WindowCtx, *, *, Unit>
 ) {
     var isVisible by remember { mutableStateOf(true) }
 
@@ -65,7 +61,7 @@ private fun <I,E> ApplicationScope.windowContents(
     val trayState = rememberTrayState()
     val appScope = this
     var additional by remember { mutableStateOf(listOf<@Composable() () -> Unit>()) }
-    val windowCtx = object : WindowCtx {
+    val windowCtx = object : WindowCtx, ApplicationScope by appScope {
         override val window = object : WindowRef {
             override fun addToContents(f: @Composable() () -> Unit) {
                 additional = additional + listOf(f)
@@ -74,8 +70,6 @@ private fun <I,E> ApplicationScope.windowContents(
         override val windowScope = GlobalScope
         override val trayState: TrayState
             get() = trayState
-        override val appScope: ApplicationScope
-            get() = appScope
         override val defaultScope: CoroutineScope
             get() = windowScope
         override val ref: ContainerRef
