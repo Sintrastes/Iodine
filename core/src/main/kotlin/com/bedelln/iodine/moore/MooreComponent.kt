@@ -1,10 +1,8 @@
 package com.bedelln.iodine.moore
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.*
 import com.bedelln.iodine.interfaces.*
-import com.bedelln.iodine.util.mapStateFlow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -15,7 +13,7 @@ interface EventInterface<E> {
 }
 
 typealias MooreComponentDescriptionImpl<Ctx,Ei,Eo,S,A>
-        = Description<Ctx, A, MooreComponentImpl<Ctx, EventInterface<Ei>, Eo, S, A>>
+    = Description<Ctx, A, MooreComponentImpl<Ctx, EventInterface<Ei>, Eo, S, A>>
 
 typealias MooreComponentDescription<Ctx,Ei,Eo,A>
     = Description<Ctx, A, MooreComponent<Ctx, EventInterface<Ei>, Eo, A>>

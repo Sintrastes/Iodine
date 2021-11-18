@@ -37,6 +37,7 @@ dependencies {
     implementation(compose.foundation)
     implementation(compose.material)
     implementation("io.arrow-kt:arrow-fx-coroutines:$arrow_version")
+    implementation(project(":base"))
     // implementation("io.github.sintrastes:buildable-kt-interfaces:1.0-SNAPSHOT")
 }
 
