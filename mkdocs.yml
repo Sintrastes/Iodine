@@ -7,6 +7,7 @@ nav:
       - concepts/basic_concepts.md
       - concepts/comonadic_components.md
       - concepts/forms_and_profunctors.md
+      - concepts/tools.md
     - 'Examples': 
       - examples/basic_examples.md
       - examples/calculator_app.md
