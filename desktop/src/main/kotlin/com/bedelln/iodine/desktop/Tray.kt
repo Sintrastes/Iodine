@@ -26,7 +26,7 @@ class Tray<C: SystemCtx>(
         return object: ComponentImpl<Unit, Void, Unit, Unit> {
             @Composable
             override fun contents(state: Unit) {
-                ctx.appScope.ComposeTray(
+                ctx.ComposeTray(
                     icon = icon.toPainter(),
                     menu = {
                         menuItems.forEach { mi ->
