@@ -9,9 +9,9 @@ import java.util.function.Consumer
 import kotlin.coroutines.Continuation
 
 typealias ToolDescription<C,E,A,B>
-        = Description<C, A, Tool<C, E, B>>
+    = Description<C, A, Tool<C, E, B>>
 
-interface Tool<in C,out E,out A> {
+interface Tool<in C: IodineContext,out E,out A> {
     val events: Flow<E>
 
     suspend fun runTool(ctx: C): A
@@ -43,7 +43,7 @@ interface Tool<in C,out E,out A> {
             }
         }
 
-        fun interface ToolEffect<C, E, A>: Effect<ToolDescription<C, E, Unit, A>> {
+        fun interface ToolEffect<C: IodineContext, E, A>: Effect<ToolDescription<C, E, Unit, A>> {
             suspend fun ToolDescription<C, E, Unit, A>.bind(): A {
                 return control().shift(this)
             }
@@ -58,7 +58,7 @@ interface Tool<in C,out E,out A> {
     }
 }
 
-inline fun <C,E,A,B,X> ToolDescription<C, E, A, B>.lmap(crossinline f: (X) -> A): ToolDescription<C, E, X, B> {
+inline fun <C: IodineContext,E,A,B,X> ToolDescription<C, E, A, B>.lmap(crossinline f: (X) -> A): ToolDescription<C, E, X, B> {
     val origDescr = this
     return object: ToolDescription<C, E, X, B> {
         override fun initialize(ctx: C, initialValue: X): Tool<C, E, B> {
@@ -80,7 +80,7 @@ inline fun <C,E,A,B,X> ToolDescription<C, E, A, B>.lmap(crossinline f: (X) -> A)
     }
 }
 
-inline fun <C,E,A,B,X> ToolDescription<C, E, A, B>.rmap(crossinline f: suspend (B) -> X): ToolDescription<C, E, A, X> {
+inline fun <C: IodineContext,E,A,B,X> ToolDescription<C, E, A, B>.rmap(crossinline f: suspend (B) -> X): ToolDescription<C, E, A, X> {
     val origDescr = this
     return object: ToolDescription<C, E, A, X> {
         override fun initialize(ctx: C, initialValue: A): Tool<C, E, X> {
@@ -101,7 +101,7 @@ inline fun <C,E,A,B,X> ToolDescription<C, E, A, B>.rmap(crossinline f: suspend (
     }
 }
 
-fun <Ctx,E,A,B,C> ToolDescription<Ctx, E, A, B>.compose(
+fun <Ctx: IodineContext,E,A,B,C> ToolDescription<Ctx, E, A, B>.compose(
     other: ToolDescription<Ctx, E, B, C>
 ): ToolDescription<Ctx, E, A, C> {
     val thisToolDescr = this
@@ -131,7 +131,7 @@ fun <Ctx,E,A,B,C> ToolDescription<Ctx, E, A, B>.compose(
     }
 }
 
-inline fun <Ctx,E,A,B> ToolDescription<Ctx, E, Unit, A>.thenTool(
+inline fun <Ctx: IodineContext,E,A,B> ToolDescription<Ctx, E, Unit, A>.thenTool(
     crossinline f: (A) -> ToolDescription<Ctx, E, Unit, B>
 ) = run {
     val origTool = this
