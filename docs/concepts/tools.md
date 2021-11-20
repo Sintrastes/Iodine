@@ -52,5 +52,75 @@ As it turns out, there is a dual way of viewing this duality between Monads and 
 
 Recall that with components, we have an "interaction interface" `I` to fill in for the action monad `M` which acts as a kind of "controller" or "view model" for the component that manipulates it's state. Can something similar be done for tools?
 
-The answer is: Yes. ...
+It turns out the answer to this is (at least for a particular case of free monads): Yes. 
+
+Consider that for "traditional" uses of free monads, the free monad is built from functors that look like the following:
+
+```kotlin
+sealed class CalculatorF<A> {
+    data class EnterDigit<A>(digit: Int, rest: A): CalculatorF<A>
+    data class EnterSymbol<A>(symbol: Symbol, rest: A): CalculatorF<A>
+}
+```
+
+In order words, they are a "sum" of all of the different functions that can be injected into the free monad. However, consider that instead, we look at a free monad built from the dual product functor:
+
+```kotlin
+interface CoCalculatorF<A> {
+    fun onEnterDigit(digit: Int): A
+    fun onEnterSymbol(symbol: Symbol): A
+}
+```
+
+In this case, we can view `Free<CoCalculatorF, A>` as a kind of "deffered result" of type `A`, where the result depends on the selected "onX" branch we take on each iteration of the product functor. Let's look at an example (TODO: Convert this to Kotlin):
+
+```haskell
+calculatorTool :: Calculator Int
+calculatorTool = go (CalculatorState [])
+  where go st = Free $ CoCalculatorF {
+    onEnterDigit = \d -> trace "Entered digit" $
+        go (CalculatorState $ (symbols st) ++ [Left d]),
+    onEnterSymbol = \s -> trace "Entered symbol" $
+        case s of
+          Enter -> case extractResult (calculate st) of
+              Just res -> Pure $ res
+              Nothing  -> trace "Could not extract result" $ go (calculate st)
+          Clear -> go $ CalculatorState []
+          otherwise -> go
+              (CalculatorState $
+                   (symbols st) ++ [Right s])
+  }
+```
+
+In other words, this can be viewed as a kind of abstract description of the state transitions of a `Tool`, as much as the free comonad over a functor like `CoCalculatorF` can be viewed as an abstract description of the state transitions of a `Component`.
+
+Similarly then, with `CoFree<CalculatorF, Unit>` we can `explore` this description to update it's state.
+
+```kotlin
+fun Free<CoCalculatorF, A>.explore(actions: CoFree<CalculatorF, Unit>): Free<CoCalculatorF, A> {
+    ...
+}
+```
+
+Now, hopefully you can appreciate why this is a "dual way" of looking at a duality -- this flips the view of "comonads as spaces" and "monads as events to manipulate that state space" entirely on it's head! Now our monad is a space (albeit, one where the state we are about is at the _leaves_ of the state space, not at every node), and our comonad is in fact isomorphic to an infinite stream of actions used to explore the "space" of the monad.
+
+In this "dual view", there are a few subtleties that need to be addressed when seeking to apply this result to practical situations, however. For example, if we were going to test a `Tool` defined via an abstract state description like this, we may want to look at _finite_ sequences of actions at a time, before checking a result. To do so, we have to add an additional case to our `CalculatorF` to provide a base case for the recursion in `Cofree` -- thus breaking the duality between our two functors:
+
+```kotlin
+sealed class CalculatorF<A> {
+    data class EnterDigit<A>(digit: Int, rest: A): CalculatorF<A>
+    data class EnterSymbol<A>(symbol: Symbol, rest: A): CalculatorF<A>
+    class Done<A>(): CalculatorF<A>
+}
+```
+
+However, the upside to `CoFree<CalculatorF, Unit>` being an infinite sequence of actions it that it actually lets define the perhaps helpful function:
+
+```kotlin
+fun Free<CoCalculatorF, A>.execute(actions: CoFree<CalculatorF, Unit>): A {
+    ...
+}
+```
+
+This function will execute the sequence of actions provided until our Monad is fully evaluated. Note however, that this is a partial function. There is noting to gaurntee that the sequence of actions provided will ever lead to the tool being executed to completion.
 
