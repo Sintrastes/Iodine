@@ -5,11 +5,11 @@ import com.bedelln.iodine.interfaces.Tool
 import com.bedelln.iodine.interfaces.ToolDescription
 import com.bedelln.iodine.android.AndroidCtx
 
-class Snackbar: ToolDescription<AndroidCtx, Unit, Unit> {
+class Snackbar: ToolDescription<AndroidCtx, Void, Unit, Unit> {
     override fun initialize(
         ctx: AndroidCtx,
         initialValue: Unit
-    ): Tool<AndroidCtx, Unit> {
+    ): Tool<AndroidCtx, Void, Unit> {
         TODO("Not yet implemented")
     }
 }

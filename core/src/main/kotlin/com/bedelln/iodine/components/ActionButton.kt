@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class ActionButton<C: IodineContext>(
     val text: String,
-    val action: ToolDescription<C, Unit, Unit>
+    val action: ToolDescription<C, Any, Unit, Unit>
 ): ComponentDescription<C, ActionButton.Action, Void, Unit> {
 
     interface Action {

@@ -18,12 +18,12 @@ import java.awt.image.BufferedImage
 /**
  * Iodine component for displaying a system tray entry.
  */
-class Tray<C: SystemCtx>(
+class Tray<C: SystemCtx, E>(
     val icon: BufferedImage,
-    val menuItems: List<MenuItem<C>>
-): ComponentDescription<C,Any,Void,Unit> {
-    override fun initialize(ctx: C, initialValue: Unit): Component<Any, Void, Unit> {
-        return object: ComponentImpl<Unit, Void, Unit, Unit> {
+    val menuItems: List<MenuItem<C,E>>
+): ComponentDescription<C,Unit,E,Unit> {
+    override fun initialize(ctx: C, initialValue: Unit): Component<Unit, E, Unit> {
+        return object: ComponentImpl<Unit, E, Unit, Unit> {
             @Composable
             override fun contents(state: Unit) {
                 ctx.ComposeTray(
@@ -44,7 +44,8 @@ class Tray<C: SystemCtx>(
                 )
             }
 
-            override val events: Flow<Void>
+            // TODO: Add events from tools.
+            override val events: Flow<E>
                 get() = emptyFlow()
             override val impl = Unit
             override val state: StateFlow<Unit>
@@ -56,9 +57,9 @@ class Tray<C: SystemCtx>(
 /**
  * A menu item for a system tray component built with [Tray].
  */
-data class MenuItem<C: SystemCtx>(
+data class MenuItem<C: SystemCtx, E>(
     /** The name displayed for the menu item. */
     val name: String,
     /** An action preformed when this menu item is clicked. */
-    val action: ToolDescription<C, Unit, Unit>
+    val action: ToolDescription<C, E, Unit, Unit>
 )
