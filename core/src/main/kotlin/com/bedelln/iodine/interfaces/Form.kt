@@ -93,10 +93,10 @@ inline fun <C : IodineContext, I, E, S, A, B, X> FormDescription<C, I, E, A, B>.
  */
 inline fun <C: IodineContext, A> ComposeForm(
     crossinline f: @Composable() C.(A) -> Unit
-): SFormDescription<C, Any, Void, A> {
-    return object: SFormDescription<C, Any, Void, A> {
+): SFormDescription<C, Unit, Void, A> {
+    return object: SFormDescription<C, Unit, Void, A> {
 
-        override fun initialize(ctx: C, initialValue: A): SForm<Any, Void, A> {
+        override fun initialize(ctx: C, initialValue: A): SForm<Unit, Void, A> {
             return object: SForm<Unit, Void, A> {
                 val contentsFlow = MutableStateFlow(initialValue)
 
