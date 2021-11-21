@@ -5,9 +5,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.bedelln.iodine.components.*
 import com.bedelln.iodine.components.builders.Column
+import com.bedelln.iodine.components.builders.Row
 import com.bedelln.iodine.components.text.DoubleEntry
 import com.bedelln.iodine.components.text.IntEntry
 import com.bedelln.iodine.desktop.*
+import com.bedelln.iodine.desktop.ctx.WindowCtx
 import com.bedelln.iodine.interfaces.*
 import com.bedelln.iodine.tools.AlertDialog
 import kotlinx.coroutines.*
@@ -37,8 +39,11 @@ fun main() = iodineDesktopApplication(
                     )
                 )
                 val resetButton = - Button("Reset")
-                val slider = - ( Slider().imap { _: Unit -> 0.5f } )
-                - ( Switch().imap { _: Unit -> true })
+                val slider = -(Slider().imap { _: Unit -> 0.5f })
+                //- Row<WindowCtx> {
+                //    - Text("Set the thing: ")
+                    - (Switch().imap { _: Unit -> true })
+                //}
                 - ( IntEntry().imap { _: Unit -> "42" } )
                 - ( DoubleEntry().imap { _: Unit -> "42" } )
 
