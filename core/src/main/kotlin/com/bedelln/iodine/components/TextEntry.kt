@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 
+/**
+ * An iodine component for
+ */
 class TextEntry(): SFormDescription<IodineContext, TextEntry.Action, Void, String> {
     interface Action {
         fun setText(value: String)

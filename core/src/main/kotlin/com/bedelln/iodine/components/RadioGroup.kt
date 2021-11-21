@@ -10,6 +10,10 @@ import com.bedelln.iodine.interfaces.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * An Iodine component for selecting a single value of type A
+ *  from a list of values of type A via a radial group.
+ */
 class RadioGroup<A: Displayable<C>, C: IodineContext>(
     val values: List<A>
 ): ComponentDescription<C, RadioGroup.Action<A>, Void, A?> {

@@ -16,22 +16,20 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 
-object InvalidInteger
-
 /** A component for inputting integers. */
-class IntEntry<C : IodineContext> : FormDescription<C, Any, ValidationEvent<Void>, String, Int?> by (
+class IntEntry : FormDescription<IodineContext, Any, ValidationEvent<Void>, String, Int?> by (
     ValidatedForm(
-        object: ValidatingFormDescription<C, Unit, Void, String, Int, InvalidInteger> {
+        object: ValidatingFormDescription<IodineContext, Unit, Void, String, Int, ValidationError> {
 
-            override fun initialize(ctx: C, initialValue: String) =
-                object: ValidatingForm<C, Unit, Void, String, Int, InvalidInteger>(initialValue) {
+            override fun initialize(ctx: IodineContext, initialValue: String) =
+                object: ValidatingForm<IodineContext, Unit, Void, String, Int, ValidationError>(initialValue) {
 
                     override fun view(input: String) =
                         input.toIntOrNull()?.let { Either.Right(it) }
-                            ?: Either.Left(InvalidInteger)
+                            ?: Either.Left(ValidationError.InvalidInteger)
 
                     @Composable
-                    override fun contents(error: InvalidInteger?, contents: String) {
+                    override fun contents(error: ValidationError?, contents: String) {
                         Column {
                             TextField(
                                 value = contents,
@@ -44,13 +42,21 @@ class IntEntry<C : IodineContext> : FormDescription<C, Any, ValidationEvent<Void
                                     Text("")
                                 }
                             )
-                            if (error == InvalidInteger) {
-                                Text(
-                                    text = "Not a valid integer",
-                                    color = Color.Red,
-                                    fontSize = 16.sp
-                                )
-                            }
+                            when (error) {
+                                is ValidationError.InvalidInteger -> {
+                                    Text(
+                                        text = "Not a valid integer",
+                                        color = Color.Red,
+                                        fontSize = 16.sp
+                                    )
+                                }
+                                is ValidationError.Empty -> {
+                                    Text(
+                                        text = "Please enter a valid integer",
+                                        color = Color.Red,
+                                        fontSize = 16.sp
+                                    )
+                                }                                }
                         }
                     }
 
@@ -61,4 +67,9 @@ class IntEntry<C : IodineContext> : FormDescription<C, Any, ValidationEvent<Void
                 }
         }
     )
-)
+) {
+    sealed interface ValidationError {
+        object InvalidInteger : ValidationError
+        object Empty: ValidationError
+    }
+}

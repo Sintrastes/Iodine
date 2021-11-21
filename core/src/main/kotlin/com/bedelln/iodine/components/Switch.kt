@@ -13,13 +13,13 @@ import kotlinx.coroutines.launch
 /**
  * Iodine component for a single [androidx.compose.material.Switch].
  */
-class Switch<C: IodineContext>(): ComponentDescription<C, Switch.Action, Void, Boolean> {
+class Switch(): ComponentDescription<IodineContext, Switch.Action, Void, Boolean> {
     interface Action {
         fun toggle()
         fun isOn(): Boolean
     }
 
-    override fun initialize(ctx: C, initialValue: Boolean): Component<Action, Void, Boolean> {
+    override fun initialize(ctx: IodineContext, initialValue: Boolean): Component<Action, Void, Boolean> {
         return object: ComponentImpl<Action, Void, Boolean, Boolean> {
             private val resultFlow = MutableStateFlow(initialValue)
             override val state get() = resultFlow

@@ -10,6 +10,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 
+/**
+ * An Iodine component used to select multiple values from a set of values of type A
+ *  using a multiselect group.
+ */
 class MultiSelectGroup<A: Displayable<C>, C: IodineContext>(
     val values: List<A>
 ): ComponentDescription<C, MultiSelectGroup.Action<A>, Void, Set<A>> {

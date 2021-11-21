@@ -1,23 +1,30 @@
 package com.bedelln.iodine.components.text
 
+import arrow.core.Either
 import com.bedelln.iodine.forms.ValidatedForm
 import com.bedelln.iodine.forms.ValidatingForm
 import com.bedelln.iodine.forms.ValidatingFormDescription
 import com.bedelln.iodine.forms.ValidationEvent
+import com.bedelln.iodine.interfaces.Form
 import com.bedelln.iodine.interfaces.FormDescription
 import com.bedelln.iodine.interfaces.IodineContext
 
-object InvalidDouble
+class DoubleEntry: ValidatingTextEntry<Double, DoubleEntry.FormatError>() {
+    override fun validate(input: String): Either<FormatError, Double> =
+        if (input.isEmpty())
+            Either.Left(FormatError.EmptyInput)
+        else
+            input.toDoubleOrNull()
+                ?.let { Either.Right(it) }
+                ?: Either.Left(FormatError.ParseError)
 
-class DoubleEntry<C : IodineContext> : FormDescription<C, Any, ValidationEvent<Void>, String, Double?> by (
-    ValidatedForm(
-        object: ValidatingFormDescription<C, Unit, Void, String, Double, InvalidDouble> {
-            override fun initialize(
-                ctx: C,
-                initialValue: String
-            ): ValidatingForm<C, Unit, Void, String, Double, InvalidDouble> {
-                TODO("Not yet implemented")
-            }
-        }
-    )
-)
+    override fun errorMessage(error: FormatError) = when(error) {
+        FormatError.ParseError -> "Invalid double"
+        FormatError.EmptyInput -> "Please enter a valid double."
+    }
+
+    sealed interface FormatError {
+        object ParseError: FormatError
+        object EmptyInput: FormatError
+    }
+}

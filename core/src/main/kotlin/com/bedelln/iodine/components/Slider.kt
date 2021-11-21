@@ -11,13 +11,13 @@ import com.bedelln.iodine.interfaces.ComponentImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class Slider<C: IodineContext>(): ComponentDescription<C, Slider.Action, Void, Float> {
+class Slider(): ComponentDescription<IodineContext, Slider.Action, Void, Float> {
     interface Action {
         fun setPosition(position: Float)
         fun currentPosition(): Float
     }
 
-    override fun initialize(ctx: C, initialValue: Float): Component<Action, Void, Float> {
+    override fun initialize(ctx: IodineContext, initialValue: Float): Component<Action, Void, Float> {
         return object: ComponentImpl<Action, Void, Float, Float> {
 
             private val contentsFlow = MutableStateFlow(initialValue)
