@@ -62,9 +62,9 @@ inline fun <C: IodineContext> Compose(
 fun <C,I,E,S,A> ComponentDescriptionImpl<C, I, E, S, A>.initialValue(
     x: A
 ): ComponentDescriptionImpl<C, I, E, S, Unit>
- = this.imap { x }
+ = this.imapImpl { x }
 
-inline fun <C,I,E,S,A,X> ComponentDescriptionImpl<C, I, E, S, A>.imap(
+inline fun <C,I,E,S,A,X> ComponentDescriptionImpl<C, I, E, S, A>.imapImpl(
     crossinline f: (X) -> A
 ): ComponentDescriptionImpl<C, I, E, S, X> {
     val origDescr = this
@@ -91,6 +91,12 @@ inline fun <C,I,E,S,A,X> ComponentDescriptionImpl<C, I, E, S, A>.imap(
         }
     }
 }
+
+inline fun <C,I,E,A,X> ComponentDescription<C, I, E, A>.imap(
+    crossinline f: (X) -> A
+): ComponentDescription<C, I, E, X>
+    = (this as ComponentDescriptionImpl<C,I,E,Any?,A>)
+        .imapImpl(f)
 
 /**
  * Helper function to obtain the composable function for rendering the given component.
