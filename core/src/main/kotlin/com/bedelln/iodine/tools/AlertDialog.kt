@@ -1,8 +1,10 @@
 package com.bedelln.iodine.tools
 
+import androidx.compose.foundation.border
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.unit.dp
 import com.bedelln.iodine.interfaces.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -22,43 +24,35 @@ class AlertDialog<C,I,E,A,B>(
     lateinit var onFinish: MutableSharedFlow<B>
 
     val showDialogFlow = MutableStateFlow(false)
-    lateinit var showState: State<Boolean>
+
     suspend fun showDialogAction() {
         showDialogFlow.emit(true)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Composable
-    override fun initCompose(ctx: C) {
-        showState = showDialogFlow.collectAsState()
-    }
+    override fun initCompose(ctx: C) { }
 
     lateinit var _contents: Form<I,E,A,B>
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override fun initialize(ctx: C, initialValue: A) = object : Tool<C, E, B> {
 
         init {
             onFinish = MutableSharedFlow()
 
             ctx.ref.addToContents {
+                val showState = showDialogFlow.collectAsState()
                 val showDialog by remember { showState }
                 _contents = contents.initialize(ctx, initialValue)
                 if (showDialog) {
                     AlertDialog(
                         title = { Text(title) },
-                        onDismissRequest = {
-                        },
-                        // properties = DesktopDialogProperties(undecorated = true),
-                        // modifier = Modifier.border(
-                        //     width = 1.dp,
-                        //     MaterialTheme.colors.primary
-                        // ),
+                        onDismissRequest = { },
+                        modifier = Modifier.border(
+                            width = 1.dp,
+                            MaterialTheme.colors.primary
+                        ),
                         text = {
-                            // TODO: Restore this.
-                            // with(_contents) {
-                            //     contents()
-                            // }
+                            _contents.getContents()
                         },
                         confirmButton = {
                             Button(
