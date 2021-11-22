@@ -1,6 +1,6 @@
 package com.bedelln.iodine.interfaces
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import com.bedelln.iodine.util.mapStateFlow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,7 +9,14 @@ import kotlinx.coroutines.flow.emptyFlow
 
 interface FormViewModel<out I, out E, A, out B> : ViewModel<I, E, A, A>, Gettable<B>
 
-interface Form<out I, out E, A, out B> : ComponentImpl<I, E, A, A>, FormViewModel<I, E, A, B>
+interface Form<out I, out E, A, out B> : ComponentImpl<I, E, A, A>, FormViewModel<I, E, A, B> {
+    @Composable
+    fun result(): B {
+        val state = result.collectAsState()
+        val res by remember { state }
+        return res
+    }
+}
 
 typealias SForm<I, E, A>
     = Form<I, E, A, A>
@@ -53,7 +60,7 @@ inline fun <C : IodineContext, I, E, A, B, X> FormDescription<C, I, E, A, B>.oma
     }
 }
 
-inline fun <C : IodineContext, I, E, S, A, B, X> FormDescription<C, I, E, A, B>.imap(
+inline fun <C : IodineContext, I, E, A, B, X> FormDescription<C, I, E, A, B>.imap(
     crossinline from: (X) -> A,
     crossinline to: (A) -> X
 ): FormDescription<C, I, E, X, B> {
