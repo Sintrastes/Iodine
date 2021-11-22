@@ -69,7 +69,7 @@ sealed class IodineMonadF<C : IodineContext, A> {
     ) : IodineMonadF<C, A>()
 }
 
-interface ColumnCtx: IodineContext, ColumnScope {
+interface ColumnCtx : IodineContext, ColumnScope {
 
     abstract class ColumnEffect<C : IodineContext, A>(
         val ctx: C,
@@ -88,15 +88,29 @@ interface ColumnCtx: IodineContext, ColumnScope {
             }
         )
 
-        suspend operator fun <I, E> ComponentDescription<C, I, E, Unit>.unaryMinus()
-            = this.not().bind()
+        @JvmName("notForm")
+        internal operator fun <I, E, A> FormDescription<C, I, E, Unit, A>.not(
+        ): IodineMonad<C, Form<I, E, Unit, A>> = IodineMonad.Bind(
+            IodineMonadF.Add(this) {
+                IodineMonad.Return(
+                    it as Form<I, E, Unit, A>
+                )
+            }
+        )
+
+        operator fun <I, E> ComponentDescription<C, I, E, Unit>.unaryMinus() =
+            this.not().bind()
+
+        operator fun <I, E, A> FormDescription<C, I, E, Unit, A>.unaryMinus() =
+            this.not().bind()
     }
 
     companion object {
+        @Composable
         internal operator fun <A, C : IodineContext> invoke(
             ctx: C,
             childComponents: MutableList<ComponentDescription<C, Any?, Any?, Unit>>,
-            func: suspend ColumnEffect<C, *>.() -> A
+            func: @Composable ColumnEffect<C, *>.() -> A
         ): IodineMonad<C, A> =
             Effect.restricted(
                 eff = { scope ->
@@ -106,16 +120,16 @@ interface ColumnCtx: IodineContext, ColumnScope {
                         }
                     }
                 },
-                f = func,
+                f = { func() },
                 just = { IodineMonad.Return(it) }
             )
     }
 }
 
 
-interface RowCtx: IodineContext, RowScope {
+interface RowCtx : IodineContext, RowScope {
 
-    abstract class ColumnEffect<C : IodineContext, A>(
+    abstract class RowEffect<C : IodineContext, A>(
         val ctx: C,
         val childComponents: MutableList<ComponentDescription<C, Any?, Any?, Unit>>
     ) : Effect<IodineMonad<C, A>> {
@@ -124,53 +138,69 @@ interface RowCtx: IodineContext, RowScope {
         }
 
         internal operator fun <I, E> ComponentDescription<C, I, E, Unit>.not(
-        ): IodineMonad<C, ComponentDescription<C, I, E, Unit>> = IodineMonad.Bind(
+        ): IodineMonad<C, Component<I, E, Unit>> = IodineMonad.Bind(
             IodineMonadF.Add(this) {
                 IodineMonad.Return(
-                    it as ComponentDescription<C, I, E, Unit>
+                    it as Component<I, E, Unit>
                 )
             }
         )
+
+        @JvmName("notForm")
+        internal operator fun <I, E, A> FormDescription<C, I, E, Unit, A>.not(
+        ): IodineMonad<C, Form<I, E, Unit, A>> = IodineMonad.Bind(
+            IodineMonadF.Add(this) {
+                IodineMonad.Return(
+                    it as Form<I, E, Unit, A>
+                )
+            }
+        )
+
+        operator fun <I, E> ComponentDescription<C, I, E, Unit>.unaryMinus() =
+            this.not().bind()
+
+        operator fun <I, E, A> FormDescription<C, I, E, Unit, A>.unaryMinus() =
+            this.not().bind()
     }
 
     companion object {
+        @Composable
         internal operator fun <A, C : IodineContext> invoke(
             ctx: C,
             childComponents: MutableList<ComponentDescription<C, *, *, Unit>>,
-            func: suspend ColumnEffect<C, *>.() -> A
+            func: @Composable RowEffect<C, *>.() -> A
         ): IodineMonad<C, A> =
             Effect.restricted(
                 eff = { scope ->
-                    object : ColumnEffect<C, A>(ctx, childComponents) {
+                    object : RowEffect<C, A>(ctx, childComponents) {
                         override fun control(): DelimitedScope<IodineMonad<C, A>> {
                             return scope
                         }
                     }
                 },
-                f = func,
+                f = { func() },
                 just = { IodineMonad.Return(it) }
             )
     }
 }
 
 class Column<C : IodineContext> constructor(
-    val childComponents: (C) -> List<ComponentDescription<C, Any?, Any?, Unit>>,
+    val childComponents: @Composable (C) -> List<ComponentDescription<C, Any?, Any?, Unit>>,
     val modifier: Modifier,
     val verticalArrangement: Arrangement.Vertical,
     val horizontalAlignment: Alignment.Horizontal,
 ) : ComponentDescription<C, Unit, Void, Unit> {
-    var childComponents_: List<ComponentDescription<C, Any?, Any?, Unit>>? = null
+    lateinit var childComponents_: List<ComponentDescription<C, Any?, Any?, Unit>>
 
     @Composable
     override fun initCompose(ctx: C) {
-        println("Calling init compose.")
-        if (childComponents_ == null) {
-            childComponents_ = childComponents(ctx)
-        }
-        childComponents_!!.forEach {
+        println("Calling init compose in column ${this.hashCode()}.")
+        childComponents_ = childComponents(ctx)
+
+        childComponents_.forEach {
             it.initCompose(ctx)
         }
-
+        println("After init compose in column")
     }
 
     override fun initialize(ctx: C, initialValue: Unit): Component<Unit, Void, Unit> {
@@ -178,10 +208,7 @@ class Column<C : IodineContext> constructor(
 
             val children
                 get() = run {
-                    if (childComponents_ == null) {
-                        childComponents_ = childComponents(ctx)
-                    }
-                    childComponents_!!.map {
+                    childComponents_.map {
                         it.initialize(ctx, Unit)
                     }
                 }
@@ -209,35 +236,29 @@ class Column<C : IodineContext> constructor(
 }
 
 class Row<C : IodineContext> constructor(
-    val childComponents: (C) -> List<ComponentDescription<C, Any?, Any?, Unit>>,
+    val childComponents: @Composable (C) -> List<ComponentDescription<C, Any?, Any?, Unit>>,
     val modifier: Modifier,
     val horizontalArrangement: Arrangement.Horizontal,
     val verticalAlignment: Alignment.Vertical
 ) : ComponentDescription<C, Unit, Void, Unit> {
-    var childComponents_: List<ComponentDescription<C, Any?, Any?, Unit>>? = null
+    lateinit var childComponents_: List<ComponentDescription<C, Any?, Any?, Unit>>
 
     @Composable
     override fun initCompose(ctx: C) {
-        println("Calling init compose.")
-        if (childComponents_ == null) {
-            childComponents_ = childComponents(ctx)
-        }
-        childComponents_!!.forEach {
+        println("Calling init compose in row ${this.hashCode()}.")
+        childComponents_ = childComponents(ctx)
+
+        childComponents_.forEach {
             it.initCompose(ctx)
         }
-
+        println("After init compose in row")
     }
 
     override fun initialize(ctx: C, initialValue: Unit): Component<Unit, Void, Unit> {
         return object : ComponentImpl<Unit, Void, Unit, Unit> {
 
-            lateinit var children: List<ComponentImpl<Unit, Void, Unit, Unit>>
-
-            fun initChildren() {
-                if (childComponents_ == null) {
-                    childComponents_ = childComponents(ctx)
-                }
-                childComponents_!!.map {
+            val children by lazy {
+                childComponents_.map {
                     it.initialize(ctx, Unit)
                 }
             }
@@ -248,10 +269,7 @@ class Row<C : IodineContext> constructor(
                     modifier,
                     horizontalArrangement,
                     verticalAlignment
-
                 ) {
-                    initChildren()
-
                     children.forEach { child ->
                         child.getContents()
                     }
@@ -271,7 +289,7 @@ fun <C : IodineContext> Column(
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    func: suspend ColumnCtx.ColumnEffect<C, *>.() -> Any?
+    func: @Composable ColumnCtx.ColumnEffect<C, *>.() -> Any?
 ): Column<C> {
 
     return Column(
@@ -291,7 +309,7 @@ fun <C : IodineContext> Row(
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Horizontal = Arrangement.Start,
     horizontalAlignment: Alignment.Vertical = Alignment.Top,
-    func: suspend RowCtx.ColumnEffect<C, *>.() -> Any?
+    func: @Composable RowCtx.RowEffect<C, *>.() -> Any?
 ): Row<C> {
     return Row(
         { ctx ->
