@@ -25,9 +25,8 @@ Introduction
 
 [Iodine](https://sintrastes.github.io/iodine/) is a functional UI toolkit for Kotlin built on top of [Flow](https://kotlinlang.org/docs/flow.html), [Jetpack Compose](https://developer.android.com/jetpack/compose) , and [Arrow](https://arrow-kt.io/). Where Arrow intends to be a "Functional companion to Kotlin's Standard Library", Iodine aims to be a functional companion to Jetpack Compose (including for [desktop](https://github.com/JetBrains/compose-jb) and multi-platform). 
 
-⚠️ WARNING: This project is of experimental/pre-release quality. Things are likely to break. 
- Interfaces are likely to change. Documentation may not be entirely accurate or complete. 
- The implementation may not be the most responsive. 
+⚠️ WARNING: This project is alpha quality software built on-top-of beta quality software (compose multi-platform). Things may break. 
+ Interfaces are likely to change without notice or deprecation cycles between versions. Documentation may not be entirely accurate or complete. While Iodine could very well be used today ot build applications, at this time we do not reccomend it for production use.
 
 ✏️Getting Started
 --------------------
