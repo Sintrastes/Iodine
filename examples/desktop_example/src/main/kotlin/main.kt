@@ -1,6 +1,9 @@
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.bedelln.iodine.components.*
@@ -23,13 +26,15 @@ fun main() = iodineDesktopApplication(
             contents = Column(
                 modifier = Modifier.padding(5.0.dp)
             ) {
+                lateinit var slider: Form<Slider.Action, Void, Unit, Float>
+
                 - ActionButton(
                     text = "Hello!",
                     action = AlertDialog(
                         title = "My alert",
                         contents = TextEntry()
                     )
-                        .lmap { "" }
+                        .lmap { "Test" }
                 )
                 - ActionButton(
                     text = "Do a notification",
@@ -39,11 +44,22 @@ fun main() = iodineDesktopApplication(
                     )
                 )
                 val resetButton = - Button("Reset")
-                val slider = -(Slider().imap { _: Unit -> 0.5f })
-                //- Row<WindowCtx> {
-                //    - Text("Set the thing: ")
+
+                - Row<WindowCtx>(
+                    horizontalAlignment = Alignment.CenterVertically
+                ) {
+                    - Text("Set a value: ")
+                    slider = - (Slider().imap(from = { _: Unit -> 0.5f }, to = { }))
+                    - Text(slider.result().toString())
+                    Unit
+                }
+
+                - Row<WindowCtx>(
+                    horizontalAlignment = Alignment.CenterVertically
+                ) {
+                    - Text("Set the thing: ")
                     - (Switch().imap { _: Unit -> true })
-                //}
+                }
                 - ( IntEntry().imap { _: Unit -> "42" } )
                 - ( DoubleEntry().imap { _: Unit -> "42" } )
 
