@@ -11,7 +11,7 @@ interface Gettable<out B> {
     val result: StateFlow<B>
 }
 
-interface ViewModel<out I, out E, out S, in A>: Settable<A> {
+interface ViewModel<out I, out E, S, in A>: Settable<A> {
     val impl: I
     val events: Flow<E>
     val state: StateFlow<S>
@@ -117,16 +117,33 @@ fun <I, E, S, A> ComponentImpl<I, E, S, A>.getContents() {
  * Useful for making use of preview functionality for composable functions.
  */
 @Composable
-fun <C: IodineContext, I, E, S, A> ComponentDescriptionImpl<C, I, E, S, A>.getContents(
+fun <C: IodineContext, I, E, S, A> ComponentDescriptionImpl<C, I, E, S, A>.getImplContents(
     ctx: C,
     initialValue: A
 ) {
-    val component = this.initialize(ctx, initialValue)
+    val description = this
+    val component: ComponentImpl<I, E, S, A> = remember {
+        description.initialize(ctx, initialValue)
+    }
     this.initCompose(ctx)
 
     val componentState = component.state.collectAsState()
     val state by remember { componentState }
     component.contents(state)
+}
+
+/**
+ * Helper function to obtain the composable function for rendering the given component description.
+ *
+ * Useful for making use of preview functionality for composable functions.
+ */
+@Composable
+fun <C: IodineContext, I, E, A> ComponentDescription<C, I, E, A>.getContents(
+    ctx: C,
+    initialValue: A
+) {
+    (this as ComponentDescriptionImpl<C,I,E,Any?,A>)
+        .getImplContents(ctx, initialValue)
 }
 
 inline fun <C,I,E,S,A> WrappedComponent(

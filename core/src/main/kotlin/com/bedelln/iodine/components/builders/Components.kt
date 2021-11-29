@@ -194,24 +194,15 @@ class Column<C : IodineContext> constructor(
 
     @Composable
     override fun initCompose(ctx: C) {
-        println("Calling init compose in column ${this.hashCode()}.")
         childComponents_ = childComponents(ctx)
 
         childComponents_.forEach {
             it.initCompose(ctx)
         }
-        println("After init compose in column")
     }
 
     override fun initialize(ctx: C, initialValue: Unit): Component<Unit, Void, Unit> {
         return object : ComponentImpl<Unit, Void, Unit, Unit> {
-
-            val children
-                get() = run {
-                    childComponents_.map {
-                        it.initialize(ctx, Unit)
-                    }
-                }
 
             @Composable
             override fun contents(state: Unit) {
@@ -220,8 +211,8 @@ class Column<C : IodineContext> constructor(
                     verticalArrangement,
                     horizontalAlignment
                 ) {
-                    children.forEach { child ->
-                        child.getContents()
+                    childComponents_.forEach { child ->
+                        child.getContents(ctx, Unit)
                     }
                 }
             }
@@ -245,23 +236,15 @@ class Row<C : IodineContext> constructor(
 
     @Composable
     override fun initCompose(ctx: C) {
-        println("Calling init compose in row ${this.hashCode()}.")
         childComponents_ = childComponents(ctx)
 
         childComponents_.forEach {
             it.initCompose(ctx)
         }
-        println("After init compose in row")
     }
 
     override fun initialize(ctx: C, initialValue: Unit): Component<Unit, Void, Unit> {
         return object : ComponentImpl<Unit, Void, Unit, Unit> {
-
-            val children by lazy {
-                childComponents_.map {
-                    it.initialize(ctx, Unit)
-                }
-            }
 
             @Composable
             override fun contents(state: Unit) {
@@ -270,8 +253,8 @@ class Row<C : IodineContext> constructor(
                     horizontalArrangement,
                     verticalAlignment
                 ) {
-                    children.forEach { child ->
-                        child.getContents()
+                    childComponents_.forEach { child ->
+                        child.getContents(ctx, Unit)
                     }
                 }
             }

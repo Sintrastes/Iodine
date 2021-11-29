@@ -1,29 +1,28 @@
 package com.bedelln.iodine.components
 
 import androidx.compose.runtime.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 import androidx.compose.material.Slider
+import androidx.compose.ui.Modifier
 import com.bedelln.iodine.interfaces.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class Slider(): SFormDescription<IodineContext, Slider.Action, Void, Float> {
+class Slider(
+    val modifier: Modifier = Modifier
+): SFormDescription<IodineContext, Slider.Action, Void, Float> {
     interface Action {
         fun setPosition(position: Float)
         fun currentPosition(): Float
     }
 
-    override fun initialize(ctx: IodineContext, initialValue: Float): Form<Action, Void, Float, Float> {
-        return object: Form<Action, Void, Float, Float> {
+    override fun initialize(ctx: IodineContext, initialValue: Float) =
+        object: FormImpl<Action, Void, Float, Float, Float> {
 
             private val contentsFlow = MutableStateFlow(initialValue)
-            override val state = contentsFlow
+            override val state get() = contentsFlow
 
             @Composable
             override fun contents(state: Float) {
-                val st = result.collectAsState()
                 Slider(
                     value = state,
                     onValueChange = {
@@ -50,5 +49,4 @@ class Slider(): SFormDescription<IodineContext, Slider.Action, Void, Float> {
             override val result: StateFlow<Float>
                 get() = contentsFlow
         }
-    }
 }
