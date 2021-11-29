@@ -18,8 +18,8 @@ class TextEntry(): SFormDescription<IodineContext, TextEntry.Action, Void, Strin
         fun setText(value: String)
     }
 
-    override fun initialize(ctx: IodineContext, initialValue: String): SForm<Action, Void, String> {
-        return object : Form<Action, Void, String, String> {
+    override fun initialize(ctx: IodineContext, initialValue: String) =
+        object : FormImpl<Action, Void, String, String, String> {
             private val contentsFlow = MutableStateFlow(initialValue)
             override val state = contentsFlow
 
@@ -48,5 +48,4 @@ class TextEntry(): SFormDescription<IodineContext, TextEntry.Action, Void, Strin
             override val result: StateFlow<String>
                 get() = state
         }
-    }
 }

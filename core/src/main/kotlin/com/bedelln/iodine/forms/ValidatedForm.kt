@@ -22,7 +22,7 @@ class ValidatedForm<C: IodineContext, I, E, A, B, Err>(
     }
 
     override fun initialize(ctx: C, initialValue: A): Form<I,ValidationEvent<E>, A, B?> {
-        return object: Form<I, ValidationEvent<E>, A, B?> {
+        return object: FormImpl<I, ValidationEvent<E>, A, A, B?> {
             override val state: StateFlow<A>
                 get() = component.state
 
