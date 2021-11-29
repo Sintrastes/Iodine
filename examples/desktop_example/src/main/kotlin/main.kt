@@ -1,6 +1,7 @@
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -49,7 +50,7 @@ fun main() = iodineDesktopApplication(
                     horizontalAlignment = Alignment.CenterVertically
                 ) {
                     - Text("Set a value: ")
-                    slider = - (Slider().imap(from = { _: Unit -> 0.5f }, to = { }))
+                    slider = remember { - (Slider(Modifier.width(30.dp)).imap { _: Unit -> 0.5f }) }
                     - Text(slider.result().toString())
                     Unit
                 }
@@ -58,7 +59,9 @@ fun main() = iodineDesktopApplication(
                     horizontalAlignment = Alignment.CenterVertically
                 ) {
                     - Text("Set the thing: ")
-                    - (Switch().imap { _: Unit -> true })
+                    - (Switch(
+
+                    ).imap { _: Unit -> true })
                 }
                 - ( IntEntry().imap { _: Unit -> "42" } )
                 - ( DoubleEntry().imap { _: Unit -> "42" } )
