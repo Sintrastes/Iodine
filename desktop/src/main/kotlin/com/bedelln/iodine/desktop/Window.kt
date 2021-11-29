@@ -68,6 +68,7 @@ private fun <I,E> ApplicationScope.windowContents(
             }
         }
         override val windowScope = GlobalScope
+
         override val trayState: TrayState
             get() = trayState
         override val defaultScope: CoroutineScope
@@ -75,9 +76,8 @@ private fun <I,E> ApplicationScope.windowContents(
         override val ref: ContainerRef
             get() = window
     }
-    contents.initCompose(windowCtx)
-    contents.initialize(windowCtx, Unit)
-        .getContents()
+
+    contents.getContents(windowCtx, Unit)
     additional.forEach {
         it()
     }
