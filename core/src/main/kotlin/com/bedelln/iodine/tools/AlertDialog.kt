@@ -52,7 +52,7 @@ class AlertDialog<C,I,E,A,B>(
                             MaterialTheme.colors.primary
                         ),
                         text = {
-                            _contents.getContents()
+                            _contents.contents()
                         },
                         confirmButton = {
                             Button(

@@ -17,13 +17,15 @@ import kotlinx.coroutines.flow.emptyFlow
 internal sealed class IodineMonad<C : IodineContext, out A> {
     abstract fun execute(
         ctx: C,
-        childComponents: MutableList<ComponentDescription<C, Any?, Any?, Unit>>
+        childComponents: MutableList<PComponentDescription<C, Any?, Any?, Unit, *>>,
+        childForms: MutableList<PFormDescription<C, Any?, Any?, Unit, *, *>>
     ): A
 
     internal data class Return<C : IodineContext, A>(val value: A) : IodineMonad<C, A>() {
         override fun execute(
             ctx: C,
-            childComponents: MutableList<ComponentDescription<C, Any?, Any?, Unit>>
+            childComponents: MutableList<PComponentDescription<C, Any?, Any?, Unit, *>>,
+            childForms: MutableList<PFormDescription<C, Any?, Any?, Unit, *,*>>
         ): A {
             return value
         }
@@ -34,13 +36,14 @@ internal sealed class IodineMonad<C : IodineContext, out A> {
     ) : IodineMonad<C, A>() {
         override fun execute(
             ctx: C,
-            childComponents: MutableList<ComponentDescription<C, Any?, Any?, Unit>>
+            childComponents: MutableList<PComponentDescription<C, Any?, Any?, Unit, *>>,
+            childForms: MutableList<PFormDescription<C, Any?, Any?, Unit, *,*>>
         ): A {
             when (action) {
                 is IodineMonadF.Add -> {
                     val component = action.child.initialize(ctx, Unit)
                     val componentDescr = object :
-                        Description<C, Any?, Component<Any?, Any?, Unit>> {
+                        Description<C, Unit, Component<Any?, Any?, *>> {
                         @Composable
                         override fun initCompose(ctx: C) {
                             action.child.initCompose(ctx)
@@ -48,14 +51,17 @@ internal sealed class IodineMonad<C : IodineContext, out A> {
 
                         override fun initialize(
                             ctx: C,
-                            initialValue: Any?
-                        ): Component<Any?, Any?, Unit> {
+                            initialValue: Unit
+                        ): Component<Any?, Any?, *> {
                             return component
                         }
                     }
                     childComponents.add(componentDescr)
                     return action.rest(component)
-                        .execute(ctx, childComponents)
+                        .execute(ctx, childComponents, childForms)
+                }
+                is IodineMonadF.AddForm -> {
+                    TODO()
                 }
             }
         }
@@ -64,8 +70,13 @@ internal sealed class IodineMonad<C : IodineContext, out A> {
 
 sealed class IodineMonadF<C : IodineContext, A> {
     data class Add<C : IodineContext, A>(
-        val child: ComponentDescription<C, Any?, Any?, Unit>,
-        val rest: (Component<Any?, Any?, Unit>) -> A
+        val child: PComponentDescription<C, Any?, Any?, Unit, *>,
+        val rest: (Component<Any?, Any?, *>) -> A
+    ) : IodineMonadF<C, A>()
+
+    data class AddForm<C : IodineContext, A>(
+        val child: PFormDescription<C, Any?, Any?, Unit, *, *>,
+        val rest: (Form<Any?, Any?, *, *>) -> A
     ) : IodineMonadF<C, A>()
 }
 
@@ -73,13 +84,14 @@ interface ColumnCtx : IodineContext, ColumnScope {
 
     abstract class ColumnEffect<C : IodineContext, A>(
         val ctx: C,
-        val childComponents: MutableList<ComponentDescription<C, *, *, Unit>>
+        val childComponents: MutableList<PComponentDescription<C, *, *, Unit, *>>,
+        val childForms: MutableList<PFormDescription<C, Any?, Any?, Unit, *,*>>
     ) : Effect<IodineMonad<C, A>> {
         internal fun <X> IodineMonad<C, X>.bind(): X = run {
-            this.execute(ctx, childComponents)
+            this.execute(ctx, childComponents, childForms)
         }
 
-        internal operator fun <I, E> ComponentDescription<C, I, E, Unit>.not(
+        internal operator fun <I, E, A> PComponentDescription<C, I, E, Unit, A>.not(
         ): IodineMonad<C, Component<I, E, Unit>> = IodineMonad.Bind(
             IodineMonadF.Add(this) {
                 IodineMonad.Return(
@@ -89,9 +101,9 @@ interface ColumnCtx : IodineContext, ColumnScope {
         )
 
         @JvmName("notForm")
-        internal operator fun <I, E, A> FormDescription<C, I, E, Unit, A>.not(
+        internal operator fun <I, E, A, B> PFormDescription<C, I, E, Unit, A, B>.not(
         ): IodineMonad<C, Form<I, E, Unit, A>> = IodineMonad.Bind(
-            IodineMonadF.Add(this) {
+            IodineMonadF.AddForm(this) {
                 IodineMonad.Return(
                     it as Form<I, E, Unit, A>
                 )
@@ -109,12 +121,13 @@ interface ColumnCtx : IodineContext, ColumnScope {
         @Composable
         internal operator fun <A, C : IodineContext> invoke(
             ctx: C,
-            childComponents: MutableList<ComponentDescription<C, Any?, Any?, Unit>>,
+            childComponents: MutableList<PComponentDescription<C, Any?, Any?, Unit, *>>,
+            childForms: MutableList<PFormDescription<C, Any?, Any?, Unit, *,*>>,
             func: @Composable ColumnEffect<C, *>.() -> A
         ): IodineMonad<C, A> =
             Effect.restricted(
                 eff = { scope ->
-                    object : ColumnEffect<C, A>(ctx, childComponents) {
+                    object : ColumnEffect<C, A>(ctx, childComponents, childForms) {
                         override fun control(): DelimitedScope<IodineMonad<C, A>> {
                             return scope
                         }
@@ -131,13 +144,14 @@ interface RowCtx : IodineContext, RowScope {
 
     abstract class RowEffect<C : IodineContext, A>(
         val ctx: C,
-        val childComponents: MutableList<ComponentDescription<C, Any?, Any?, Unit>>
+        val childComponents: MutableList<PComponentDescription<C, Any?, Any?, Unit, *>>,
+        val childForms: MutableList<PFormDescription<C, Any?, Any?, Unit, *,*>>
     ) : Effect<IodineMonad<C, A>> {
         internal fun <X> IodineMonad<C, X>.bind(): X = run {
-            this.execute(ctx, childComponents)
+            this.execute(ctx, childComponents, childForms)
         }
 
-        internal operator fun <I, E> ComponentDescription<C, I, E, Unit>.not(
+        internal operator fun <I, E, A> PComponentDescription<C, I, E, Unit, A>.not(
         ): IodineMonad<C, Component<I, E, Unit>> = IodineMonad.Bind(
             IodineMonadF.Add(this) {
                 IodineMonad.Return(
@@ -147,19 +161,19 @@ interface RowCtx : IodineContext, RowScope {
         )
 
         @JvmName("notForm")
-        internal operator fun <I, E, A> FormDescription<C, I, E, Unit, A>.not(
+        internal operator fun <I, E, A, B> PFormDescription<C, I, E, Unit, A, B>.not(
         ): IodineMonad<C, Form<I, E, Unit, A>> = IodineMonad.Bind(
-            IodineMonadF.Add(this) {
+            IodineMonadF.AddForm(this) {
                 IodineMonad.Return(
                     it as Form<I, E, Unit, A>
                 )
             }
         )
 
-        operator fun <I, E> ComponentDescription<C, I, E, Unit>.unaryMinus() =
+        operator fun <I, E, A> PComponentDescription<C, I, E, Unit, A>.unaryMinus() =
             this.not().bind()
 
-        operator fun <I, E, A> FormDescription<C, I, E, Unit, A>.unaryMinus() =
+        operator fun <I, E, A, B> PFormDescription<C, I, E, Unit, A, B>.unaryMinus() =
             this.not().bind()
     }
 
@@ -167,12 +181,13 @@ interface RowCtx : IodineContext, RowScope {
         @Composable
         internal operator fun <A, C : IodineContext> invoke(
             ctx: C,
-            childComponents: MutableList<ComponentDescription<C, *, *, Unit>>,
+            childComponents: MutableList<PComponentDescription<C, *, *, Unit, *>>,
+            childForms: MutableList<PFormDescription<C, *, *, Unit, *, *>>,
             func: @Composable RowEffect<C, *>.() -> A
         ): IodineMonad<C, A> =
             Effect.restricted(
                 eff = { scope ->
-                    object : RowEffect<C, A>(ctx, childComponents) {
+                    object : RowEffect<C, A>(ctx, childComponents, childForms) {
                         override fun control(): DelimitedScope<IodineMonad<C, A>> {
                             return scope
                         }
@@ -185,12 +200,12 @@ interface RowCtx : IodineContext, RowScope {
 }
 
 class Column<C : IodineContext> constructor(
-    val childComponents: @Composable (C) -> List<ComponentDescription<C, Any?, Any?, Unit>>,
+    val childComponents: @Composable (C) -> List<PComponentDescription<C, Any?, Any?, Unit,*>>,
     val modifier: Modifier,
     val verticalArrangement: Arrangement.Vertical,
     val horizontalAlignment: Alignment.Horizontal,
 ) : ComponentDescription<C, Unit, Void, Unit> {
-    lateinit var childComponents_: List<ComponentDescription<C, Any?, Any?, Unit>>
+    lateinit var childComponents_: List<PComponentDescription<C, Any?, Any?, Unit, *>>
 
     @Composable
     override fun initCompose(ctx: C) {
@@ -227,12 +242,12 @@ class Column<C : IodineContext> constructor(
 }
 
 class Row<C : IodineContext> constructor(
-    val childComponents: @Composable (C) -> List<ComponentDescription<C, Any?, Any?, Unit>>,
+    val childComponents: @Composable (C) -> List<PComponentDescription<C, Any?, Any?, Unit,*>>,
     val modifier: Modifier,
     val horizontalArrangement: Arrangement.Horizontal,
     val verticalAlignment: Alignment.Vertical
 ) : ComponentDescription<C, Unit, Void, Unit> {
-    lateinit var childComponents_: List<ComponentDescription<C, Any?, Any?, Unit>>
+    lateinit var childComponents_: List<PComponentDescription<C, Any?, Any?, Unit,*>>
 
     @Composable
     override fun initCompose(ctx: C) {
@@ -277,9 +292,10 @@ fun <C : IodineContext> Column(
 
     return Column(
         { ctx ->
-            val childComponents = mutableListOf<ComponentDescription<C, Any?, Any?, Unit>>()
-            ColumnCtx(ctx, childComponents, func)
-                .execute(ctx, childComponents)
+            val childComponents = mutableListOf<PComponentDescription<C, Any?, Any?, Unit, *>>()
+            val childForms = mutableListOf<PFormDescription<C, Any?, Any?, Unit, *,*>>()
+            ColumnCtx(ctx, childComponents, childForms, func)
+                .execute(ctx, childComponents, childForms)
             childComponents
         },
         modifier,
@@ -296,9 +312,10 @@ fun <C : IodineContext> Row(
 ): Row<C> {
     return Row(
         { ctx ->
-            val childComponents = mutableListOf<ComponentDescription<C, Any?, Any?, Unit>>()
-            RowCtx(ctx, childComponents, func)
-                .execute(ctx, childComponents)
+            val childComponents = mutableListOf<PComponentDescription<C, Any?, Any?, Unit, *>>()
+            val childForms = mutableListOf<PFormDescription<C, Any?, Any?, Unit, *,*>>()
+            RowCtx(ctx, childComponents, childForms, func)
+                .execute(ctx, childComponents, childForms)
             childComponents
         },
         modifier,

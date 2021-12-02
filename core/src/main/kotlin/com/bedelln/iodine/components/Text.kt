@@ -8,6 +8,6 @@ import com.bedelln.iodine.interfaces.IodineContext
 /**
  * Iodine component for a (non-user editable) text display.
  */
-fun Text(text: String) = Compose<IodineContext> {
+fun Text() = ComposeForm<IodineContext, String> { text ->
     Text(text)
 }
