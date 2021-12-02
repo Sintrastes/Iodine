@@ -1,5 +1,4 @@
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.ExperimentalMaterialApi
@@ -18,6 +17,7 @@ import com.bedelln.iodine.interfaces.*
 import com.bedelln.iodine.tools.AlertDialog
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlin.reflect.KClass
 
 @OptIn(ExperimentalMaterialApi::class)
 fun main() = iodineDesktopApplication(
@@ -27,7 +27,6 @@ fun main() = iodineDesktopApplication(
             contents = Column(
                 modifier = Modifier.padding(5.0.dp)
             ) {
-                lateinit var slider: Form<Slider.Action, Void, Unit, Float>
 
                 - ActionButton(
                     text = "Hello!",
@@ -35,7 +34,7 @@ fun main() = iodineDesktopApplication(
                         title = "My alert",
                         contents = TextEntry()
                     )
-                        .lmap { "Test" }
+                        .lmap { it: Unit -> "Test" }
                 )
                 - ActionButton(
                     text = "Do a notification",
@@ -49,22 +48,22 @@ fun main() = iodineDesktopApplication(
                 - Row<WindowCtx>(
                     horizontalAlignment = Alignment.CenterVertically
                 ) {
-                    - Text("Set a value: ")
-                    slider = remember { - (Slider(Modifier.width(30.dp)).imap { _: Unit -> 0.5f }) }
-                    - Text(slider.result().toString())
+                    - Text().initialValue("Set a value: ")
+                    slider = - Slider(Modifier.width(30.dp))
+                        .initialValue(0.5f)
                     Unit
                 }
+
+                sliderText = - Text().initialValue("")
 
                 - Row<WindowCtx>(
                     horizontalAlignment = Alignment.CenterVertically
                 ) {
-                    - Text("Set the thing: ")
-                    - (Switch(
-
-                    ).imap { _: Unit -> true })
+                    - Text().initialValue("Set the thing: ")
+                    - Switch().initialValue(true)
                 }
-                - ( IntEntry().imap { _: Unit -> "42" } )
-                - ( DoubleEntry().imap { _: Unit -> "42" } )
+                - IntEntry().initialValue("42")
+                - DoubleEntry().initialValue("42")
 
                 val closeButton = - Button(
                     text = "Close application",
@@ -74,26 +73,25 @@ fun main() = iodineDesktopApplication(
                 /************* Interactions ****************/
 
                 // On click of the notification button, reset the slider.
-                ctx.defaultScope.launch {
-                    resetButton.events.collect { event ->
-                        when (event) {
-                            is Button.Event.OnClick -> {
-                                slider.impl
-                                    .setPosition(0.5f)
-                            }
-                        }
-                    }
+                resetButton.on(ctx, Button.Event.OnClick::class) {
+                    slider.impl
+                        .setPosition(0.5f)
                 }
 
                 // On clicking the close button, close the application
-                ctx.defaultScope.launch {
-                    closeButton.events.collect { event ->
-                        if (event is Button.Event.OnClick)
-                            ctx.windowScope.cancel()
-                    }
+                closeButton.on(ctx, Button.Event.OnClick::class) {
+                    ctx.windowScope.cancel()
+                }
+
+                // Set the slider text to the value of the slider.
+                slider.onValueChange(ctx) {
+                    sliderText.setValue(it.toString())
                 }
             }
         )
     }
 )
+
+lateinit var slider: Form<Slider.Action, Void, Unit, Float>
+lateinit var sliderText: Component<Unit, Void, Unit>
 
