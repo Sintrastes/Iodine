@@ -60,7 +60,7 @@ class AndroidAlertDialog<C, I, E, A, B>(
                         ),
                         text = {
                             // TODO: Fix this.
-                            _contents.getContents()
+                            _contents.contents()
                         },
                         buttons = {
                             Button(
