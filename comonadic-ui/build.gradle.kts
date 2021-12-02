@@ -42,7 +42,8 @@ dependencies {
     implementation(compose.ui)
     implementation(compose.foundation)
     implementation(compose.material)
-    project(":base")
+    implementation(project(":base"))
+    implementation(project(":core"))
     implementation("io.kindedj:kindedj:1.1.0")
     implementation("io.arrow-kt:arrow-core:1.0.0")
 }
