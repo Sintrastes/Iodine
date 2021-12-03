@@ -27,9 +27,13 @@ repositories {
 dependencies {
     implementation(compose.desktop.currentOs)
     implementation("io.arrow-kt:arrow-fx-coroutines:0.13.2")
+    implementation("org.pushing-pixels:aurora-theming:1.0.0-beta5")
+    implementation("org.pushing-pixels:aurora-component:1.0.0-beta5")
+    implementation("org.pushing-pixels:aurora-window:1.0.0-beta5")
     implementation(files("$projectDir/libs/iodine-base.jar"))
     implementation(files("$projectDir/libs/iodine-core.jar"))
     implementation(files("$projectDir/libs/iodine-desktop.jar"))
+    implementation(files("$projectDir/libs/iodine-desktop-aurora.jar"))
 }
 
 tasks.withType<KotlinCompile>().configureEach {

@@ -33,10 +33,7 @@ fun iodineDesktopApplication(
 }
 
 /**
- * Entrypoint for an Iodine for Desktop application.
- *
  * Opens a window with the given component.
- *
  */
 @Composable
 fun ApplicationScope.IodineWindow(

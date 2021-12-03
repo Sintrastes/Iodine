@@ -1,24 +1,12 @@
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.bedelln.iodine.components.*
-import com.bedelln.iodine.components.builders.Column
-import com.bedelln.iodine.components.builders.Row
-import com.bedelln.iodine.components.text.DoubleEntry
-import com.bedelln.iodine.components.text.IntEntry
-import com.bedelln.iodine.desktop.*
-import com.bedelln.iodine.desktop.ctx.WindowCtx
-import com.bedelln.iodine.interfaces.*
-import com.bedelln.iodine.tools.AlertDialog
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-import kotlin.reflect.KClass
+import com.bedelln.iodine.desktop.aurora.auroraIodineApplication
+import com.bedelln.iodine.desktop.aurora.components.Button
 
+fun main() = auroraIodineApplication {
+    Button("Hello, aurora!")
+}
+
+/*
 @OptIn(ExperimentalMaterialApi::class)
 fun main() = iodineDesktopApplication(
     content = {
@@ -95,3 +83,4 @@ fun main() = iodineDesktopApplication(
 lateinit var slider: Form<Slider.Action, Void, Unit, Float>
 lateinit var sliderText: Component<Unit, Void, Unit>
 
+ */
