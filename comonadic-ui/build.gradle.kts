@@ -9,16 +9,15 @@ buildscript {
         gradlePluginPortal()
         maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
     }
-    // dependencies {
-    //     classpath("io.arrow-kt:arrow-proofs-gradle-plugin:1.5.31-SNAPSHOT")
-    // }
+    dependencies {
+        classpath("io.arrow-kt:arrow-proofs-gradle-plugin:2.0-SNAPSHOT")
+    }
 }
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.compose") version "1.0.0-beta6-dev462"
+    id("org.jetbrains.compose") version "1.0.0"
     id("org.jetbrains.dokka")
-    // id("io.arrow-kt.proofs") version "1.5.31-SNAPSHOT"
 }
 
 group = "com.bedelln"
