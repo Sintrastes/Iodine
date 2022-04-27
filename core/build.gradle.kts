@@ -23,10 +23,10 @@ repositories {
     mavenLocal()
     google()
     maven(url="https://dl.bintray.com/kotlin/dokka")
-    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
-val arrow_version = "1.0.1"
+val arrow_version = "0.13.2"
 
 dependencies {
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.5.0")

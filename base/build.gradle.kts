@@ -28,10 +28,10 @@ repositories {
     google()
     maven(url="https://dl.bintray.com/kotlin/dokka")
     maven(url = "https://oss.sonatype.org/content/repositories/snapshots/")
-    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
-val arrow_version = "1.1.1"
+val arrow_version = "0.13.2"
 
 dependencies {
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.6.21")
@@ -42,7 +42,7 @@ dependencies {
     implementation(compose.foundation)
     implementation(compose.material)
     implementation("io.kindedj:kindedj:1.1.0")
-    implementation("io.arrow-kt:arrow-core:1.0.1")
+    implementation("io.arrow-kt:arrow-core:0.13.2")
 }
 
 tasks.jar {
