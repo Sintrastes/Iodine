@@ -16,9 +16,8 @@ buildscript {
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.compose") version "1.0.0"
+    id("org.jetbrains.compose") version "1.2.0-alpha01-dev675"
     id("org.jetbrains.dokka")
-    // id("io.arrow-kt.proofs") version "1.5.31-SNAPSHOT"
 }
 
 group = "com.bedelln"
@@ -32,10 +31,10 @@ repositories {
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
 }
 
-val arrow_version = "0.13.2"
+val arrow_version = "1.1.1"
 
 dependencies {
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.5.0")
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.6.21")
 }
 
 dependencies {
@@ -43,7 +42,7 @@ dependencies {
     implementation(compose.foundation)
     implementation(compose.material)
     implementation("io.kindedj:kindedj:1.1.0")
-    implementation("io.arrow-kt:arrow-core:1.0.0")
+    implementation("io.arrow-kt:arrow-core:1.0.1")
 }
 
 tasks.jar {

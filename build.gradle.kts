@@ -10,8 +10,8 @@ buildscript {
 
     dependencies {
         classpath("com.android.tools.build:gradle:7.0.0")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31")
-        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.5.30")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21")
+        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.6.21")
     }
 }
 
@@ -21,7 +21,7 @@ repositories {
 }
 
 plugins {
-    id("org.jetbrains.dokka") version "1.5.30"
+    id("org.jetbrains.dokka") version "1.6.21"
 }
 
 tasks.dokkaHtmlMultiModule.configure {
