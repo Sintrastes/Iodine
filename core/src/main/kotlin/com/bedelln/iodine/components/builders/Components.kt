@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emptyFlow
 
+/*
 internal sealed class IodineMonad<C : IodineContext, out A> {
     abstract fun execute(
         ctx: C,
@@ -323,3 +324,4 @@ fun <C : IodineContext> Row(
         horizontalAlignment
     )
 }
+ */

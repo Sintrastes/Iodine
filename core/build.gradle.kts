@@ -24,7 +24,6 @@ repositories {
     mavenLocal()
     google()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-    maven(url="https://dl.bintray.com/kotlin/dokka")
 }
 
 val arrow_version = "0.13.2"
