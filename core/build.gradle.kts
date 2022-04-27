@@ -44,7 +44,7 @@ dependencies {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.freeCompilerArgs = listOf(
-            "-Xopt-in=io.ktor.util.KtorExperimentalAPI"
+            "-Xcontext-receivers"
     )
 }
 

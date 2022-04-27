@@ -52,15 +52,15 @@ fun <F,G,S,E,A> ComonadicComponent<F,S,E,A>.transform(
  * Useful for hiding or adapting the type of state exposed by a
  *  comonadic component.
  */
+context(Functor<F>)
 fun <F,S,X,E,A> ComonadicComponent<F,S,E,A>.mapState(
-    @Given functor: Functor<F>,
     to: (S) -> X,
     from: (X) -> S
 ): ComonadicComponent<F,X,E,A> {
     val origComponent = this
     return object: ComonadicComponent<F,X,E,A> {
         override val stateSpace: Hk<F, X>
-            get() = with(functor) { origComponent.stateSpace.fmap(to) }
+            get() = origComponent.stateSpace.fmap(to)
 
         @Composable
         override fun contents(state: X) {
@@ -79,7 +79,7 @@ fun <F,S,X,E,A> ComonadicComponent<F,S,E,A>.mapState(
  *  in order to be able to construct the necessary Pairing relationship.
  */
 fun <W,S,E,A,I> ComonadicComponent<W,S,E,A>.asComponent(
-    @Given pairing: Pairing<W, I>
+    pairing: Pairing<W, I>
 ): Component<I,E,A> {
     val component = this
     return object: Component<I,E,A> {
