@@ -3,7 +3,7 @@ repositories {
     google()
     gradlePluginPortal()
     maven {
-        url 'https://maven.pkg.jetbrains.space/public/p/compose/dev'
+        url "https://maven.pkg.jetbrains.space/public/p/compose/dev"
     }
 }
 
@@ -11,6 +11,9 @@ buildscript {
     repositories {
         google()
         gradlePluginPortal()
+        maven {
+            url "https://maven.pkg.jetbrains.space/public/p/compose/dev"
+        }
     }
     dependencies {
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.6.21")
