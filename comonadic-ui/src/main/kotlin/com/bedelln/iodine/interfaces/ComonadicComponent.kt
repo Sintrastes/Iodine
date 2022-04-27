@@ -3,7 +3,6 @@ package com.bedelln.iodine.interfaces
 import androidx.compose.runtime.*
 import com.bedelln.iodine.comonads.NaturalTransformation
 import com.bedelln.iodine.util.Functor
-import com.bedelln.iodine.util.Given
 import com.bedelln.iodine.util.Pairing
 import io.kindedj.Hk
 import kotlinx.coroutines.flow.Flow
@@ -78,14 +77,13 @@ fun <F,S,X,E,A> ComonadicComponent<F,S,E,A>.mapState(
  * This relationship cannot be witnessed by subtyping, as it depends on codegen
  *  in order to be able to construct the necessary Pairing relationship.
  */
-fun <W,S,E,A,I> ComonadicComponent<W,S,E,A>.asComponent(
-    pairing: Pairing<W, I>
-): Component<I,E,A> {
+context(Pairing<W, I>)
+fun <W,S,E,A,I> ComonadicComponent<W,S,E,A>.asComponent(): Component<I,E,A> {
     val component = this
     return object: Component<I,E,A> {
-        override val impl: I = with(pairing) {
+        override val impl: I =
             stateSpace.getImpl()
-        }
+
 
         val state: StateFlow<S> get() = TODO()
 
