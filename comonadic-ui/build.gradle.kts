@@ -1,5 +1,4 @@
 import org.jetbrains.compose.compose
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
@@ -42,6 +41,12 @@ dependencies {
     implementation(project(":core"))
     implementation("io.kindedj:kindedj:1.1.0")
     implementation("io.arrow-kt:arrow-core:1.0.1")
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.freeCompilerArgs = listOf(
+            "-Xopt-in=io.ktor.util.KtorExperimentalAPI"
+    )
 }
 
 tasks.jar {

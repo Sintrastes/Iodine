@@ -1,4 +1,5 @@
 import org.jetbrains.compose.compose
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     repositories {
@@ -39,6 +40,12 @@ dependencies {
     implementation("io.arrow-kt:arrow-fx-coroutines:$arrow_version")
     implementation(project(":base"))
     // implementation("io.github.sintrastes:buildable-kt-interfaces:1.0-SNAPSHOT")
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.freeCompilerArgs = listOf(
+            "-Xopt-in=io.ktor.util.KtorExperimentalAPI"
+    )
 }
 
 tasks.jar {

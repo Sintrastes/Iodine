@@ -1,5 +1,4 @@
 import org.jetbrains.compose.compose
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
@@ -40,6 +39,12 @@ dependencies {
     implementation("org.pushing-pixels:aurora-component:1.0.0-beta5")
     implementation("org.pushing-pixels:aurora-window:1.0.0-beta5")
     implementation("io.arrow-kt:arrow-fx-coroutines:$arrow_version")
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.freeCompilerArgs = listOf(
+            "-Xopt-in=io.ktor.util.KtorExperimentalAPI"
+    )
 }
 
 tasks.jar {
