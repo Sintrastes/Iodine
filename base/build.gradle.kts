@@ -26,8 +26,7 @@ version = "0.1-SNAPSHOT"
 repositories {
     mavenCentral()
     google()
-    maven(url="https://dl.bintray.com/kotlin/dokka")
-    maven(url = "https://oss.sonatype.org/content/repositories/snapshots/")
+    maven("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
