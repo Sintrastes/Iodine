@@ -7,7 +7,7 @@ buildscript {
         google()
         mavenCentral()
         gradlePluginPortal()
-        maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
     // dependencies {
     //     classpath("io.arrow-kt:arrow-proofs-gradle-plugin:1.5.31-SNAPSHOT")

@@ -5,6 +5,7 @@ buildscript {
         google()
         mavenLocal()
         mavenCentral()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         gradlePluginPortal()
     }
 }
@@ -22,8 +23,8 @@ repositories {
     mavenCentral()
     mavenLocal()
     google()
-    maven(url="https://dl.bintray.com/kotlin/dokka")
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    maven(url="https://dl.bintray.com/kotlin/dokka")
 }
 
 val arrow_version = "0.13.2"
