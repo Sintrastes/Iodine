@@ -11,8 +11,8 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") version "1.5.31"
-    id("org.jetbrains.compose") version "1.0.0"
+    kotlin("jvm") version "1.7.0"
+    id("org.jetbrains.compose") version "1.2.0-alpha01-dev748"
 }
 
 group = "com.bedelln"
@@ -44,7 +44,6 @@ tasks.withType<KotlinCompile>().configureEach {
             // "-Xallow-jvm-ir-dependencies",
             "-Xskip-prerelease-check"
         )
-        useIR = true
     }
 }
 
