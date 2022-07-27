@@ -43,20 +43,22 @@ class IntEntry : FormDescription<IodineContext, Any, ValidationEvent<Void>, Stri
                                 }
                             )
                             when (error) {
-                                is ValidationError.InvalidInteger -> {
+                                ValidationError.InvalidInteger -> {
                                     Text(
                                         text = "Not a valid integer",
                                         color = Color.Red,
                                         fontSize = 16.sp
                                     )
                                 }
-                                is ValidationError.Empty -> {
+                                ValidationError.Empty -> {
                                     Text(
                                         text = "Please enter a valid integer",
                                         color = Color.Red,
                                         fontSize = 16.sp
                                     )
-                                }                                }
+                                }
+                                null -> { }
+                            }
                         }
                     }
 
