@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    compileSdk = 30
+    compileSdk = 32
     buildToolsVersion = "30.0.3"
 
     defaultConfig {
@@ -46,6 +46,7 @@ val arrow_version = "0.13.2"
 
 dependencies {
     implementation(files("$projectDir/libs/iodine-core.jar"))
+    implementation(files("$projectDir/libs/iodine-base.jar"))
     implementation(files("$projectDir/libs/iodine-android-debug-1.0.aar"))
     implementation("androidx.core:core-ktx:1.3.2")
     implementation("androidx.appcompat:appcompat:1.2.0")
