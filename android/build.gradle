@@ -1,18 +1,13 @@
-repositories {
-    mavenCentral()
-    google()
-    gradlePluginPortal()
-    maven {
-        url "https://maven.pkg.jetbrains.space/public/p/compose/dev"
-    }
-}
-
 buildscript {
     repositories {
+        mavenCentral()
         google()
         gradlePluginPortal()
         maven {
             url "https://maven.pkg.jetbrains.space/public/p/compose/dev"
+        }
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
         }
     }
     dependencies {
@@ -20,10 +15,24 @@ buildscript {
     }
 }
 
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'org.jetbrains.dokka'
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id 'org.jetbrains.dokka'
+}
+
+repositories {
+    mavenCentral()
+    google()
+    gradlePluginPortal()
+    maven {
+        url "https://maven.pkg.jetbrains.space/public/p/compose/dev"
+    }
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
+}
 
 android() {
     compileSdkVersion 31
@@ -46,7 +55,7 @@ android() {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.2.0-alpha08"
+        kotlinCompilerExtensionVersion = "1.2.0"
         kotlinCompilerVersion = "1.7.0"
     }
 
@@ -69,7 +78,7 @@ android() {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     kotlinOptions {
         jvmTarget = "1.8"
-        freeCompilerArgs += ["-Xallow-jvm-ir-dependencies", "-Xskip-prerelease-check", "-Xjvm-default"]
+        freeCompilerArgs += ["-Xallow-jvm-ir-dependencies", "-Xskip-prerelease-check"]
     }
 }
 
