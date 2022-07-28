@@ -1,9 +1,29 @@
 
-import com.bedelln.iodine.desktop.aurora.auroraIodineApplication
-import com.bedelln.iodine.desktop.aurora.components.Button
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import org.pushingpixels.aurora.component.model.Command
+import org.pushingpixels.aurora.component.projection.CommandButtonProjection
+import org.pushingpixels.aurora.theming.AuroraSkin
+import org.pushingpixels.aurora.theming.AuroraSkinDefinition
+import org.pushingpixels.aurora.theming.marinerSkin
+import org.pushingpixels.aurora.window.AuroraWindow
+import org.pushingpixels.aurora.window.auroraApplication
 
-fun main() = auroraIodineApplication {
-    Button("Hello, aurora!")
+fun main() = auroraApplication {
+    AuroraWindow(
+        title = "Hello",
+        onCloseRequest = {  },
+        visible = true,
+        skin = marinerSkin()
+    ) {
+        CommandButtonProjection(
+            contentModel  = Command(
+                text = "Hello world",
+                action = {  }
+            )
+        )
+            .project()
+    }
 }
 
 /*
