@@ -36,6 +36,16 @@ jobs:
       - name: Build android aar
         run: |
             ./gradlew :android:build
+
+      - name: Build desktop example
+        run: |
+          cd examples/desktop_example
+          ./gradlew build
+
+      - name: Build android example
+        run: |
+          cd examples/IodineAndroidApp
+          ./gradlew build
             
       - name: Archive core jar
         uses: actions/upload-artifact@v2
