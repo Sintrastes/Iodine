@@ -14,6 +14,7 @@ nav:
       - examples/todo_app.md
     - 'Additional Resources': 
       - additional/halogen_comparison.md
+      - additional/pre-v1_comparison.md
       - additional/higher_kinds_in_kotlin.md
 theme:
   name: material

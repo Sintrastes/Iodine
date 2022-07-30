@@ -13,7 +13,7 @@
     
     
       
-        <title>Higher kinds in kotlin - Iodine</title>
+        <title>Pre v1 comparison - Iodine</title>
       
     
     
@@ -65,7 +65,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#higher-kinded-types-in-kotlin" class="md-skip">
+        <a href="#pre-v1-comparison" class="md-skip">
           Skip to content
         </a>
       
@@ -98,7 +98,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Higher kinds in kotlin
+              Pre v1 comparison
             
           </span>
         </div>
@@ -479,20 +479,6 @@
               
   
   
-  
-    <li class="md-nav__item">
-      <a href="../pre-v1_comparison/" class="md-nav__link">
-        Pre v1 comparison
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
     
   
   
@@ -504,10 +490,62 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Pre v1 comparison
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
-        Higher kinds in kotlin
+        Pre v1 comparison
       </a>
       
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#original-implementation" class="md-nav__link">
+    Original Implementation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-new-approach" class="md-nav__link">
+    The New Approach
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../higher_kinds_in_kotlin/" class="md-nav__link">
+        Higher kinds in kotlin
+      </a>
     </li>
   
 
@@ -531,38 +569,39 @@
             <article class="md-content__inner md-typeset">
               
                 
-  <a href="https://github.com/Sintrastes/Iodine/edit/master/docs/additional/higher_kinds_in_kotlin.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/Sintrastes/Iodine/edit/master/docs/additional/pre-v1_comparison.md" title="Edit this page" class="md-content__button md-icon">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
 
 
 
-<h1 id="higher-kinded-types-in-kotlin">Higher kinded types in Kotlin</h1>
-<p>Higher-kinded-types are a type of <em>generic programing</em> feature that allows for generic parameters like <code>F</code> to stand for <em>not just</em> types
- like <code>Int</code> or <code>Double</code> -- but <em>types</em> which take <em>other types</em> as arguments. The most common example often encounted is containers, like <code>F = List</code>, <code>F = Sequence</code>, or <code>F = Map</code>.</p>
-<p>Kotlin does not natively support such generic type parameters -- if you don't believe me, just try plugging just <code>List</code> (not <code>List&lt;A&gt;</code>, <code>List&lt;Int&gt;</code>, or <code>List&lt;*&gt;</code> -- just <code>List</code>) into something expecting a generic parameter.</p>
-<p>Iodine makes use of these higher-kinded-types by making use of a <a href="https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf">lightweight encoding</a> of this feature, as some features (such as making use of an interface <code>I</code> to define the type of interactions with a component) would be difficult to implement in a clean, declarative way without them. Additionally, Iodine makes use of some more <a href="../../concepts/comonadic_components/">experimental/advanced</a> features by making use of this encoding.</p>
-<p>To allow for the highest level of interoperability with other frameworks using an encoding of Higher-kinded types in Kotlin/on the JVM, Iodine currently makes use of the <a href="https://github.com/KindedJ/KindedJ">kindedJ</a> library in it's encoding.</p>
-<p>The core ideas of this approach are that:</p>
-<ol>
-<li><code>Hk&lt;Fw,A&gt;</code> is a dummy "tagging" interface used to represent the higher-kinded application <code>F&lt;A&gt;</code>.</li>
-<li>The generic type <code>F&lt;A&gt;</code> should <em>extend</em> the interface <code>Hk&lt;Fw, A&gt;</code>. Due to sub-typing, this means that
-     we can use an <code>F&lt;A&gt;</code> wherever an <code>Hk&lt;F.W, A&gt;</code> is expected in an API.</li>
-<li><code>Fw</code> is a "witness" for the higher-kinded type <code>F</code>. In other words, a dummy <code>object</code> used to represent <code>F</code> as an argument to <code>Hk</code> (remember -- we can't use <code>F</code> itself, which is the whole point of this encoding).</li>
-<li>There is a "witness function", <code>Hk&lt;Fw,A&gt;.fix(): F&lt;A&gt;</code> that lets us do the conversion the other way around. This requires type-casting, but
-     should be safe as long as for each <code>Fw</code>, there is only one <code>F</code> that implements <code>Hk&lt;Fw, A&gt;</code>.</li>
-</ol>
-<p>For example, to represent <code>MyType</code> as a higher-kind with the witness <code>MyType.W</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="kd">data</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nc">MyType</span><span class="o">&lt;</span><span class="n">A</span><span class="o">&gt;</span><span class="p">(</span><span class="kd">val</span><span class="w"> </span><span class="nv">someValue</span><span class="p">:</span><span class="w"> </span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="kd">val</span><span class="w"> </span><span class="nv">someOtherValue</span><span class="p">:</span><span class="w"> </span><span class="n">A</span><span class="p">):</span><span class="w"> </span><span class="n">Hk</span><span class="o">&lt;</span><span class="n">MyType</span><span class="p">.</span><span class="na">W</span><span class="p">,</span><span class="w"> </span><span class="n">A</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// Witness for MyType</span><span class="w"></span>
-<span class="w">    </span><span class="kd">object</span><span class="w"> </span><span class="nc">W</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
-
-<span class="nd">@Supress</span><span class="p">(</span><span class="s">&quot;UncheckedCast&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="kd">fun</span><span class="w"> </span><span class="nf">Hk</span><span class="o">&lt;</span><span class="n">MyType</span><span class="p">.</span><span class="na">W</span><span class="p">,</span><span class="w"> </span><span class="n">A</span><span class="o">&gt;</span><span class="p">.</span><span class="na">fix</span><span class="p">():</span><span class="w"> </span><span class="n">MyType</span><span class="o">&lt;</span><span class="n">A</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">MyType</span><span class="o">&lt;</span><span class="n">A</span><span class="o">&gt;</span><span class="w"></span>
+<h1 id="pre-v1-comparison">Pre-v1 Comparison</h1>
+<p>Prior to the official v1 release of Iodine (and specifically, going back from the 1a1333e39dafeebfe429c54b8471346ffcaf2bbc commit and earlier in the codebase), Iodine had a lot of differences with the current design. So much so, that it might be fair to consider it as a completely different library.</p>
+<p>For historical reasons, and in case you are one of the few people who read some of the pre-v1 version of Iodine's documentation or code-base, this section of the documentation exists to motivate some of the breaking API changes that led to where Iodine is today.</p>
+<h2 id="original-implementation">Original Implementation</h2>
+<p>Originally, a lot of the design of Iodine was influenced by some ideas I had of how to implement a declarative UI framework on top of vanilla Android (i.e. <code>View</code>) based UIs. The basic idea was to define an interface for "typed components" (somewhat inspired by the Halogen library), together with various utilities for combining and composing said components into more complex UIs. This looked something like:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span><span class="w"> </span><span class="nc">Component</span><span class="o">&lt;</span><span class="n">E</span><span class="p">,</span><span class="w"> </span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">B</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">view</span><span class="p">:</span><span class="w"> </span><span class="n">View</span><span class="w"></span>
+<span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">events</span><span class="p">:</span><span class="w"> </span><span class="n">Flow</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">    </span><span class="kd">fun</span><span class="w"> </span><span class="nf">onSetValue</span><span class="p">(</span><span class="n">newValue</span><span class="p">:</span><span class="w"> </span><span class="n">A</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="kd">fun</span><span class="w"> </span><span class="nf">getValue</span><span class="p">():</span><span class="w"> </span><span class="n">B</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
+<p>This is great if raw <code>View</code>-based UIs are all you have, and allows you to do a lot of cool things very succinctly, especially when combined with other parts of the library like tools (asynchronous UI-modifying workflows that let you easily compose things like sequences of alert dialogs), or with things like arrow-optics, which then lets you build up components with incredibly flexible data binding operations, and is incredibly useful for removing a lot of the boilerplate around building up complex data entry forms.</p>
+<p>Some of these advantages (such as both the ease of building up complex data entry forms, as well as composing asynchronous UI-modifying workflows) went beyond raw compose, so I decided to try to implement this idea on top of Jetpack Compose instead of Android <code>View</code>s -- this was the initial idea behind the initial implementation of <code>Iodine</code>, /Users/nathan/Code/Iodine-gh-pages/docs/additional/pre-v1_comparison.mdand the <code>Component</code>s there were essentially the same as the Android <code>View</code>-based version, but with the <code>View</code> swapped out for a composable function:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span><span class="w"> </span><span class="nc">Component</span><span class="o">&lt;</span><span class="n">E</span><span class="p">,</span><span class="w"> </span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">B</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@Composable</span><span class="w"></span>
+<span class="w">    </span><span class="kd">fun</span><span class="w"> </span><span class="nf">contents</span><span class="p">()</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">events</span><span class="p">:</span><span class="w"> </span><span class="n">Flow</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">    </span><span class="kd">fun</span><span class="w"> </span><span class="nf">onSetValue</span><span class="p">(</span><span class="n">newValue</span><span class="p">:</span><span class="w"> </span><span class="n">A</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="kd">fun</span><span class="w"> </span><span class="nf">getValue</span><span class="p">():</span><span class="w"> </span><span class="n">StateFlow</span><span class="o">&lt;</span><span class="n">B</span><span class="o">&gt;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<p>Eventually I realized that this design didn't really take full advantage of everything compose had to offer -- and didn't really seem to integrate well into the existing compose ecosystem. Wrappers like <code>iodineApplication</code> had to be used, Iodine components and other composable functions couldn't be easily mixed. So despite the aforementioned advantages, it wasn't very great.</p>
+<h2 id="the-new-approach">The New Approach</h2>
+<p>It turns out, making use of all that compose has to offer rather than just using an <code>@Composable</code> function as a drop-in replacement for <code>View</code>, this interface can be simplified considerably. For instance, <code>onSetValue</code> can be replaced by adding an <code>A</code> parameter to the composable, and <code>getValue</code> is unnecessary, because we can just return a value of type <code>B</code> from the composable.</p>
+<p>This also has the advantage (much like Bow Arch, which Iodine also takes inspiration from) of allowing us to call Iodine components directly from regular composable functions (via the <code>contents</code> composable), thus making Iodine much less "opinionated", and letting us eschew the need for "special" functions like <code>iodineApplication</code>.</p>
 
               
             </article>
@@ -576,7 +615,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../pre-v1_comparison/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Pre v1 comparison" rel="prev">
+        <a href="../halogen_comparison/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Halogen comparison" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -585,11 +624,26 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              Pre v1 comparison
+              Halogen comparison
             </div>
           </div>
         </a>
       
+      
+        
+        <a href="../higher_kinds_in_kotlin/" class="md-footer__link md-footer__link--next" aria-label="Next: Higher kinds in kotlin" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Higher kinds in kotlin
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
       
     </nav>
   

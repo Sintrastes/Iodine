@@ -15,9 +15,9 @@ Veterans of Halogen are sure to notice the lack of the `query` parameter of `H.C
 
 To which I respond: Don't worry -- this actually has a bit of precedent, and [interesting theory](https://r6.ca/blog/20140210T181244Z.html) behind it. So if you need to legitimize your functional street cred, just be sure to mention something about the "van Laarhoven Free Monad". Also, to be fair, we still do need higher kinds when _defining_ the component -- let me explain.
 
-It turns out that the Kotlin type `I.() -> A`, where `I` is an interface, is _almost like_ a free monad. This is not quite as powerful as the van Laarhoven encoding mentioned above, but close enough for our use-case of `I` as a parameter for describing the API for interacting with a typed comonent (hence, _interaction interface_).
+It turns out that the Kotlin type `I.() -> A`, where `I` is an interface, is _almost like_ a free monad. This is not quite as powerful as the van Laarhoven encoding mentioned above, but close enough for our use-case of `I` as a parameter for describing the API for interacting with a typed component (hence, _interaction interface_).
 
-Even better -- it turns out that `I` is pretty close to what we need in order to _interpret_ our "free-ish" monad `I.() -> A` -- that is, a [cofree comonad](https://dlaing.org/cofun/posts/free_and_cofree.html). However, this is where higher-kinds are nescesary for our use-case. In Iodine, we make use of the following interface
+Even better -- it turns out that `I` is pretty close to what we need in order to _interpret_ our "free-ish" monad `I.() -> A` -- that is, a [cofree comonad](https://dlaing.org/cofun/posts/free_and_cofree.html). However, this is where higher-kinds are necessary for our use-case. In Iodine, we make use of the following interface
 
 ```kotlin
 interface IndexedAPI<I,Ix> {
