@@ -5,7 +5,6 @@ import androidx.compose.ui.graphics.toPainter
 import androidx.compose.ui.window.Tray as ComposeTray
 import com.bedelln.iodine.desktop.ctx.SystemCtx
 import com.bedelln.iodine.interfaces.Component
-import com.bedelln.iodine.interfaces.ToolDescription
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -2,166 +2,146 @@ package com.bedelln.iodine.interfaces
 
 import androidx.compose.runtime.*
 import arrow.continuations.Effect
-import kotlinx.coroutines.flow.Flow
+import arrow.continuations.generic.DelimitedScope
+import arrow.core.Either
+import arrow.core.Option
+import com.bedelln.iodine.tools.Dynamic
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.launch
-import java.util.function.Consumer
-import kotlin.coroutines.Continuation
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 
-typealias ToolDescription<C,E,A,B>
-    = Description<C, A, Tool<C, E, B>>
+sealed interface ToolState<out A> {
+    object Cancelled : ToolState<Nothing>
+    object Initial : ToolState<Nothing>
+    data class Returned<out A>(val value: A) : ToolState<A>
+}
 
-interface Tool<in C: IodineContext,out E,out A> {
-    val events: Flow<E>
+interface Tool<A> {
+    // Idea: Build up the UI for the tool, and then
+    // return a result when the user hits submit.
+    @Composable
+    fun UI(): ToolState<A>
 
-    suspend fun runTool(ctx: C): A
+    // Function to "open" the tool in the UI
+    fun start()
+}
 
-    companion object {
-        fun <C: IodineContext,E,A> noop() = create<C,E,A,Unit> { _, _ -> }
-        fun <C: IodineContext,E,A,B> create(f: suspend C.(Consumer<E>, A) -> B): ToolDescription<C, E, A, B> {
-            return object: ToolDescription<C, E, A, B> {
-                @Composable
-                override fun initCompose(ctx: C) { }
+interface OptionTool<A> {
+    // Idea: Build up the UI for the tool, and then
+    // return a result when the user hits submit.
+    @Composable
+    fun UI(): Option<A>?
 
-                override fun initialize(ctx: C, initialValue: A): Tool<C, E, B> {
-                    return object: Tool<C, E, B> {
-                        override suspend fun runTool(ctx: C): B {
-                            return f(ctx, { ctx.defaultScope.launch { mutEvents.emit(it) } },initialValue)
+    // Function to "open" the tool in the UI
+    fun start()
+}
+
+interface EitherTool<E, A> {
+    // Idea: Build up the UI for the tool, and then
+    // return a result when the user hits submit.
+    @Composable
+    fun UI(): Either<E, A>?
+
+    // Function to "open" the tool in the UI
+    fun start()
+}
+
+abstract class ToolBuilder<A>(
+    val scope: CoroutineScope,
+    val currentContents: MutableStateFlow<@Composable () -> Unit>
+) : Effect<A?> {
+    suspend fun <B> Tool<B>.bind(): B {
+        val toolResult = MutableSharedFlow<B?>()
+
+        scope.launch {
+            val newComposable = @Composable {
+                val tool = this@bind
+                val result = tool.UI()
+
+                println("Result for ${tool.hashCode()}: $result")
+                remember { scope.launch { tool.start() } }
+
+                when (result) {
+                    is ToolState.Returned -> remember {
+                        scope.launch {
+                            println("Launching result: ${toolResult.hashCode()}")
+                            toolResult.emit(
+                                result.value
+                            )
                         }
-
-                        val mutEvents = MutableSharedFlow<E>()
-
-                        override val events: Flow<E>
-                            get() = mutEvents
                     }
+                    ToolState.Cancelled -> remember {
+                        scope.launch {
+                            println("Launching result: null")
+                            toolResult.emit(
+                                null
+                            )
+                        }
+                    }
+                    ToolState.Initial -> { }
                 }
+
+                Unit
             }
-        }
-        fun <C: IodineContext,E,A,B> just(value: B): ToolDescription<C, E, A, B> {
-            return create { _, _: A ->
-                value
-            }
+
+            currentContents.emit(newComposable)
         }
 
-        fun interface ToolEffect<C: IodineContext, E, A>: Effect<ToolDescription<C, E, Unit, A>> {
-            suspend fun ToolDescription<C, E, Unit, A>.bind(): A {
-                return control().shift(this)
-            }
-        }
+        return toolResult.first()
+            ?: control().shift(null)
+    }
+}
 
-        operator fun <C: IodineContext, E, A> invoke(func: suspend ToolEffect<C, E, *>.() -> A): ToolDescription<C, E, Unit, A> =
-            Effect.restricted(
-                eff = { ToolEffect { it } },
-                f = func,
-                just = { just(it) }
+fun <A> CoroutineScope.tool(handler: suspend ToolBuilder<*>.() -> A?): Tool<A> = object : Tool<A> {
+    var scope = this@tool + Job()
+
+    val currentContents = MutableStateFlow<@Composable () -> Unit> { }
+
+    val finalResultFlow = MutableStateFlow<ToolState<A>>(
+        ToolState.Initial
+    )
+
+    @Composable
+    override fun UI(): ToolState<A> {
+        val finalResultState = finalResultFlow.collectAsState()
+        val finalResult by remember { finalResultState }
+
+        Dynamic(currentContents)
+
+        return finalResult
+    }
+
+    override fun start() {
+        launch {
+            val finalResult = Effect.suspended(
+                eff = {
+                    object: ToolBuilder<A?>(scope, currentContents) {
+                        override fun control(): DelimitedScope<A?> {
+                            return it
+                        }
+                    }
+                },
+                f = handler,
+                just = { it }
             )
-    }
-}
 
-inline fun <C: IodineContext,E,A,B,X> ToolDescription<C, E, A, B>.lmap(crossinline f: (X) -> A): ToolDescription<C, E, X, B> {
-    val origDescr = this
-    return object: ToolDescription<C, E, X, B> {
-        override fun initialize(ctx: C, initialValue: X): Tool<C, E, B> {
-            val orig = origDescr.initialize(ctx, f(initialValue))
-            return object: Tool<C, E, B> {
-                override suspend fun runTool(ctx: C): B {
-                    return orig.runTool(ctx)
+            finalResultFlow.emit(
+                if (finalResult != null) {
+                    ToolState.Returned(
+                        finalResult
+                    )
+                } else {
+                    ToolState.Cancelled
                 }
+            )
 
-                override val events: Flow<E>
-                    get() = orig.events
-            }
-        }
+            // Reset the coroutine scope
+            // for this workflow
+            scope.cancel()
+            scope = this@tool + Job()
 
-        @Composable
-        override fun initCompose(ctx: C) {
-            origDescr.initCompose(ctx)
-        }
-    }
-}
-
-inline fun <C: IodineContext,E,A,B,X> ToolDescription<C, E, A, B>.rmap(crossinline f: suspend (B) -> X): ToolDescription<C, E, A, X> {
-    val origDescr = this
-    return object: ToolDescription<C, E, A, X> {
-        override fun initialize(ctx: C, initialValue: A): Tool<C, E, X> {
-            val orig = origDescr.initialize(ctx, initialValue)
-            return object: Tool<C, E, X> {
-                override suspend fun runTool(ctx: C): X {
-                    return f(orig.runTool(ctx))
-                }
-
-                override val events: Flow<E>
-                    get() = orig.events
-            }
-        }
-        @Composable
-        override fun initCompose(ctx: C) {
-            origDescr.initCompose(ctx)
-        }
-    }
-}
-
-fun <Ctx: IodineContext,E,A,B,C> ToolDescription<Ctx, E, A, B>.compose(
-    other: ToolDescription<Ctx, E, B, C>
-): ToolDescription<Ctx, E, A, C> {
-    val thisToolDescr = this
-    return object: ToolDescription<Ctx, E, A, C> {
-        @Composable
-        override fun initCompose(ctx: Ctx) {
-            thisToolDescr.initCompose(ctx)
-            other.initCompose(ctx)
-        }
-
-        override fun initialize(ctx: Ctx, initialValue: A): Tool<Ctx, E, C> {
-            val thisTool = thisToolDescr.initialize(ctx, initialValue)
-            val composedTool: suspend () -> Tool<Ctx, E, C> = {
-                val res = thisTool.runTool(ctx)
-                other.initialize(ctx, res)
-            }
-            return object: Tool<Ctx, E, C> {
-                override suspend fun runTool(ctx: Ctx): C {
-                    return composedTool().runTool(ctx)
-                }
-
-                // TODO: Include the events of the other tool.
-                override val events: Flow<E>
-                    get() = thisTool.events
-            }
-        }
-    }
-}
-
-inline fun <Ctx: IodineContext,E,A,B> ToolDescription<Ctx, E, Unit, A>.thenTool(
-    crossinline f: (A) -> ToolDescription<Ctx, E, Unit, B>
-) = run {
-    val origTool = this
-    object : ToolDescription<Ctx, E, Unit, B> {
-
-        lateinit var secondTool: ToolDescription<Ctx, E, Unit, B>
-
-        @Composable
-        override fun initCompose(ctx: Ctx) {
-            var initializedSecondTool by remember { mutableStateOf(false) }
-            origTool.initCompose(ctx)
-            if (initializedSecondTool) {
-                secondTool.initCompose(ctx)
-            }
-        }
-
-        override fun initialize(ctx: Ctx, initialValue: Unit): Tool<Ctx, E, B> {
-            val tool = origTool.initialize(ctx,initialValue)
-            return object: Tool<Ctx, E, B> {
-                override suspend fun runTool(ctx: Ctx): B {
-                    val res = tool.runTool(ctx)
-                    secondTool = f(res)
-                    return secondTool.initialize(ctx, Unit)
-                        .runTool(ctx)
-                }
-
-                // TODO: Include the events of the other tool as well.
-                override val events: Flow<E>
-                    get() = tool.events
-            }
+            currentContents.emit { }
         }
     }
 }
