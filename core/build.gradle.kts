@@ -27,7 +27,7 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
-val arrow_version = "0.13.2"
+val arrow_version = "1.0.1"
 
 dependencies {
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.5.0")
@@ -37,6 +37,7 @@ dependencies {
     implementation(compose.ui)
     implementation(compose.foundation)
     implementation(compose.material)
+    implementation("io.arrow-kt:arrow-optics:$arrow_version")
     implementation("io.arrow-kt:arrow-fx-coroutines:$arrow_version")
     implementation(project(":base"))
     // implementation("io.github.sintrastes:buildable-kt-interfaces:1.0-SNAPSHOT")
