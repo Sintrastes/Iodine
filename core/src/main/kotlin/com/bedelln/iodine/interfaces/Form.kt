@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 typealias ValidatedForm<E, A, B> = @Composable (A) -> ValidatedNel<E, B>
 typealias NullableForm<A, B> = @Composable (A) -> B?
 
-interface Form<A, B> {
+fun interface Form<A, B> {
     @Composable
     fun contents(initialValue: A): B
 
@@ -18,6 +18,7 @@ interface Form<A, B> {
         return contents(p1)
     }
 }
+
 typealias SForm<A> = Form<A, A>
 
 /************************* Core utilities ******************************/
