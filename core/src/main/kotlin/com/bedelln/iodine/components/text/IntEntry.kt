@@ -7,16 +7,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import arrow.core.Either
-import com.bedelln.iodine.forms.ValidatedForm
-import com.bedelln.iodine.forms.ValidatingForm
-import com.bedelln.iodine.forms.ValidatingFormDescription
-import com.bedelln.iodine.forms.ValidationEvent
 import com.bedelln.iodine.interfaces.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 
 /** A component for inputting integers. */
+/*
 class IntEntry : FormDescription<IodineContext, Any, ValidationEvent<Void>, String, Int?> by (
     ValidatedForm(
         object: ValidatingFormDescription<IodineContext, Unit, Void, String, Int, ValidationError> {
@@ -75,3 +72,4 @@ class IntEntry : FormDescription<IodineContext, Any, ValidationEvent<Void>, Stri
         object Empty: ValidationError
     }
 }
+ */

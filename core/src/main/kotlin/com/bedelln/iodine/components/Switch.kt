@@ -2,8 +2,6 @@ package com.bedelln.iodine.components
 
 import androidx.compose.runtime.*
 import com.bedelln.iodine.interfaces.Component
-import com.bedelln.iodine.interfaces.ComponentDescription
-import com.bedelln.iodine.interfaces.ComponentImpl
 import com.bedelln.iodine.interfaces.IodineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +11,7 @@ import kotlinx.coroutines.launch
 /**
  * Iodine component for a single [androidx.compose.material.Switch].
  */
+/*
 class Switch(): ComponentDescription<IodineContext, Switch.Action, Void, Boolean> {
     interface Action {
         fun toggle()
@@ -52,3 +51,4 @@ class Switch(): ComponentDescription<IodineContext, Switch.Action, Void, Boolean
         }
     }
 }
+ */

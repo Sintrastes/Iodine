@@ -8,18 +8,12 @@ import io.kindedj.Hk
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
-interface ComonadicViewModel<W,S,E,A>: Settable<A> {
+interface ComonadicComponent<W,S,E,A> {
     val stateSpace: Hk<W, S>
     val events: Flow<E>
-}
-
-interface ComonadicComponent<W,S,E,A>: ComonadicViewModel<W,S,E,A> {
     @Composable
     fun contents(state: S)
 }
-
-typealias ComonadicComponentDescription<Ctx,W,S,E,A>
-        = Description<Ctx, A, ComonadicComponent<W,S,E,A>>
 
 /**
  * Transform the type of comonad used in a comonadic component by
@@ -77,6 +71,7 @@ fun <F,S,X,E,A> ComonadicComponent<F,S,E,A>.mapState(
  * This relationship cannot be witnessed by subtyping, as it depends on codegen
  *  in order to be able to construct the necessary Pairing relationship.
  */
+/*
 context(Pairing<W, I>)
 fun <W,S,E,A,I> ComonadicComponent<W,S,E,A>.asComponent(): Component<I,E,A> {
     val component = this
@@ -98,3 +93,4 @@ fun <W,S,E,A,I> ComonadicComponent<W,S,E,A>.asComponent(): Component<I,E,A> {
         }
     }
 }
+ */

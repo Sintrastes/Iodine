@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Tool for launching a popup window from another window.
  */
+/*
 class PopupWindow<C, I, E, A, B>(
     val title: String,
     val contents: FormDescription<C, I, E, A, B>
@@ -23,3 +24,4 @@ class PopupWindow<C, I, E, A, B>(
         }
     }
 }
+ */

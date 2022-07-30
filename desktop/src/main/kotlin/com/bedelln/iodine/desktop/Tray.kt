@@ -5,8 +5,6 @@ import androidx.compose.ui.graphics.toPainter
 import androidx.compose.ui.window.Tray as ComposeTray
 import com.bedelln.iodine.desktop.ctx.SystemCtx
 import com.bedelln.iodine.interfaces.Component
-import com.bedelln.iodine.interfaces.ComponentDescription
-import com.bedelln.iodine.interfaces.ComponentImpl
 import com.bedelln.iodine.interfaces.ToolDescription
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +16,7 @@ import java.awt.image.BufferedImage
 /**
  * Iodine component for displaying a system tray entry.
  */
+/*
 class Tray<C: SystemCtx, E>(
     val icon: BufferedImage,
     val menuItems: List<MenuItem<C,E>>
@@ -63,3 +62,4 @@ data class MenuItem<C: SystemCtx, E>(
     /** An action preformed when this menu item is clicked. */
     val action: ToolDescription<C, E, Unit, Unit>
 )
+ */

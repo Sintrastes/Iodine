@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 
+/*
 sealed class ValidationEvent<in E> {
     class SubmitForValidation<E>(): ValidationEvent<E>()
     data class Other<E>(val event: E): ValidationEvent<E>()
@@ -49,3 +50,4 @@ class ValidatedForm<C: IodineContext, I, E, A, B, Err>(
         }
     }
 }
+ */

@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
+/*
 class AndroidAlertDialog<C, I, E, A, B>(
     val title: String,
     val contents: FormDescription<C, I, E, A, B>
@@ -90,3 +91,4 @@ class AndroidAlertDialog<C, I, E, A, B>(
             get() = _contents.events
     }
 }
+ */

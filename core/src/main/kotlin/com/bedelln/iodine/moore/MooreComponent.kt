@@ -12,14 +12,10 @@ interface EventInterface<E> {
     fun onEvent(event: E)
 }
 
-typealias MooreComponentDescriptionImpl<Ctx,Ei,Eo,S,A>
-    = Description<Ctx, A, MooreComponentImpl<Ctx, EventInterface<Ei>, Eo, S, A>>
-
-typealias MooreComponentDescription<Ctx,Ei,Eo,A>
-    = Description<Ctx, A, MooreComponent<Ctx, EventInterface<Ei>, Eo, A>>
-
+/*
 typealias MooreComponent<C,Ei,Eo,A>
     = MooreComponentImpl<C,Ei,Eo,*,A>
+ */
 
 /**
  * Abstract class for a component defined via the Elm Architecture.
@@ -31,6 +27,7 @@ typealias MooreComponent<C,Ei,Eo,A>
  *
  * @param initialState The initial state of the component.
  */
+/*
 abstract class MooreComponentImpl<C: IodineContext,Ei,Eo,S,A>(
     val initialState: S
 ): ComponentDescriptionImpl<C,EventInterface<Ei>,Eo,S,A> {
@@ -87,3 +84,4 @@ inline fun <C: IodineContext, Ei, Eo, S, A, X, B> MooreComponentImpl<C,Ei,Eo,S,A
         }
     }
 }
+ */

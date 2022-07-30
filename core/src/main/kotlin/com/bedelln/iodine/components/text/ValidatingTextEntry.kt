@@ -7,9 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import arrow.core.Either
-import com.bedelln.iodine.forms.ValidatingForm
-import com.bedelln.iodine.forms.ValidatingFormDescription
-import com.bedelln.iodine.forms.ValidationEvent
 import com.bedelln.iodine.interfaces.IodineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -19,6 +16,7 @@ import kotlinx.coroutines.launch
  * An abstract class for a text entry that preforms some validation, and
  *  displays a red error message on errors encountered.
  */
+/*
 abstract class ValidatingTextEntry<A,E>
     : ValidatingFormDescription<IodineContext, Unit, Void, String, A, E> {
         abstract fun validate(input: String): Either<E, A>
@@ -52,10 +50,6 @@ abstract class ValidatingTextEntry<A,E>
                     }
                 }
             }
-
-            override val impl: Unit
-                get() = Unit
-            override val events: Flow<Void>
-                get() = emptyFlow()
         }
 }
+ */

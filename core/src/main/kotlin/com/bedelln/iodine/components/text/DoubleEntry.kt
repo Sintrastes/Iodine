@@ -1,14 +1,10 @@
 package com.bedelln.iodine.components.text
 
 import arrow.core.Either
-import com.bedelln.iodine.forms.ValidatedForm
-import com.bedelln.iodine.forms.ValidatingForm
-import com.bedelln.iodine.forms.ValidatingFormDescription
-import com.bedelln.iodine.forms.ValidationEvent
 import com.bedelln.iodine.interfaces.Form
-import com.bedelln.iodine.interfaces.FormDescription
 import com.bedelln.iodine.interfaces.IodineContext
 
+/*
 class DoubleEntry: ValidatingTextEntry<Double, DoubleEntry.FormatError>() {
     override fun validate(input: String): Either<FormatError, Double> =
         if (input.isEmpty())
@@ -28,3 +24,4 @@ class DoubleEntry: ValidatingTextEntry<Double, DoubleEntry.FormatError>() {
         object EmptyInput: FormatError
     }
 }
+ */

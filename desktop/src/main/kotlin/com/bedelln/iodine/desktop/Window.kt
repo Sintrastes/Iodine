@@ -3,14 +3,8 @@ package com.bedelln.iodine.desktop
 import androidx.compose.runtime.*
 import androidx.compose.ui.window.*
 import com.bedelln.iodine.desktop.ctx.SystemCtx
-import com.bedelln.iodine.interfaces.ContainerRef
-import com.bedelln.iodine.desktop.ctx.WindowCtx
-import com.bedelln.iodine.desktop.ctx.WindowRef
-import com.bedelln.iodine.interfaces.ComponentDescription
-import com.bedelln.iodine.interfaces.getContents
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 
 /** Entrypoint for an Iodine desktop application. */
 fun iodineDesktopApplication(
@@ -35,6 +29,7 @@ fun iodineDesktopApplication(
 /**
  * Opens a window with the given component.
  */
+/*
 @Composable
 fun ApplicationScope.IodineWindow(
     title: String,
@@ -79,3 +74,4 @@ private fun <I,E> ApplicationScope.windowContents(
         it()
     }
 }
+ */

@@ -6,10 +6,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import arrow.core.Either
 import com.bedelln.iodine.interfaces.*
-import com.bedelln.iodine.store.StoreForm
 import kotlinx.coroutines.flow.*
 
 /** A special type of store component to facilitate developing components with validation. */
+/*
 abstract class ValidatingForm<C: IodineContext,I,E,A,B,Err>(
     val initialValue: A
 ): StoreForm<I, E, A, Either<Err, B>>() {
@@ -34,3 +34,5 @@ abstract class ValidatingForm<C: IodineContext,I,E,A,B,Err>(
 
 typealias ValidatingFormDescription<C,I,E,A,B,Err>
     = Description<C, A, ValidatingForm<C, I, E, A, B, Err>>
+
+ */

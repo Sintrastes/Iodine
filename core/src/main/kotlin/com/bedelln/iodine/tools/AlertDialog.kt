@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 
 // Note: This should probably be SystemCtx -- an alert dialog could be launched from anywhere.
+/*
 @ExperimentalMaterialApi
 class AlertDialog<C,I,E,A,B>(
     val title: String,
@@ -81,3 +82,4 @@ class AlertDialog<C,I,E,A,B>(
             get() = _contents.events
     }
 }
+ */
